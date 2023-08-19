@@ -45,8 +45,39 @@
 }
 
 .card{
-    width: 200px;
-    height: 200px;
+    margin: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    width: 250px;
+    height: 250px;
     background-color: #333;
+    overflow: hidden;
     border-radius: 2rem;
+
+    transition: transform .7s ease-in-out;
+
+}
+
+.card:hover{
+    transform: scale(1.15);
+}
+
+.card img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.projectTitle{
+    text-align: center;
+    color: black;
+}
+
+.projectsContainer{
+    margin: 5rem;
+    padding: 2rem;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px dashed rgb(0, 0, 0);
 }
