@@ -1,5 +1,6 @@
 import React from 'react';
 import ProjectCard from './ProjectCard';
+import ProjectsInfo from'./projects.json';
 
 export default function Projects() {
     const Project = {
@@ -11,10 +12,13 @@ export default function Projects() {
     const projectsArray = new Array(8).fill(Project); // Create an array of Project objects
 
     return (
+        <>
+        <h1>Projects</h1>
         <div className='projectsContainer'>
-            {projectsArray.map((project, index) => (
-                <ProjectCard key={index} Project={project} />
+            {ProjectsInfo.map((project, index) => (
+                <ProjectCard key={index} Project={project}/>
             ))}
         </div>
+        </>
     );
 }
