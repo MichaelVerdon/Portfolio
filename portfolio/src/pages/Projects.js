@@ -12,8 +12,11 @@ export default function Projects(){
             <ProjectCard Project={Project}></ProjectCard>
             <ProjectCard Project={Project}></ProjectCard>
             <ProjectCard Project={Project}></ProjectCard>
-            
-          
+            <ProjectCard Project={Project}></ProjectCard>
+            <ProjectCard Project={Project}></ProjectCard>
+            <ProjectCard Project={Project}></ProjectCard>
+            <ProjectCard Project={Project}></ProjectCard>
+            <ProjectCard Project={Project}></ProjectCard>
         </div>
         
     )
