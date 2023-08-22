@@ -6,7 +6,17 @@
     },
     {
         "name":"Workout Logging and Planning App",
-        "src":"../projects/sorting-visualiser.png",
+        "src":"../projects/fitness-app.png",
         "link":"https://github.com/MichaelVerdon/Workout-Logging-and-Planning-Mobile-Application"
+    },
+    {
+        "name":"Recycling Sorting with the Kuka YouBot",
+        "src":"../projects/youbot-recycling.png",
+        "link":"https://github.com/MichaelVerdon/Recycling-Sorting-with-the-Kuka-YouBot"
+    },
+    {
+        "name":"Get to your 9am on Time!",
+        "src":"../projects/fitness-app.png",
+        "link":"https://github.com/MichaelVerdon/Get-to-your-9am-on-time-re-upload-"
     }
 ]

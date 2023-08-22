@@ -9,7 +9,7 @@ export default function Projects() {
         "link": "http://www.google.com",
     };
 
-    const projectsArray = new Array(8).fill(Project); // Create an array of Project objects
+    const projectsArray = new Array(Project); // Create an array of Project objects
 
     return (
         <>

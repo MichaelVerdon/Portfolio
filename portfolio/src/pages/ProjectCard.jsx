@@ -16,7 +16,9 @@ const ProjectCard = ({ Project }) => {
                     ? Project.src
                     : 'https://via.placeholder.com/400'
                      } alt="project"/>
-                <div className='projectTitle'>{Project.name}</div>  
+                <div className='projectTitle'>
+                    <a>{Project.name}</a>
+                </div>  
             </div> 
         </Col>     
         </>
