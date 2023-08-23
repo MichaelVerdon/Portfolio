@@ -1,0 +1,43 @@
+[
+    {
+        "name":"C++",
+        "src":"../languages/cpp.svg"
+    },
+    {
+        "name":"Dart",
+        "src":"../languages/dart.svg"
+    },
+    {
+        "name":"Python",
+        "src":"../languages/python.svg"
+    },
+    {
+        "name":"Java",
+        "src":"../languages/java.svg"
+    },
+    {
+        "name":"Javascript",
+        "src":"../languages/javascript.svg"
+    },
+    {
+        "name":"HTML",
+        "src":"../languages/html.svg"
+    },
+    {
+        "name":"CSS",
+        "src":"../languages/CSS.svg"
+    },
+    {
+        "name":"Matlab",
+        "src":"../languages/matlab.svg"
+    },
+    {
+        "name":"SQL",
+        "src":"../languages/sql.svg"
+    },
+    {
+        "name":"LUA",
+        "src":"../languages/lua.svg"
+    }
+
+]

@@ -1,22 +1,50 @@
 [
     {
+        "name":"My Portfolio (Definitely not this site)",
+        "src":"../projects/onyo.jpg",
+        "link":"https://github.com/MichaelVerdon/Portfolio",
+        "desc":"My portfolio created using React, which is the site you are viewing this on."
+    },
+    {
         "name":"Sorting Algorithm Visualiser",
         "src":"../projects/sorting-visualiser.png",
-        "link":"https://github.com/MichaelVerdon/Sorting-Algorithm-Visualiser"
+        "link":"https://github.com/MichaelVerdon/Sorting-Algorithm-Visualiser",
+        "desc":"A sorting algorithm visualiser created using the SDL library in C++. This features numerous common sorting algorithms."
+    },
+    {
+        "name":"Yawspeed",
+        "src":"../projects/yawspeed.png",
+        "link":"https://github.com/MichaelVerdon/YawSpeed",
+        "desc":"A mouse hook created in C++ utilising the Windows API to allow automated spinning in video games without using the joystick of a controller."
+    },
+    {
+        "name":"YouTube Downloader",
+        "src":"../projects/ytdownloader.png",
+        "link":"https://github.com/MichaelVerdon/YT-Downloader",
+        "desc":"A short project made with Python using the pytube library to allow the downloading of YouTube video and audio."
     },
     {
         "name":"Workout Logging and Planning App",
         "src":"../projects/fitness-app.png",
-        "link":"https://github.com/MichaelVerdon/Workout-Logging-and-Planning-Mobile-Application"
+        "link":"https://github.com/MichaelVerdon/Workout-Logging-and-Planning-Mobile-Application",
+        "desc":"Created as my third year dissertation project of University, This mobile application allows users to plan, log and create workouts including automated goal setting, activity tracking and a workout generator. This was made using the Flutter framework for Dart."
     },
     {
         "name":"Recycling Sorting with the Kuka YouBot",
         "src":"../projects/youbot-recycling.png",
-        "link":"https://github.com/MichaelVerdon/Recycling-Sorting-with-the-Kuka-YouBot"
+        "link":"https://github.com/MichaelVerdon/Recycling-Sorting-with-the-Kuka-YouBot",
+        "desc":"A robotics simulation of a robot (the Kuka YouBot) sorting recycling using the Copelia Sim API and Lua."
     },
     {
-        "name":"Get to your 9am on Time!",
-        "src":"../projects/fitness-app.png",
-        "link":"https://github.com/MichaelVerdon/Get-to-your-9am-on-time-re-upload-"
+        "name":"Get to your 9am on Time! - Text Adventure Game",
+        "src":"../projects/9am-game.png",
+        "link":"https://github.com/MichaelVerdon/Get-to-your-9am-on-time-re-upload-",
+        "desc":"A comedic text adventure game made in Java with Swing where decisions and stat collections and influence many different endings."
+    },
+    {
+        "name":"Wordguess",
+        "src":"../projects/wordguess.png",
+        "link":"https://github.com/MichaelVerdon/WordGuess",
+        "desc":"A word guessing game built with Python that grabs a random word from the internet for you to guess like in Hangman. Features difficulty settings and winrate saving."
     }
 ]

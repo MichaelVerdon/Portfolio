@@ -1,10 +1,13 @@
 import React from 'react';
 
-const Navbar = () => {
+const Navbar = ({ Logo }) => {
 
     return(
         <nav className='nav'>
-            <a href='/' className='site-title'>Michael Verdon</a>
+            <a href='/'>
+                <img src={Logo}/>
+            </a>
+            
                 <ul>    
                     <li>
                         <a href='/projects' className="header">Projects</a>

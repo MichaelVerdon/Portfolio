@@ -1,0 +1,34 @@
+[
+    {
+        "name":"Github",
+        "src":"../software/github.svg"
+    },
+    {
+        "name":"VS Code",
+        "src":"../software/vscode.svg"
+    },
+    {
+        "name":"Visual Studio",
+        "src":"../software/visual-studio.svg"
+    },
+    {
+        "name":"After Effects",
+        "src":"../software/after-effects.svg"
+    },
+    {
+        "name":"Photoshop",
+        "src":"../software/photoshop.svg"
+    },
+    {
+        "name":"Illustrator",
+        "src":"../software/illustrator.svg"
+    },
+    {
+        "name":"XD",
+        "src":"../software/xd.svg"
+    },
+    {
+        "name":"Vegas",
+        "src":"../software/vegas.svg"
+    }
+]

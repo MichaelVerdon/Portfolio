@@ -56,11 +56,31 @@
     position: relative;
 
     transition: transform .7s ease-in-out;
-    box-shadow: 5px 5px 10px black;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.projectDesc{
+    visibility: hidden;
+    position: absolute;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+}
+
+.card:hover .projectDesc{
+    visibility: visible;
 }
 
 .card:hover{
     transform: scale(1.15);
+}
+
+.card:hover .projectTitle{
+    visibility: hidden;
 }
 
 .card img{
@@ -74,16 +94,52 @@
     text-align: center;
     background-color: rgba(0, 0, 0, 1);
     color: white;
-    padding: 15px;
     box-sizing: border-box;
+    width: 100%;
 }
 
 .projectsContainer{
-    margin: 2rem;
-    padding: 2rem;
+    margin: 0;
+    padding: 1rem;
+    justify-content: center;
     display: flex;
     flex-wrap: wrap; 
     margin-left: auto;
     margin-right: auto;
-    border: 1px dashed rgb(0, 0, 0);
+    /*border: 1px dashed rgb(0, 0, 0);*/
+}
+
+.skillsContainer {
+    margin: auto; /* Adjusts margin to center horizontally */
+    padding: 1rem;
+    width: 50rem;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centers vertically */
+    flex-wrap: wrap;
+  }
+
+.card2{
+    margin: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    overflow: hidden;
+    border-radius: 1rem;
+    position: relative;
+
+    transition: transform .7s ease-in-out;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.card2:hover{
+    transform: scale(1.15);
+}
+
+.card2 img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }

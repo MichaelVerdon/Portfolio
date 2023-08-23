@@ -1,0 +1,26 @@
+[
+    {
+        "name":"Flutter",
+        "src":"../libraries/flutter.svg"
+    },
+    {
+        "name":"React",
+        "src":"../libraries/react.svg"
+    },
+    {
+        "name":"Nodejs",
+        "src":"../libraries/node.svg"
+    },
+    {
+        "name":"Pytorch",
+        "src":"../libraries/pytorch.svg"
+    },
+    {
+        "name":"Numpy",
+        "src":"../libraries/numpy.svg"
+    },
+    {
+        "name":"Pandas",
+        "src":"../libraries/pandas.svg"
+    }
+]
