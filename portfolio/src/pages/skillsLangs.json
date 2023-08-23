@@ -36,8 +36,12 @@
         "src":"../languages/sql.svg"
     },
     {
-        "name":"LUA",
+        "name":"Lua",
         "src":"../languages/lua.svg"
+    },
+    {
+        "name":"Haskell",
+        "src":"../languages/haskell.svg"
     }
 
 ]
