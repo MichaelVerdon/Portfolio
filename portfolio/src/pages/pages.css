@@ -143,3 +143,34 @@
     height: 100%;
     object-fit: cover;
 }
+
+.contactsContainer{
+    margin: auto; /* Adjusts margin to center horizontally */
+    padding: 1rem;
+    width: 50rem;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centers vertically */
+    flex-wrap: wrap;
+
+}
+
+.contactContainer{
+    margin: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-color: white;
+    position: relative;
+
+    transition: transform .7s ease-in-out;
+}
+
+.contactContainer:hover{
+    transform: scale(1.15) rotate3d(0, 1, 0, 360deg);
+}
+
+.contactImg{
+    width: 100px;
+    height: 100px;
+}

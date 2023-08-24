@@ -9,21 +9,21 @@ const ProjectCard = ({ Project }) => {
 
     return(
         <>
-        <Col>
-            <div className='card' onClick={redirectLink}>
-                <img src={
-                    Project.src !== "N/A" 
-                    ? Project.src
-                    : 'https://via.placeholder.com/400'
-                     } alt="project"/>
-                <div className='projectTitle'>
-                    <h3>{Project.name}</h3>
-                </div>
-                <div className="projectDesc">
-                    <p>{Project.desc}</p>
-                </div>
-            </div> 
-        </Col>     
+            <Col>
+                <div className='card' onClick={redirectLink}>
+                    <img src={
+                        Project.src !== "N/A" 
+                        ? Project.src
+                        : 'https://via.placeholder.com/400'
+                        } alt="project"/>
+                    <div className='projectTitle'>
+                        <h3>{Project.name}</h3>
+                    </div>
+                    <div className="projectDesc">
+                        <p>{Project.desc}</p>
+                    </div>
+                </div> 
+            </Col>     
         </>
     )
 }
