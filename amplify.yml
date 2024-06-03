@@ -17,3 +17,9 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+  hosting:
+    service: S3
+    build:
+      publish: ./build
+    public: true
+
