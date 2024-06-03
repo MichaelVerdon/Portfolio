@@ -3,6 +3,7 @@ frontend:
   phases:
     build:
       commands:
+        - cd portfolio\package.json 
         - npm install
         - npm run build
   artifacts:
