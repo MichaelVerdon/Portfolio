@@ -30,5 +30,13 @@
     {
         "name":"Vegas",
         "src":"../software/vegas.svg"
+    },
+    {
+        "name":"AWS",
+        "src":"../software/AWS.svg"
+    },
+    {
+        "name":"MySQL",
+        "src":"../software/MySQL.svg"
     }
 ]

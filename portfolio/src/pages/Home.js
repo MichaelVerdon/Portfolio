@@ -1,4 +1,4 @@
-import Selfie from "./images/onyo.jpg"
+import Selfie from "./images/selfielinkedin.jpg"
 import gitHubLogo from "./images/github.svg"
 import './pages.css'
 import React, { useEffect } from 'react';

@@ -1,7 +1,37 @@
 [
     {
-        "name":"My Portfolio (Definitely not this site)",
-        "src":"../projects/onyo.jpg",
+        "name":"GuitarFretVerse",
+        "src":"../projects/guitarfretverselogo.png",
+        "link":"https://github.com/MichaelVerdon/GuitarFretVerse",
+        "desc":"A website that acts as a visualisation and learning tool for guitarists (React.js) to learn about scales, arpeggios and what moods they create."
+    },
+    {
+        "name":"Edutopia",
+        "src":"../projects/edutopia.png",
+        "link":"https://github.com/MichaelVerdon/Edutopia",
+        "desc":"Acted as SCRUM master to create an educational game (React.js) based on IBMs courses for IBM. This game is based on RISK and combines it with a questioning system to demonstrate acquired knowledge."
+    },
+    {
+        "name":"Text Sentiment Analysis using Machine Learning",
+        "src":"../projects/yelpml.png",
+        "link":"https://github.com/MichaelVerdon/Yelp-Reviews-Sentiment-Analysis",
+        "desc":"Used data, text mining and natural language processing techniques combined with machine learning methods (supervied and unsupervised) to predict sentiments at 81% accuracy as well as fine-tuning the BERT model to make predictions at 90% accuracy."
+    },
+    {
+        "name":"Sentiment Analysis using Fuzzy Systems",
+        "src":"../projects/fuzzy.png",
+        "link":"https://github.com/MichaelVerdon/SentiWordNet-and-Fuzzy-Logic-Sentiment-Analysis",
+        "desc":"Developed a Mamdami inference system combined with SentiWord net and natural language processing techniques to analyse text sentiments without training required at 70% accuracy."
+    },
+    {
+        "name":"Predicting Social Grade using Machine Learning",
+        "src":"../projects/2011Census.png",
+        "link":"https://github.com/MichaelVerdon/UK-2011-Census-Analysis",
+        "desc":"Used data mining techniques combined with machine learning methods (supervied and unsupervised) to predict social grade at 92% accuracy from the 2011 UK Census dataset."
+    },
+    {
+        "name":"Portfolio Website",
+        "src":"../projects/portfoliosite.png",
         "link":"https://github.com/MichaelVerdon/Portfolio",
         "desc":"My portfolio created using React, which is the site you are viewing this on."
     },
@@ -39,7 +69,7 @@
         "name":"Get to your 9am on Time! - Text Adventure Game",
         "src":"../projects/9am-game.png",
         "link":"https://github.com/MichaelVerdon/Get-to-your-9am-on-time-re-upload-",
-        "desc":"A comedic text adventure game made in Java with Swing where decisions and stat collections and influence many different endings."
+        "desc":"A comedic text adventure game made in Java with Swing where decisions and stat collections influence the endings achieved."
     },
     {
         "name":"Wordguess",

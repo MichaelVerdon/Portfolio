@@ -22,5 +22,26 @@
     {
         "name":"Pandas",
         "src":"../libraries/pandas.svg"
+    },
+    {
+        "name":"SKLearn",
+        "src":"../libraries/scikit-learn.svg"
+    },
+    {
+        "name":"MatPlotLib",
+        "src":"../libraries/Matplotlib.svg"
+    },
+    {
+        "name":"Flask",
+        "src":"../libraries/Flask.svg"
+    },
+    {
+        "name":"SDL",
+        "src":"../libraries/sdl.svg"
+    },
+    {
+        "name":"Seaborn",
+        "src":"../libraries/seaborn.svg"
     }
+    
 ]

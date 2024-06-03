@@ -22,7 +22,7 @@ export default function Skills(){
                     <SkillCard key={index} Skill={skill}/>
                 ))}
             </div>
-            <h2>Software</h2>
+            <h2>Software and Services</h2>
             <div className="skillsContainer">
                 {SkillsSoftware.map((skill, index) => (
                     <SkillCard key={index} Skill={skill}/>
