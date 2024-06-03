@@ -7,7 +7,7 @@ frontend:
         - npm install
         - npm run build
   artifacts:
-    baseDirectory: portfolio/public
+    baseDirectory: portfolio
     files:
       - '**/*'
   cache:
