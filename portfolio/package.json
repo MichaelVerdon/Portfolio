@@ -1,6 +1,6 @@
 {
   "name": "portfolio",
-  "homepage": "{https://main.d2108wvylak7in.amplifyapp.com}/#/",
+  "homepage": "https://main.d2108wvylak7in.amplifyapp.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
