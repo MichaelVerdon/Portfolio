@@ -94,10 +94,6 @@
     visibility: visible;
 }
 
-.card:hover{
-    transform: scale(1.15);
-}
-
 .card:hover .projectTitle{
     visibility: hidden;
 }
