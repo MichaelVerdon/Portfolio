@@ -1,9 +1,15 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700");
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap');
 
-:root{
+:root {
   font-family: 'Ubuntu', sans-serif;
   font-size: 1.4vh;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-roboto);
 }
 
 .App {
@@ -15,70 +21,113 @@
   justify-content: center;
 }
 
-body{
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-roboto);
-}
-
-.nav ul{
-  list-style: none;
-  display: flex;
-  gap: 3rem;
-  font-size: 1.5rem;
-}
-
-.nav{
+.nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 20%;
-  padding: 0 3rem;
+  height: 5rem;
+  padding: 0 1rem;
   box-shadow: 0px 5px 3px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
 }
 
-.nav img{
-  width: 20rem;
-  padding: 0.5rem;
-  margin-left: -3rem;
+.nav ul {
+  list-style: none;
+  display: flex;
+  font-size: 1.5rem;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.nav a{
+.nav img {
+  width: 20rem;
+  padding: 0.5rem;
+}
+
+.nav a {
   color: inherit;
   text-decoration: none;
 }
 
-.header:focus{
+.header:focus {
   color: #2200ff;
 }
 
-.header:hover{
+.header:hover {
   color: #2200ff;
   padding: 0.2rem;
   border-radius: 2rem;
 }
 
-.header:hover:after{
+.header:hover:after {
   content: "    >>";
 }
 
-.header:active{
+.header:active {
   background-color: #00000014;
   padding: 0.2rem;
   border-radius: 2rem;
 }
 
-@media screen and (max-width: 768px) {
-  .nav {
-      width: 120%;
+.logoContainer {
+  width: 20%;
+}
+
+.navContentsContainer {
+  padding-right: 2rem;
+  width: 20%;
+}
+
+@media screen and (max-width: 820px) {
+  .nav ul {
+    font-size: 1rem;
   }
 
+  .nav{
+    height: 20%;
+  }
+
+  .nav img {
+    left: 10%;
+    width: 15rem;
+  }
+
+  .logoContainer{
+    position: relative;
+    margin-left: 10%;
+  }
+
+  .nav ul{
+    gap: 1rem;
+  }
+
+  .nav ul li{
+    display: flex;
+    margin-left: 50%;
+  }
 }
 
 @media screen and (max-width: 480px) {
-  .nav {
-      width: 120%;
+  .nav ul {
+    flex-direction: column; /* Stack items vertically */
+    gap: 0.1rem;
+    font-size: 1rem;
+  }
+
+  .nav ul{
+    gap: 0rem;
+  }
+  
+  .nav ul li{
+    display: flex;
+    margin-left: 50%;
+  }
+
+  .nav img {
+    width: 15rem; /* Adjust logo size for smaller screens */
+    margin-left: 10; /* Adjust logo margin */
   }
 }

@@ -4,7 +4,7 @@ import { Col } from 'react-bootstrap';
 const SkillCard = ({ Skill }) => {
     return(
         <>
-            <Col>
+            <Col className='cardColumn2'>
                 <div className='card2'>
                     <img src={
                                 Skill.src !== "N/A" 
