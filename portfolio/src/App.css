@@ -81,6 +81,12 @@ body {
   width: 20%;
 }
 
+@media screen and (min-width: 1200px) {
+  .nav ul{
+    gap: 3rem;
+  }
+}
+
 @media screen and (max-width: 820px) {
   .nav ul {
     font-size: 1rem;
