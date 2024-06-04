@@ -1,4 +1,5 @@
 import React from 'react';
+import './App.css';
 
 const Navbar = ({ Logo }) => {
 
@@ -7,8 +8,7 @@ const Navbar = ({ Logo }) => {
             <a href='/'>
                 <img src={Logo}/>
             </a>
-            
-                <ul>    
+                <ul className='navList'>    
                     <li>
                         <a href='/projects' className="header">Projects</a>
                     </li>

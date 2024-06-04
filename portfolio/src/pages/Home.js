@@ -10,7 +10,7 @@ export default function Home(){
     }
 
     return(
-        <>
+        <div className="homeContainer">
             <h1>Hello 👋, my name is Michael</h1>
             <div className="avatar">
                 <img src={Selfie} className="selfie"></img>
@@ -26,6 +26,6 @@ export default function Home(){
                 <img src={gitHubLogo} alt="github" id="github" onClick={RedirectGithub}/>
                 <p>Github</p>
             </div>       
-        </>
+        </div>
     )
 }

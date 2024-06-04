@@ -7,8 +7,8 @@
 }
 
 .selfie{
-    width: 400px;
-    height: 400px;
+    width: 20rem;
+    height: 20rem;
     border-radius: 50%;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
     transition: transform .3s ease-in-out;
@@ -20,18 +20,23 @@
 
 .textContainer{
     margin: auto;
-    width: 600px;
+    width: 40%;
     text-align: center;
     text-justify: inter-character;
+    font-size: 1.4rem;
+}
+
+.paragraph{
+    font-size: 1.4rem;
 }
 
 .githubCont{
-    margin: 2rem;
+    margin-top: 2rem;
 }
 
 #github{
-    width: 60px;
-    height: 60px;
+    width: 5rem;
+    height: 5rem;
     transition: transform .7s ease-in-out;
 }
 
@@ -48,8 +53,8 @@
     margin: 2rem;
     display: flex;
     flex-wrap: wrap;
-    width: 250px;
-    height: 250px;
+    width: 15rem;
+    height: 15rem;
     background-color: #ffffff;
     overflow: hidden;
     border-radius: 2rem;
@@ -59,13 +64,19 @@
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
 
+.cardColumn{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .projectDesc{
     visibility: hidden;
     position: absolute;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 10px;
+    padding: 1rem;
     box-sizing: border-box;
     width: 100%;
     height: 100%;
@@ -98,15 +109,34 @@
     width: 100%;
 }
 
-.projectsContainer{
-    margin: 0;
+.homeContainer{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.projectsPageContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.projectsContainer {
     padding: 1rem;
     justify-content: center;
     display: flex;
     flex-wrap: wrap; 
-    margin-left: auto;
-    margin-right: auto;
-    /*border: 1px dashed rgb(0, 0, 0);*/
+    width: 100%; /* Use 100% width relative to its parent container */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin: 0 auto; /* Center the container itself horizontally */
+}
+
+/* Center the items within .projectsContainer */
+.projectsContainer > * {
+    flex: 1 1 auto; /* Allow items to grow and shrink as needed */
+    margin: 1rem; /* Add margin around items for spacing */
 }
 
 .skillsContainer {
@@ -123,8 +153,8 @@
     margin: 0.5rem;
     display: flex;
     flex-wrap: wrap;
-    width: 50px;
-    height: 50px;
+    width: 5rem;
+    height: 5rem;
     background-color: white;
     overflow: hidden;
     border-radius: 1rem;

@@ -5,7 +5,7 @@ export default function Contact(){
     return(
         <>
             <h1>Contact</h1>
-            <p>Get in touch with me via email or LinkedIn:</p>
+            <p className="paragraph">Get in touch with me via email or LinkedIn:</p>
             <div className="contactsContainer">
                 {Contacts.map((contact, index) => (
                     <ContactCard key={index} Contact={contact}/>

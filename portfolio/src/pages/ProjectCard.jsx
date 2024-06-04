@@ -9,7 +9,7 @@ const ProjectCard = ({ Project }) => {
 
     return(
         <>
-            <Col>
+            <Col className='cardColumn'>
                 <div className='card' onClick={redirectLink}>
                     <img src={
                         Project.src !== "N/A" 
