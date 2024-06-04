@@ -9,7 +9,7 @@ export default function Skills(){
     return(
         <>
             <h1>Skills</h1>
-            <p>These are the technologies, services, languages and frameworks that I have experience in:</p>
+            <p className='paragraph'>These are the technologies, services, languages and frameworks that I have experience in:</p>
             <h2>Languages</h2>
             <div className="skillsContainer">
                 {SkillsLangs.map((skill, index) => (
