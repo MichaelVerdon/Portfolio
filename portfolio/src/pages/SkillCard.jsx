@@ -12,7 +12,7 @@ const SkillCard = ({ Skill }) => {
                                 : 'https://via.placeholder.com/400'
                                 } alt='project'/>
                     <div className='skillTitle'>
-                        <h1>{Skill.name}</h1>
+                        <div>{Skill.name}</div>
                     </div>
                 </div>
             </Col>

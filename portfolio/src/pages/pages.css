@@ -164,13 +164,34 @@
     height: 5rem;
     background-color: #ffffff;
     overflow: hidden;
-    border-radius: 2rem;
+    border-radius: 1rem;
     position: relative;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 
 }
 
 .card2:hover{
     transform: scale(1.15);
+    visibility: hidden;
+}
+
+.card2:hover .skillTitle{
+    visibility: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skillTitle{
+    visibility: hidden;
+    position: absolute;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 1rem;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
 }
 
 .card2 img{

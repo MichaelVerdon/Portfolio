@@ -100,10 +100,6 @@ body {
     margin-left: 10%;
   }
 
-  .nav ul{
-    gap: 1rem;
-  }
-
   .nav ul li{
     display: flex;
     margin-left: 50%;
