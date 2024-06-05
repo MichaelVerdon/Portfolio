@@ -1,4 +1,4 @@
-.avatar{
+.avatar {
     margin: 0;
     padding: 2rem;
     display: block;
@@ -6,7 +6,7 @@
     margin-right: auto;
 }
 
-.selfie{
+.selfie {
     width: 20rem;
     height: 20rem;
     border-radius: 50%;
@@ -14,11 +14,11 @@
     transition: transform .3s ease-in-out;
 }
 
-.selfie:hover{
+.selfie:hover {
     transform: scale(1.05);
 }
 
-.textContainer{
+.textContainer {
     margin: auto;
     width: 40%;
     text-align: center;
@@ -26,30 +26,40 @@
     font-size: 1.4rem;
 }
 
-.paragraph{
+.paragraph {
     font-size: 1.4rem;
 }
 
-.githubCont{
-    margin-top: 2rem;
+.githubCont {
+    margin-top: 0.5rem;
 }
 
-#github{
+#projectGithub {
+    width: 5rem;
+    height: 5rem;
+    transition: transform .4s ease-in-out;
+}
+
+#projectGithub:hover {
+    transform: scale(1.25);
+}
+
+#github {
     width: 5rem;
     height: 5rem;
     transition: transform .7s ease-in-out;
 }
 
-#github:active{
+#github:active {
     border-radius: 50%;
     color: black;
 }
 
-#github:hover{
+#github:hover {
     transform: rotate3d(0, 1, 0, 360deg) scale(1.1);
 }
 
-.card{
+.card {
     margin: 2rem;
     display: flex;
     flex-wrap: wrap;
@@ -64,21 +74,21 @@
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
 
-.cardColumn{
-    display:flex;
+.cardColumn {
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.cardColumn2{
-    display:flex;
+.cardColumn2 {
+    display: flex;
     align-items: center;
     justify-content: center;
     height: 7rem;
     width: 7rem;
 }
 
-.projectDesc{
+.projectShow {
     visibility: hidden;
     position: absolute;
     text-align: center;
@@ -90,21 +100,30 @@
     height: 100%;
 }
 
-.card:hover .projectDesc{
+.projectModalContents {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
+.card:hover .projectShow {
     visibility: visible;
 }
 
-.card:hover .projectTitle{
+.card:hover .projectTitle {
     visibility: hidden;
 }
 
-.card img{
+.card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.projectTitle{
+.projectTitle {
     position: absolute;
     text-align: center;
     background-color: rgba(0, 0, 0, 1);
@@ -113,14 +132,34 @@
     width: 100%;
 }
 
-.homeContainer{
+.modalImage {
+    margin: 2rem;
+    display: flex;
+    width: 25rem;
+    height: 25rem;
+    background-color: #ffffff;
+    overflow: hidden;
+    border-radius: 2rem;
+    position: relative;
+
+    transition: transform .7s ease-in-out;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.modalImage::before {
+    content: "";
+    display: block;
+    padding-top: 100%; /* 1:1 aspect ratio (100% height of the width) */
+}
+
+.homeContainer {
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
 }
 
-.projectsPageContainer{
+.projectsPageContainer {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -132,7 +171,7 @@
     padding: 1rem;
     justify-content: center;
     display: flex;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     width: 100%; /* Use 100% width relative to its parent container */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
     margin: 0 auto; /* Center the container itself horizontally */
@@ -144,6 +183,47 @@
     margin: 1rem; /* Add margin around items for spacing */
 }
 
+.projectModal {
+    position: fixed;
+    inset: 0px;
+    width: 80%; /* Adjusted for smaller screens */
+    max-width: 50rem; /* Limit the max width */
+    height: 60%; /* Allow height to adjust */
+    margin: auto;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    padding: 1rem;
+    box-sizing: border-box; /* Ensure padding is included in total width and height */
+    overflow: auto; /* Allow scrolling if content overflows */
+    border-radius: 1rem; /* Rounded corners */
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.projectModal:focus {outline:0;}
+
+.modalImage .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.projectTextContainer {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    height: 100%;
+    text-align: center;
+    text-justify: inter-character;
+    font-size: 1.4rem;
+    word-wrap: break-word; /* Ensure long words break and wrap */
+}
+
 .skillsContainer {
     padding: 2%;
     width: 50%;
@@ -151,9 +231,9 @@
     justify-content: center;
     align-items: center; /* Centers vertically */
     flex-wrap: wrap;
-  }
+}
 
-.card2{
+.card2 {
     display: flex;
     flex-wrap: wrap;
     width: 5rem;
@@ -163,22 +243,21 @@
     border-radius: 1rem;
     position: relative;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
-
 }
 
-.card2:hover{
+.card2:hover {
     transform: scale(1.15);
     visibility: hidden;
 }
 
-.card2:hover .skillTitle{
+.card2:hover .skillTitle {
     visibility: visible;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.skillTitle{
+.skillTitle {
     visibility: hidden;
     position: absolute;
     text-align: center;
@@ -190,23 +269,22 @@
     height: 100%;
 }
 
-.card2 img{
+.card2 img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.contactsContainer{
+.contactsContainer {
     margin: auto;
     padding: 1rem;
     width: 20%;
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
 
-.contactContainer{
+.contactContainer {
     margin: 2rem;
     display: flex;
     flex-wrap: wrap;
@@ -214,15 +292,14 @@
     align-items: center;
     background-color: white;
     position: relative;
-
     transition: transform .7s ease-in-out;
 }
 
-.contactContainer:hover{
+.contactContainer:hover {
     transform: scale(1.15) rotate3d(0, 1, 0, 360deg);
 }
 
-.contactImg{
+.contactImg {
     width: 100px;
     height: 100px;
 }
@@ -232,8 +309,31 @@
         width: 100%;
     }
 
-    .homeContainer{
+    .homeContainer {
         width: 100%;
+    }
+
+    .projectModal {
+        max-width: 40rem;
+    }
+
+    .projectTextContainer {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .modalImage {
+        width: 80vw; /* Use viewport width to keep it responsive */
+        height: 80vw; /* Use the same value to maintain the square aspect ratio */
+        max-width: 15rem; /* Maximum width to prevent it from being too large */
+        max-height: 15rem; /* Maximum height to prevent it from being too large */
+    }
+
+    .modalImage img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 }
 
@@ -244,10 +344,35 @@
     }
 
     .card2 {
-        width: 100%; 
-    }
-
-    .homeContainer{
         width: 100%;
     }
+
+    .homeContainer {
+        width: 100%;
+    }
+
+    .projectModal {
+        max-width: 30rem;
+        max-height: 50%;
+    }
+
+    .projectTextContainer {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .modalImage {
+        width: 80vw; /* Use viewport width to keep it responsive */
+        height: 80vw; /* Use the same value to maintain the square aspect ratio */
+        max-width: 15rem; /* Maximum width to prevent it from being too large */
+        max-height: 15rem; /* Maximum height to prevent it from being too large */
+    }
+
+    .modalImage img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 }
+

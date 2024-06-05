@@ -3,78 +3,91 @@
         "name":"GuitarFretVerse",
         "src":"../projects/guitarfretverselogo.png",
         "link":"https://github.com/MichaelVerdon/GuitarFretVerse",
-        "desc":"A website that acts as a visualisation and learning tool for guitarists (React.js) to learn about scales, arpeggios and what moods they create."
+        "desc":"A website that acts as a visualisation and learning tool for guitarists to learn about scales, arpeggios and what moods they create.",
+        "tech":"Javascript, CSS, HTML, React.js"
     },
     {
         "name":"Edutopia",
         "src":"../projects/edutopia.png",
         "link":"https://github.com/MichaelVerdon/Edutopia",
-        "desc":"Acted as SCRUM master to create an educational game (React.js) based on IBMs courses for IBM. This game is based on RISK and combines it with a questioning system to demonstrate acquired knowledge."
+        "desc":"Acted as SCRUM master to create an educational game based on IBMs courses for IBM. This game is based on RISK and combines it with a questioning system to demonstrate acquired knowledge.",
+        "tech":"Javascript, CSS, HTML, React.js, Python, Flask, SQL, MySQL"
     },
     {
         "name":"Text Sentiment Analysis using Machine Learning",
         "src":"../projects/yelpml.png",
         "link":"https://github.com/MichaelVerdon/Yelp-Reviews-Sentiment-Analysis",
-        "desc":"Used data, text mining and natural language processing techniques combined with machine learning methods (supervied and unsupervised) to predict sentiments at 81% accuracy as well as fine-tuning the BERT model to make predictions at 90% accuracy."
+        "desc":"Used data, text mining and natural language processing techniques combined with machine learning methods (supervied and unsupervised) to predict sentiments at 81% accuracy as well as fine-tuning the BERT model to make predictions at 90% accuracy.",
+        "tech":"Python, NLTK, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, PyTorch, pyLDAvis"
     },
     {
         "name":"Sentiment Analysis using Fuzzy Systems",
         "src":"../projects/fuzzy.png",
         "link":"https://github.com/MichaelVerdon/SentiWordNet-and-Fuzzy-Logic-Sentiment-Analysis",
-        "desc":"Developed a Mamdami inference system combined with SentiWord net and natural language processing techniques to analyse text sentiments without training required at 70% accuracy."
+        "desc":"Developed a Mamdami inference system combined with SentiWord net and natural language processing techniques to analyse text sentiments without training required at 70% accuracy.",
+        "tech":"Python, NLTK, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, Scikit-Fuzzy"
     },
     {
         "name":"Predicting Social Grade using Machine Learning",
         "src":"../projects/2011Census.png",
         "link":"https://github.com/MichaelVerdon/UK-2011-Census-Analysis",
-        "desc":"Used data mining techniques combined with machine learning methods (supervied and unsupervised) to predict social grade at 92% accuracy from the 2011 UK Census dataset."
+        "desc":"Used data mining techniques combined with machine learning methods (supervied and unsupervised) to predict social grade at 92% accuracy from the 2011 UK Census dataset.",
+        "tech":"Python, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, Mlxtend"
     },
     {
         "name":"Portfolio Website",
         "src":"../projects/portfoliosite.png",
         "link":"https://github.com/MichaelVerdon/Portfolio",
-        "desc":"My portfolio created using React, which is the site you are viewing this on."
+        "desc":"My portfolio created using React, which is the site you are viewing this on.",
+        "tech":"Javascript, CSS, HTML, React.js"
     },
     {
         "name":"Sorting Algorithm Visualiser",
         "src":"../projects/sorting-visualiser.png",
         "link":"https://github.com/MichaelVerdon/Sorting-Algorithm-Visualiser",
-        "desc":"A sorting algorithm visualiser created using the SDL library in C++. This features numerous common sorting algorithms."
+        "desc":"A sorting algorithm visualiser created using the SDL library in C++. This features numerous common sorting algorithms.",
+        "tech":"C++, SDL, WxWidgets"
     },
     {
         "name":"Yawspeed",
         "src":"../projects/yawspeed.png",
         "link":"https://github.com/MichaelVerdon/YawSpeed",
-        "desc":"A mouse hook created in C++ utilising the Windows API to allow automated spinning in video games without using the joystick of a controller."
+        "desc":"A mouse hook created in C++ utilising the Windows API to allow automated spinning in video games without using the joystick of a controller.",
+        "tech":"C++, WinAPI, WxWidgets"
     },
     {
         "name":"YouTube Downloader",
         "src":"../projects/ytdownloader.png",
         "link":"https://github.com/MichaelVerdon/YT-Downloader",
-        "desc":"A short project made with Python using the pytube library to allow the downloading of YouTube video and audio."
+        "desc":"A short project made with Python using the pytube library to allow the downloading of YouTube video and audio.",
+        "tech":"Python, TKinter, Requests, Pytube, PIL"
     },
     {
         "name":"Workout Logging and Planning App",
         "src":"../projects/fitness-app.png",
         "link":"https://github.com/MichaelVerdon/Workout-Logging-and-Planning-Mobile-Application",
-        "desc":"Created as my third year dissertation project of University, This mobile application allows users to plan, log and create workouts including automated goal setting, activity tracking and a workout generator. This was made using the Flutter framework for Dart."
+        "desc":"Created as my third year dissertation project of University, This mobile application allows users to plan, log and create workouts including automated goal setting, activity tracking and a workout generator. This was made using the Flutter framework for Dart.",
+        "tech":"Dart, Flutter"
     },
     {
         "name":"Recycling Sorting with the Kuka YouBot",
         "src":"../projects/youbot-recycling.png",
         "link":"https://github.com/MichaelVerdon/Recycling-Sorting-with-the-Kuka-YouBot",
-        "desc":"A robotics simulation of a robot (the Kuka YouBot) sorting recycling using the Copelia Sim API and Lua."
+        "desc":"A robotics simulation of a robot (the Kuka YouBot) sorting recycling using the Copelia Sim API and Lua.",
+        "tech":"Lua, CopeliaSimAPI"
     },
     {
         "name":"Get to your 9am on Time! - Text Adventure Game",
         "src":"../projects/9am-game.png",
         "link":"https://github.com/MichaelVerdon/Get-to-your-9am-on-time-re-upload-",
-        "desc":"A comedic text adventure game made in Java with Swing where decisions and stat collections influence the endings achieved."
+        "desc":"A comedic text adventure game made in Java with Swing where decisions and stat collections influence the endings achieved.",
+        "tech":"Java, Swing"
     },
     {
         "name":"Wordguess",
         "src":"../projects/wordguess.png",
         "link":"https://github.com/MichaelVerdon/WordGuess",
-        "desc":"A word guessing game built with Python that grabs a random word from the internet for you to guess like in Hangman. Features difficulty settings and winrate saving."
+        "desc":"A word guessing game built with Python that grabs a random word from the internet for you to guess like in Hangman. Features difficulty settings and winrate saving.",
+        "tech":"Python, Requests, TKinter, Pickle"
     }
 ]
