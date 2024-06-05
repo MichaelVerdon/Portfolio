@@ -31,7 +31,7 @@
         "name":"Predicting Social Grade using Machine Learning",
         "src":"../projects/2011Census.png",
         "link":"https://github.com/MichaelVerdon/UK-2011-Census-Analysis",
-        "desc":"Used data mining techniques combined with machine learning methods (supervied and unsupervised) to predict social grade at 92% accuracy from the 2011 UK Census dataset.",
+        "desc":"Used data mining techniques combined with machine learning methods (supervied and unsupervised) to predict social grade at 91% accuracy from the 2011 UK Census dataset.",
         "tech":"Python, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, Mlxtend"
     },
     {
