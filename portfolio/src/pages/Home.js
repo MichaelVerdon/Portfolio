@@ -17,8 +17,8 @@ export default function Home(){
             </div>
             <div className="textContainer">
                 <p>
-                    I am a fourth year MEng Computer Science student 
-                    attending the University of Portsmouth with a passion for software
+                    I am an MEng Computer Science graduate (Discintion)
+                    from the University of Portsmouth and Maker's Academy graduate with a passion for software
                     development, artificial intelligence and creative technology.
                 </p>
             </div>
