@@ -17,7 +17,7 @@ export default function Home(){
             </div>
             <div className="textContainer">
                 <p>
-                I hold an MEng in Computer Science with Distinction from the University of Portsmouth and graduated from Maker's Academy. I'm passionate about software development, artificial intelligence, and creative technology, and I thrive on creating innovative solutions and pushing the boundaries of what's possible.
+                I am a Junior software engineer for Invertase. Furthermore, I also hold an MEng in Computer Science with Distinction from the University of Portsmouth and graduated from Maker's Academy. I'm passionate about software development, artificial intelligence, and creative technology, and I thrive on creating innovative solutions and pushing the boundaries of what's possible.
                 </p>
             </div>
             <div className="githubCont">
