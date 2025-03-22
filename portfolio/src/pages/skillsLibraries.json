@@ -4,7 +4,7 @@
         "src":"../libraries/flutter.svg"
     },
     {
-        "name":"React",
+        "name":"React and React Native",
         "src":"../libraries/react.svg"
     },
     {
@@ -42,6 +42,13 @@
     {
         "name":"Seaborn",
         "src":"../libraries/seaborn.svg"
+    },
+    {
+        "name":"Firebase",
+        "src":"../libraries/firebase.svg"
+    },
+    {
+        "name":"Gradle",
+        "src":"../libraries/gradle.svg"
     }
-    
 ]

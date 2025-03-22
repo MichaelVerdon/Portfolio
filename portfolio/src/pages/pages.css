@@ -328,6 +328,8 @@
         height: 80vw; /* Use the same value to maintain the square aspect ratio */
         max-width: 15rem; /* Maximum width to prevent it from being too large */
         max-height: 15rem; /* Maximum height to prevent it from being too large */
+        display: flex;
+        justify-content: center;
     }
 
     .modalImage img {

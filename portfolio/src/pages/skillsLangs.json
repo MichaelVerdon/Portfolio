@@ -20,6 +20,10 @@
         "src":"../languages/javascript.svg"
     },
     {
+        "name":"Typescript",
+        "src":"../languages/typescript.svg"
+    },
+    {
         "name":"HTML",
         "src":"../languages/html.svg"
     },
@@ -42,6 +46,18 @@
     {
         "name":"Haskell",
         "src":"../languages/haskell.svg"
+    },
+    {
+        "name":"Swift",
+        "src":"../languages/swift.svg"
+    },
+    {
+        "name":"Objective-C",
+        "src":"../languages/objc.svg"
+    },
+    {
+        "name":"Kotlin",
+        "src":"../languages/kotlin.svg"
     }
 
 ]

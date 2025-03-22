@@ -38,5 +38,13 @@
     {
         "name":"MySQL",
         "src":"../software/MySQL.svg"
+    },
+    {
+        "name":"Android Studio",
+        "src":"../software/android-studio.svg"
+    },
+    {
+        "name":"XCode",
+        "src":"../software/xcode.svg"
     }
 ]

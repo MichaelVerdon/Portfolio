@@ -1,5 +1,26 @@
 [
     {
+        "name":"React Native Firebase",
+        "src":"../projects/react-native-firebase.png",
+        "link":"https://github.com/invertase/react-native-firebase",
+        "desc":"As part of my role at Invertase, I help maintain React Native Firebase by triaging issues, working on feature requests and fixing bugs.",
+        "tech":"React Native, Javascript, Typescript, Java, Obj-c, Android Studio, XCode"
+    },
+    {
+        "name":"FlutterFire",
+        "src":"../projects/flutterfire.png",
+        "link":"https://github.com/firebase/flutterfire",
+        "desc":"As part of my role at Invertase, I help maintain FlutterFire by triaging issues, working on feature requests and fixing bugs.",
+        "tech":"Dart, Flutter, Java, Obj-c, Android Studio, XCode"
+    },
+    {
+        "name":"Google DOTS",
+        "src":"../projects/firebase_image.png",
+        "link":"https://github.com/firebase",
+        "desc":"Succesfully completed a contract with Google as part of the Invertase team providing triaging and solutions to help out users of Firebase iOS and Android.",
+        "tech":"Java, Kotlin, Gradle, Android Studio, Obj-c, Swift, XCode"
+    },
+    {
         "name":"GuitarFretVerse",
         "src":"../projects/guitarfretverselogo.png",
         "link":"https://github.com/MichaelVerdon/GuitarFretVerse",
