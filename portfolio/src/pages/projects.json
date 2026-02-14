@@ -1,5 +1,19 @@
 [
     {
+        "name":"Pokemon Team Builder",
+        "src":"../projects/pokeball.png",
+        "link":"https://github.com/MichaelVerdon/PokemonTeamBuilder",
+        "desc":"A service that allows you to integrate pokemon team building into your website or app which also wraps around the publicly available PokeAPI to provide searching. This was created to introduce me to springboot and MongoDB.",
+        "tech":"Java, Springboot, MongoDB"
+    },
+    {
+        "name":"ZenLoop",
+        "src":"../projects/zenloop.png",
+        "link":"/",
+        "desc":"A simple white noise app that lets you mix different sounds together and individually adjust them to get your preferred mix. This was created as a side project to help me sleep better.",
+        "tech":"Dart, Flutter"
+    },
+    {
         "name":"React Native Firebase",
         "src":"../projects/react-native-firebase.png",
         "link":"https://github.com/invertase/react-native-firebase",
