@@ -8,6 +8,10 @@
         "src": "/libraries/react.svg"
     },
     {
+        "name": "Redux Toolkit",
+        "src": "/libraries/redux.svg"
+    },
+    {
         "name": "Nodejs",
         "src": "/libraries/node.svg"
     },

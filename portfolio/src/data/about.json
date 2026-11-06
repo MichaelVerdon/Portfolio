@@ -26,7 +26,7 @@
             "label": "Now",
             "title": "Associate Software Engineer",
             "place": "JP Morgan · Payments Technology & AI",
-            "text": "Building payments systems and AI solutions at global scale, using Java, Spring Boot, Maven, MongoDB, Liquibase and Kubernetes on the back end and React with TypeScript on the front end."
+            "text": "Building payments systems and AI solutions at global scale, using Java, Spring Boot, Maven, MongoDB, Liquibase and Kubernetes on the back end and React, Redux Toolkit and TypeScript on the front end."
         }
     ],
     "drives": [
