@@ -30,8 +30,8 @@ describe('projects.json', () => {
     expect(project.name.trim()).not.toBe('');
     expect(project.desc.trim()).not.toBe('');
     expect(project.tech.trim()).not.toBe('');
-    // A link is a full https URL, or a path on this site (e.g. "/" for no public repo).
-    expect(project.link).toMatch(/^(https:\/\/|\/)/);
+    // A link is a full https URL, or empty / "/" when there is no public repo yet.
+    expect(project.link).toMatch(/^(https:\/\/|\/|$)/);
     expectImageExists(project.src);
   });
 

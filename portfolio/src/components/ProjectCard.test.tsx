@@ -46,8 +46,8 @@ describe('ProjectCard', () => {
     expect(source).toHaveAttribute('target', '_blank');
   });
 
-  it('hides the source link when the project has no public repo', async () => {
-    render(<ProjectCard project={{ ...project, link: '/' }} />);
+  it.each(['', '/'])('hides the source link when the link is %j', async (link) => {
+    render(<ProjectCard project={{ ...project, link }} />);
     const dialog = await openModal();
     expect(within(dialog).queryByRole('link')).not.toBeInTheDocument();
   });
