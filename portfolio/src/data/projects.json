@@ -3,7 +3,7 @@
         "name": "H2MVM",
         "src": "/projects/h2mvm.jpg",
         "link": "https://github.com/MichaelVerdon/h2m-campaign-mvm",
-        "desc": "A fork of the H2M mod adapted for singleplayer moviemaking, built with Dinkleberg. It gives creators one unified space to record cinematic footage from MW1, MW2 and MW3 in a single, better-looking engine, solving several long-standing pain points for moviemakers at once, with in-game tools built in Dear ImGui for staging and filming scenes.",
+        "desc": "A fork of the H2M mod built for moviemaking with Dinkleberg. It gives creators one unified space to record cinematic footage from MW1, MW2 and MW3 in a single, better-looking engine, and removes the old limits so cinematics can be recorded in singleplayer too. Together that solves several long-standing pain points for moviemakers, with in-game tools built in Dear ImGui for staging and filming scenes.",
         "tech": "C++, Dear ImGui",
         "imageFit": "cover"
     },
