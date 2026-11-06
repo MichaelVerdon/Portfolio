@@ -10,6 +10,8 @@ export interface Project {
   tech: string;
   /** "cover" fills the frame edge to edge (good for screenshots). Defaults to fitting a logo inside it. */
   imageFit?: 'cover' | 'contain';
+  /** Optional badge, e.g. "To be released". */
+  status?: string;
 }
 
 export interface Skill {

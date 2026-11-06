@@ -55,7 +55,7 @@ Tests sit next to the code they cover (`*.test.ts(x)`).
 All content lives in `src/data/*.json`, so updating the site needs no code changes:
 
 - **Your story:** `about.json` holds the hero headline, intro, the things that drive you, and the timeline (add a step with `label`, `title`, `place` and `text`).
-- **Project:** add an entry to `projects.json` with `name`, `src`, `link`, `desc` and `tech` (comma-separated, shown as tags; leave `link` as `""` until there is a public repo), and put its image in `public/projects/`. Add `"imageFit": "cover"` for screenshots that should fill the frame; logos are fitted inside it by default. The first six projects are featured; the rest appear under "Show all".
+- **Project:** add an entry to `projects.json` with `name`, `src`, `link`, `desc` and `tech` (comma-separated, shown as tags; leave `link` as `""` until there is a public repo), and put its image in `public/projects/`. Add `"imageFit": "cover"` for screenshots that should fill the frame (logos are fitted inside it by default), and `"status": "To be released"` (or any short text) to show a badge. The first six projects are featured; the rest appear under "Show all".
 - **Skill:** add `{ "name", "src" }` to the matching `skills*.json` file, with its icon in `public/languages`, `public/libraries` or `public/software`.
 
 Use `"N/A"` as an image path to show the on-brand placeholder until you have an image. The test suite checks every entry has its fields filled in, a valid link, a unique name, and an image file that exists, so `npm test` catches typos before they go live.

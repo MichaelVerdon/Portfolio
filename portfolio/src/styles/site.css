@@ -588,6 +588,39 @@
   align-self: flex-start;
 }
 
+.projectCard-image {
+  position: relative;
+}
+
+.statusBadge {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pixel);
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+}
+
+.statusBadge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--accent-glow);
+}
+
+.statusBadge--inline {
+  position: static;
+  align-self: flex-start;
+}
+
 /* ---------- Skills ---------- */
 
 .skills-header {

@@ -13,7 +13,8 @@
         "link": "",
         "desc": "A suite of After Effects plugins that lets editors generate overlay-style visuals on the fly, such as CRT, optical flares, diffusion glitches, light leaks and film burns. Instead of hunting for and re-using stock overlay assets, editors generate exactly the look they need inside their composition.",
         "tech": "After Effects SDK, C++",
-        "imageFit": "cover"
+        "imageFit": "cover",
+        "status": "To be released"
     },
     {
         "name": "Pokemon Team Builder",

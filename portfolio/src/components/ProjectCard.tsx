@@ -24,6 +24,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <button type="button" className="projectCard" onClick={() => setOpen(true)}>
         <div className={`projectCard-image${coverClass}`}>
           <img src={image} alt="" loading="lazy" />
+          {project.status && <span className="statusBadge">{project.status}</span>}
         </div>
         <div className="projectCard-body">
           <h3>{project.name}</h3>
@@ -58,6 +59,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           <img src={image} alt={project.name} />
         </div>
         <div className="projectModal-body">
+          {project.status && <span className="statusBadge statusBadge--inline">{project.status}</span>}
           <h3>{project.name}</h3>
           <p>{project.desc}</p>
           <ul className="tags" aria-label="Tech">

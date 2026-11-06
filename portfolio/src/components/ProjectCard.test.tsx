@@ -59,6 +59,18 @@ describe('ProjectCard', () => {
     expect(container.querySelector('.projectCard-image')).toHaveClass('is-cover');
   });
 
+  it('shows a status badge on the card and in the dialog when set', async () => {
+    render(<ProjectCard project={{ ...project, status: 'To be released' }} />);
+    expect(screen.getByText('To be released')).toBeInTheDocument();
+    const dialog = await openModal();
+    expect(within(dialog).getByText('To be released')).toBeInTheDocument();
+  });
+
+  it('shows no status badge by default', () => {
+    render(<ProjectCard project={project} />);
+    expect(document.querySelector('.statusBadge')).toBeNull();
+  });
+
   it('closes with the close button', async () => {
     render(<ProjectCard project={project} />);
     await openModal();
