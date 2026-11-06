@@ -35,8 +35,11 @@ portfolio/
 └── src/
     ├── main.tsx        App bootstrap (router, global styles)
     ├── App.tsx         Routes
-    ├── pages/          One component per page (Home, Projects, Skills, Contact)
-    ├── components/     Reusable pieces (Navbar, ProjectCard, SkillCard, ContactCard)
+    ├── pages/          Home (the story page) and StyleGuide (/style-guide)
+    ├── components/
+    │   ├── layout/     Navbar and Footer
+    │   ├── sections/   Hero, Story, Projects, Skills, Contact
+    │   └── geometry/   SVG visuals: PixelSteps, PixelField, OrbitRings
     ├── data/           Site content as JSON, plus index.ts which types it
     ├── types/          TypeScript types for the content
     ├── assets/         Images imported by components (logo, photo)
@@ -49,12 +52,17 @@ Tests sit next to the code they cover (`*.test.ts(x)`).
 
 ## Editing content
 
-All content lives in `src/data/*.json`, so adding a project or skill needs no code changes:
+All content lives in `src/data/*.json`, so updating the site needs no code changes:
 
-- **Project:** add an entry to `projects.json` with `name`, `src`, `link`, `desc` and `tech`, and put its image in `public/projects/`.
+- **Your story:** `about.json` holds the hero headline, intro, the things that drive you, and the timeline (add a step with `label`, `title`, `place` and `text`).
+- **Project:** add an entry to `projects.json` with `name`, `src`, `link`, `desc` and `tech` (comma-separated, shown as tags), and put its image in `public/projects/`. The first six projects are featured; the rest appear under "Show all".
 - **Skill:** add `{ "name", "src" }` to the matching `skills*.json` file, with its icon in `public/languages`, `public/libraries` or `public/software`.
 
-Use `"N/A"` as an image path to show a placeholder. The test suite checks every entry has its fields filled in, a valid link, a unique name, and an image file that exists, so `npm test` catches typos before they go live.
+Use `"N/A"` as an image path to show the on-brand placeholder until you have an image. The test suite checks every entry has its fields filled in, a valid link, a unique name, and an image file that exists, so `npm test` catches typos before they go live.
+
+## Design system
+
+Colours, fonts and spacing are CSS variables in `src/styles/tokens.css`. Run the dev server and open `/style-guide` to see them all in one place.
 
 ## Deployment
 

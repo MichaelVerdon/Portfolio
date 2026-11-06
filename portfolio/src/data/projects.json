@@ -1,128 +1,135 @@
 [
     {
-        "name":"Pokemon Team Builder",
-        "src":"../projects/pokeball.png",
-        "link":"https://github.com/MichaelVerdon/PokemonTeamBuilder",
-        "desc":"A service that allows you to integrate pokemon team building into your website or app which also wraps around the publicly available PokeAPI to provide searching. This was created to introduce me to springboot and MongoDB.",
-        "tech":"Java, Springboot, MongoDB"
+        "name": "H2MVM",
+        "src": "N/A",
+        "link": "https://github.com/MichaelVerdon/h2m-campaign-mvm",
+        "desc": "A fork of the H2M mod adapted for singleplayer moviemaking, built with Dinkleberg. It adds the tools creators need to stage and film cinematic scenes in the campaign.",
+        "tech": "C++"
     },
     {
-        "name":"ZenLoop",
-        "src":"../projects/zenloop.png",
-        "link":"/",
-        "desc":"A simple white noise app that lets you mix different sounds together and individually adjust them to get your preferred mix. This was created as a side project to help me sleep better.",
-        "tech":"Dart, Flutter"
+        "name": "Pokemon Team Builder",
+        "src": "/projects/pokeball.png",
+        "link": "https://github.com/MichaelVerdon/PokemonTeamBuilder",
+        "desc": "A service that allows you to integrate pokemon team building into your website or app which also wraps around the publicly available PokeAPI to provide searching. This was created to introduce me to springboot and MongoDB.",
+        "tech": "Java, Springboot, MongoDB"
     },
     {
-        "name":"React Native Firebase",
-        "src":"../projects/react-native-firebase.png",
-        "link":"https://github.com/invertase/react-native-firebase",
-        "desc":"As part of my role at Invertase, I help maintain React Native Firebase by triaging issues, working on feature requests and fixing bugs.",
-        "tech":"React Native, Javascript, Typescript, Java, Obj-c, Android Studio, XCode"
+        "name": "ZenLoop",
+        "src": "/projects/zenloop.png",
+        "link": "/",
+        "desc": "A simple white noise app that lets you mix different sounds together and individually adjust them to get your preferred mix. This was created as a side project to help me sleep better.",
+        "tech": "Dart, Flutter"
     },
     {
-        "name":"FlutterFire",
-        "src":"../projects/flutterfire.png",
-        "link":"https://github.com/firebase/flutterfire",
-        "desc":"As part of my role at Invertase, I help maintain FlutterFire by triaging issues, working on feature requests and fixing bugs.",
-        "tech":"Dart, Flutter, Java, Obj-c, Android Studio, XCode"
+        "name": "React Native Firebase",
+        "src": "/projects/react-native-firebase.png",
+        "link": "https://github.com/invertase/react-native-firebase",
+        "desc": "As part of my role at Invertase, I help maintain React Native Firebase by triaging issues, working on feature requests and fixing bugs.",
+        "tech": "React Native, Javascript, Typescript, Java, Obj-c, Android Studio, XCode"
     },
     {
-        "name":"Google DOTS",
-        "src":"../projects/firebase_image.png",
-        "link":"https://github.com/firebase",
-        "desc":"Succesfully completed a contract with Google as part of the Invertase team providing triaging and solutions to help out users of Firebase iOS and Android.",
-        "tech":"Java, Kotlin, Gradle, Android Studio, Obj-c, Swift, XCode"
+        "name": "FlutterFire",
+        "src": "/projects/flutterfire.png",
+        "link": "https://github.com/firebase/flutterfire",
+        "desc": "As part of my role at Invertase, I help maintain FlutterFire by triaging issues, working on feature requests and fixing bugs.",
+        "tech": "Dart, Flutter, Java, Obj-c, Android Studio, XCode"
     },
     {
-        "name":"GuitarFretVerse",
-        "src":"../projects/guitarfretverselogo.png",
-        "link":"https://github.com/MichaelVerdon/GuitarFretVerse",
-        "desc":"A website that acts as a visualisation and learning tool for guitarists to learn about scales, arpeggios and what moods they create.",
-        "tech":"Javascript, CSS, HTML, React.js"
+        "name": "Google DOTS",
+        "src": "/projects/firebase_image.png",
+        "link": "https://github.com/firebase",
+        "desc": "Succesfully completed a contract with Google as part of the Invertase team providing triaging and solutions to help out users of Firebase iOS and Android.",
+        "tech": "Java, Kotlin, Gradle, Android Studio, Obj-c, Swift, XCode"
     },
     {
-        "name":"Edutopia",
-        "src":"../projects/edutopia.png",
-        "link":"https://github.com/MichaelVerdon/Edutopia",
-        "desc":"Acted as SCRUM master to create an educational game based on IBMs courses for IBM. This game is based on RISK and combines it with a questioning system to demonstrate acquired knowledge.",
-        "tech":"Javascript, CSS, HTML, React.js, Python, Flask, SQL, MySQL"
+        "name": "GuitarFretVerse",
+        "src": "/projects/guitarfretverselogo.png",
+        "link": "https://github.com/MichaelVerdon/GuitarFretVerse",
+        "desc": "A website that acts as a visualisation and learning tool for guitarists to learn about scales, arpeggios and what moods they create.",
+        "tech": "Javascript, CSS, HTML, React.js"
     },
     {
-        "name":"Text Sentiment Analysis using Machine Learning",
-        "src":"../projects/yelpml.png",
-        "link":"https://github.com/MichaelVerdon/Yelp-Reviews-Sentiment-Analysis",
-        "desc":"Used data, text mining and natural language processing techniques combined with machine learning methods (supervied and unsupervised) to predict sentiments at 81% accuracy as well as fine-tuning the BERT model to make predictions at 90% accuracy.",
-        "tech":"Python, NLTK, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, PyTorch, pyLDAvis"
+        "name": "Edutopia",
+        "src": "/projects/edutopia.png",
+        "link": "https://github.com/MichaelVerdon/Edutopia",
+        "desc": "Acted as SCRUM master to create an educational game based on IBMs courses for IBM. This game is based on RISK and combines it with a questioning system to demonstrate acquired knowledge.",
+        "tech": "Javascript, CSS, HTML, React.js, Python, Flask, SQL, MySQL"
     },
     {
-        "name":"Sentiment Analysis using Fuzzy Systems",
-        "src":"../projects/fuzzy.png",
-        "link":"https://github.com/MichaelVerdon/SentiWordNet-and-Fuzzy-Logic-Sentiment-Analysis",
-        "desc":"Developed a Mamdami inference system combined with SentiWord net and natural language processing techniques to analyse text sentiments without training required at 70% accuracy.",
-        "tech":"Python, NLTK, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, Scikit-Fuzzy"
+        "name": "Text Sentiment Analysis using Machine Learning",
+        "src": "/projects/yelpml.png",
+        "link": "https://github.com/MichaelVerdon/Yelp-Reviews-Sentiment-Analysis",
+        "desc": "Used data, text mining and natural language processing techniques combined with machine learning methods (supervied and unsupervised) to predict sentiments at 81% accuracy as well as fine-tuning the BERT model to make predictions at 90% accuracy.",
+        "tech": "Python, NLTK, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, PyTorch, pyLDAvis"
     },
     {
-        "name":"Predicting Social Grade using Machine Learning",
-        "src":"../projects/2011Census.png",
-        "link":"https://github.com/MichaelVerdon/UK-2011-Census-Analysis",
-        "desc":"Used data mining techniques combined with machine learning methods (supervied and unsupervised) to predict social grade at 91% accuracy from the 2011 UK Census dataset.",
-        "tech":"Python, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, Mlxtend"
+        "name": "Sentiment Analysis using Fuzzy Systems",
+        "src": "/projects/fuzzy.png",
+        "link": "https://github.com/MichaelVerdon/SentiWordNet-and-Fuzzy-Logic-Sentiment-Analysis",
+        "desc": "Developed a Mamdami inference system combined with SentiWord net and natural language processing techniques to analyse text sentiments without training required at 70% accuracy.",
+        "tech": "Python, NLTK, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, Scikit-Fuzzy"
     },
     {
-        "name":"Portfolio Website",
-        "src":"../projects/portfoliosite.png",
-        "link":"https://github.com/MichaelVerdon/Portfolio",
-        "desc":"My portfolio created using React, which is the site you are viewing this on.",
-        "tech":"Javascript, CSS, HTML, React.js"
+        "name": "Predicting Social Grade using Machine Learning",
+        "src": "/projects/2011Census.png",
+        "link": "https://github.com/MichaelVerdon/UK-2011-Census-Analysis",
+        "desc": "Used data mining techniques combined with machine learning methods (supervied and unsupervised) to predict social grade at 91% accuracy from the 2011 UK Census dataset.",
+        "tech": "Python, Pandas, NumPy, Scikit-Learn, Seaborn, MatPlotLib, Mlxtend"
     },
     {
-        "name":"Sorting Algorithm Visualiser",
-        "src":"../projects/sorting-visualiser.png",
-        "link":"https://github.com/MichaelVerdon/Sorting-Algorithm-Visualiser",
-        "desc":"A sorting algorithm visualiser created using the SDL library in C++. This features numerous common sorting algorithms.",
-        "tech":"C++, SDL, WxWidgets"
+        "name": "Portfolio Website",
+        "src": "/projects/portfoliosite.png",
+        "link": "https://github.com/MichaelVerdon/Portfolio",
+        "desc": "My portfolio created using React, which is the site you are viewing this on.",
+        "tech": "Javascript, CSS, HTML, React.js"
     },
     {
-        "name":"Yawspeed",
-        "src":"../projects/yawspeed.png",
-        "link":"https://github.com/MichaelVerdon/YawSpeed",
-        "desc":"A mouse hook created in C++ utilising the Windows API to allow automated spinning in video games without using the joystick of a controller.",
-        "tech":"C++, WinAPI, WxWidgets"
+        "name": "Sorting Algorithm Visualiser",
+        "src": "/projects/sorting-visualiser.png",
+        "link": "https://github.com/MichaelVerdon/Sorting-Algorithm-Visualiser",
+        "desc": "A sorting algorithm visualiser created using the SDL library in C++. This features numerous common sorting algorithms.",
+        "tech": "C++, SDL, WxWidgets"
     },
     {
-        "name":"YouTube Downloader",
-        "src":"../projects/ytdownloader.png",
-        "link":"https://github.com/MichaelVerdon/YT-Downloader",
-        "desc":"A short project made with Python using the pytube library to allow the downloading of YouTube video and audio.",
-        "tech":"Python, TKinter, Requests, Pytube, PIL"
+        "name": "Yawspeed",
+        "src": "/projects/yawspeed.png",
+        "link": "https://github.com/MichaelVerdon/YawSpeed",
+        "desc": "A mouse hook created in C++ utilising the Windows API to allow automated spinning in video games without using the joystick of a controller.",
+        "tech": "C++, WinAPI, WxWidgets"
     },
     {
-        "name":"Workout Logging and Planning App",
-        "src":"../projects/fitness-app.png",
-        "link":"https://github.com/MichaelVerdon/Workout-Logging-and-Planning-Mobile-Application",
-        "desc":"Created as my third year dissertation project of University, This mobile application allows users to plan, log and create workouts including automated goal setting, activity tracking and a workout generator. This was made using the Flutter framework for Dart.",
-        "tech":"Dart, Flutter"
+        "name": "YouTube Downloader",
+        "src": "/projects/ytdownloader.png",
+        "link": "https://github.com/MichaelVerdon/YT-Downloader",
+        "desc": "A short project made with Python using the pytube library to allow the downloading of YouTube video and audio.",
+        "tech": "Python, TKinter, Requests, Pytube, PIL"
     },
     {
-        "name":"Recycling Sorting with the Kuka YouBot",
-        "src":"../projects/youbot-recycling.png",
-        "link":"https://github.com/MichaelVerdon/Recycling-Sorting-with-the-Kuka-YouBot",
-        "desc":"A robotics simulation of a robot (the Kuka YouBot) sorting recycling using the Copelia Sim API and Lua.",
-        "tech":"Lua, CopeliaSimAPI"
+        "name": "Workout Logging and Planning App",
+        "src": "/projects/fitness-app.png",
+        "link": "https://github.com/MichaelVerdon/Workout-Logging-and-Planning-Mobile-Application",
+        "desc": "Created as my third year dissertation project of University, This mobile application allows users to plan, log and create workouts including automated goal setting, activity tracking and a workout generator. This was made using the Flutter framework for Dart.",
+        "tech": "Dart, Flutter"
     },
     {
-        "name":"Get to your 9am on Time! - Text Adventure Game",
-        "src":"../projects/9am-game.png",
-        "link":"https://github.com/MichaelVerdon/Get-to-your-9am-on-time-re-upload-",
-        "desc":"A comedic text adventure game made in Java with Swing where decisions and stat collections influence the endings achieved.",
-        "tech":"Java, Swing"
+        "name": "Recycling Sorting with the Kuka YouBot",
+        "src": "/projects/youbot-recycling.png",
+        "link": "https://github.com/MichaelVerdon/Recycling-Sorting-with-the-Kuka-YouBot",
+        "desc": "A robotics simulation of a robot (the Kuka YouBot) sorting recycling using the Copelia Sim API and Lua.",
+        "tech": "Lua, CopeliaSimAPI"
     },
     {
-        "name":"Wordguess",
-        "src":"../projects/wordguess.png",
-        "link":"https://github.com/MichaelVerdon/WordGuess",
-        "desc":"A word guessing game built with Python that grabs a random word from the internet for you to guess like in Hangman. Features difficulty settings and winrate saving.",
-        "tech":"Python, Requests, TKinter, Pickle"
+        "name": "Get to your 9am on Time! - Text Adventure Game",
+        "src": "/projects/9am-game.png",
+        "link": "https://github.com/MichaelVerdon/Get-to-your-9am-on-time-re-upload-",
+        "desc": "A comedic text adventure game made in Java with Swing where decisions and stat collections influence the endings achieved.",
+        "tech": "Java, Swing"
+    },
+    {
+        "name": "Wordguess",
+        "src": "/projects/wordguess.png",
+        "link": "https://github.com/MichaelVerdon/WordGuess",
+        "desc": "A word guessing game built with Python that grabs a random word from the internet for you to guess like in Hangman. Features difficulty settings and winrate saving.",
+        "tech": "Python, Requests, TKinter, Pickle"
     }
 ]

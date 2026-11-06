@@ -1,7 +1,6 @@
-import { screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import type { Project } from '../types/content';
 import ProjectCard from './ProjectCard';
 
@@ -10,48 +9,60 @@ const project: Project = {
   src: '/projects/test.png',
   link: 'https://github.com/MichaelVerdon/test',
   desc: 'A project used in tests.',
-  tech: 'TypeScript, React',
+  tech: 'TypeScript, React, Vite, Vitest, Node',
 };
 
-afterEach(() => {
-  vi.restoreAllMocks();
-});
+async function openModal() {
+  await userEvent.click(screen.getByRole('button', { name: /test project/i }));
+  return screen.getByRole('dialog');
+}
 
 describe('ProjectCard', () => {
-  it('shows the name and image, with details hidden', () => {
+  it('shows the name, description and first three tech tags', () => {
     render(<ProjectCard project={project} />);
-    expect(screen.getByRole('heading', { name: 'Test Project' })).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Test Project' })).toHaveAttribute('src', project.src);
-    expect(screen.queryByText(project.desc)).not.toBeInTheDocument();
+    const card = screen.getByRole('button', { name: /test project/i });
+    expect(within(card).getByRole('heading', { name: 'Test Project' })).toBeInTheDocument();
+    expect(card).toHaveTextContent(project.desc);
+    expect(within(card).getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'TypeScript',
+      'React',
+      'Vite',
+      '+2',
+    ]);
   });
 
-  it('opens a modal with the description and tech when clicked', async () => {
+  it('shows no "+" tag when there are three tags or fewer', () => {
+    render(<ProjectCard project={{ ...project, tech: 'Python, Flask' }} />);
+    expect(screen.queryByText(/^\+/)).not.toBeInTheDocument();
+  });
+
+  it('opens a dialog with all the details and a source link', async () => {
     render(<ProjectCard project={project} />);
-    await userEvent.click(screen.getByText('Click for more info'));
-    const dialog = screen.getByRole('dialog');
+    const dialog = await openModal();
     expect(dialog).toHaveTextContent(project.desc);
-    expect(dialog).toHaveTextContent(project.tech);
+    expect(within(dialog).getAllByRole('listitem')).toHaveLength(5);
+    const source = within(dialog).getByRole('link', { name: /view source/i });
+    expect(source).toHaveAttribute('href', project.link);
+    expect(source).toHaveAttribute('target', '_blank');
   });
 
-  it('closes the modal on Escape', async () => {
+  it('hides the source link when the project has no public repo', async () => {
+    render(<ProjectCard project={{ ...project, link: '/' }} />);
+    const dialog = await openModal();
+    expect(within(dialog).queryByRole('link')).not.toBeInTheDocument();
+  });
+
+  it('closes with the close button', async () => {
     render(<ProjectCard project={project} />);
-    await userEvent.click(screen.getByText('Click for more info'));
-    await userEvent.keyboard('{Escape}');
+    await openModal();
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('opens the source code link from the modal', async () => {
-    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+  it('closes on Escape', async () => {
     render(<ProjectCard project={project} />);
-    await userEvent.click(screen.getByText('Click for more info'));
-    await userEvent.click(screen.getByRole('img', { name: 'GitHub' }));
-    expect(open).toHaveBeenCalledWith(project.link);
-  });
-
-  it('uses a placeholder image when the source is "N/A"', () => {
-    render(<ProjectCard project={{ ...project, src: 'N/A' }} />);
-    expect(screen.getByRole('img', { name: 'Test Project' }).getAttribute('src')).toMatch(
-      /^https:\/\//,
-    );
+    await openModal();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });

@@ -1,31 +1,28 @@
-import gitHubLogo from '../assets/github.svg';
-import selfie from '../assets/selfielinkedin.jpg';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import ContactSection from '../components/sections/ContactSection';
+import Hero from '../components/sections/Hero';
+import ProjectsSection from '../components/sections/ProjectsSection';
+import SkillsSection from '../components/sections/SkillsSection';
+import Story from '../components/sections/Story';
 
 export default function Home() {
+  const { hash } = useLocation();
+
+  // When arriving with a hash (e.g. /#projects from another page or an old
+  // /projects link), scroll to that section once it has rendered.
+  useEffect(() => {
+    if (!hash) return;
+    document.getElementById(hash.slice(1))?.scrollIntoView?.();
+  }, [hash]);
+
   return (
-    <div className="homeContainer">
-      <h1>Hello 👋, my name is Michael</h1>
-      <div className="avatar">
-        <img src={selfie} className="selfie" alt="Michael Verdon" />
-      </div>
-      <div className="textContainer">
-        <p>
-          I am a Junior software engineer for Invertase. Furthermore, I also hold an MEng in
-          Computer Science with Distinction from the University of Portsmouth and graduated from
-          Maker's Academy. I'm passionate about software development, artificial intelligence, and
-          creative technology, and I thrive on creating innovative solutions and pushing the
-          boundaries of what's possible.
-        </p>
-      </div>
-      <div className="githubCont">
-        <img
-          src={gitHubLogo}
-          alt="GitHub"
-          id="github"
-          onClick={() => window.open('https://github.com/MichaelVerdon')}
-        />
-        <p>Github</p>
-      </div>
-    </div>
+    <main>
+      <Hero />
+      <Story />
+      <ProjectsSection />
+      <SkillsSection />
+      <ContactSection />
+    </main>
   );
 }

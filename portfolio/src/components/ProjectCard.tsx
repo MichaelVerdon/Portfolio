@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Col } from 'react-bootstrap';
 import Modal from 'react-modal';
-import gitHubLogo from '../assets/github.svg';
+import { techTags } from '../data';
 import type { Project } from '../types/content';
 import { imageOrPlaceholder } from '../utils/image';
 
@@ -9,56 +8,69 @@ interface ProjectCardProps {
   project: Project;
 }
 
+/** Only real web links get a "source code" button (some projects have none). */
+function hasSourceLink(project: Project) {
+  return project.link.startsWith('https://');
+}
+
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const tags = techTags(project);
   const image = imageOrPlaceholder(project.src);
 
   return (
     <>
-      <Col className="cardColumn">
-        <div className="card" onClick={() => setModalOpen(true)}>
-          <img src={image} alt={project.name} />
-          <div className="projectTitle">
-            <h3>{project.name}</h3>
-          </div>
-          <div className="projectShow">
-            <p>Click for more info</p>
-          </div>
+      <button type="button" className="projectCard" onClick={() => setOpen(true)}>
+        <div className="projectCard-image">
+          <img src={image} alt="" loading="lazy" />
         </div>
-      </Col>
+        <div className="projectCard-body">
+          <h3>{project.name}</h3>
+          <p className="projectCard-desc">{project.desc}</p>
+          <ul className="tags" aria-label="Tech">
+            {tags.slice(0, 3).map((tag) => (
+              <li key={tag} className="tag">
+                {tag}
+              </li>
+            ))}
+            {tags.length > 3 && <li className="tag tag--more">+{tags.length - 3}</li>}
+          </ul>
+        </div>
+      </button>
+
       <Modal
-        isOpen={modalOpen}
-        onRequestClose={() => setModalOpen(false)}
+        isOpen={open}
+        onRequestClose={() => setOpen(false)}
         className="projectModal"
+        overlayClassName="projectModal-overlay"
+        contentLabel={project.name}
       >
-        <div className="projectModalContents">
-          <div className="modalImage">
-            <img src={image} alt={project.name} />
-          </div>
-          <div className="projectTextContainer">
-            <div>
-              <h3>{project.name}</h3>
-            </div>
-            <div className="projectDesc">
-              <p>
-                <strong>Description:</strong> {project.desc}
-              </p>
-            </div>
-            <div className="projectTechContainer">
-              <p>
-                <strong>Tech:</strong> {project.tech}
-              </p>
-            </div>
-            <div className="githubCont">
-              <img
-                src={gitHubLogo}
-                alt="GitHub"
-                id="projectGithub"
-                onClick={() => window.open(project.link)}
-              />
-              <p>Github</p>
-            </div>
-          </div>
+        <button
+          type="button"
+          className="projectModal-close"
+          aria-label="Close"
+          onClick={() => setOpen(false)}
+        >
+          ×
+        </button>
+        <div className="projectModal-image">
+          <img src={image} alt={project.name} />
+        </div>
+        <div className="projectModal-body">
+          <h3>{project.name}</h3>
+          <p>{project.desc}</p>
+          <ul className="tags" aria-label="Tech">
+            {tags.map((tag) => (
+              <li key={tag} className="tag">
+                {tag}
+              </li>
+            ))}
+          </ul>
+          {hasSourceLink(project) && (
+            <a className="button button--primary" href={project.link} target="_blank" rel="noreferrer">
+              View source on GitHub
+            </a>
+          )}
         </div>
       </Modal>
     </>

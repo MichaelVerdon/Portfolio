@@ -1,12 +1,12 @@
 [
     {
         "name":"Email",
-        "img":"../contact/gmail.svg",
+        "img":"/contact/gmail.svg",
         "link":"mailto:verdonmw@gmail.com"
     },
     {
         "name":"LinkedIn",
-        "img":"../contact/linkedin.svg",
+        "img":"/contact/linkedin.svg",
         "link":"https://www.linkedin.com/in/michael-verdon-13b04328a/"
     }
 ]

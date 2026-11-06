@@ -1,0 +1,38 @@
+{
+    "name": "Michael Verdon",
+    "role": "Software Engineer",
+    "headline": "I build software that sits where engineering meets creativity.",
+    "intro": "I'm an Associate Software Engineer at JP Morgan in Payments Technology. Before that I worked at Invertase on open-source tools that developers around the world rely on. I'm drawn to artificial intelligence and creative technology, and I love turning an idea into something people can actually use.",
+    "timeline": [
+        {
+            "label": "Studied",
+            "title": "MEng Computer Science, Distinction",
+            "place": "University of Portsmouth",
+            "text": "Where I went deep on machine learning, fuzzy systems and robotics, and found out how much I enjoy building things that think."
+        },
+        {
+            "label": "Trained",
+            "title": "Software Engineering Bootcamp",
+            "place": "Makers Academy",
+            "text": "An intense, hands-on course in test-driven development, pairing and shipping in teams."
+        },
+        {
+            "label": "Before",
+            "title": "Junior Software Engineer",
+            "place": "Invertase",
+            "text": "Working on React Native Firebase and FlutterFire, the open-source libraries that connect thousands of apps to Firebase."
+        },
+        {
+            "label": "Now",
+            "title": "Associate Software Engineer",
+            "place": "JP Morgan · Payments Technology",
+            "text": "Building the systems behind payments at global scale, with Java, Spring Boot, MongoDB and Liquibase."
+        }
+    ],
+    "drives": [
+        "Artificial intelligence",
+        "Creative technology",
+        "Open source",
+        "Pushing what's possible"
+    ]
+}
