@@ -12,6 +12,8 @@ export interface Project {
   imageFit?: 'cover' | 'contain';
   /** Optional badge, e.g. "To be released". */
   status?: string;
+  /** Optional link to a live version of the project. */
+  demo?: string;
 }
 
 export interface Skill {

@@ -71,6 +71,21 @@ describe('ProjectCard', () => {
     expect(document.querySelector('.statusBadge')).toBeNull();
   });
 
+  it('offers a live demo link alongside the source when there is one', async () => {
+    render(<ProjectCard project={{ ...project, demo: 'https://example.com/live' }} />);
+    const dialog = await openModal();
+    const live = within(dialog).getByRole('link', { name: 'See it live' });
+    expect(live).toHaveAttribute('href', 'https://example.com/live');
+    expect(live).toHaveAttribute('target', '_blank');
+    expect(within(dialog).getByRole('link', { name: /view source/i })).toHaveClass('button--ghost');
+  });
+
+  it('shows a live demo link even without a public repo', async () => {
+    render(<ProjectCard project={{ ...project, link: '', demo: 'https://example.com/live' }} />);
+    const dialog = await openModal();
+    expect(within(dialog).getAllByRole('link')).toHaveLength(1);
+  });
+
   it('closes with the close button', async () => {
     render(<ProjectCard project={project} />);
     await openModal();

@@ -35,6 +35,12 @@ describe('projects.json', () => {
     expectImageExists(project.src);
   });
 
+  it('only uses https links for live demos', () => {
+    for (const project of projects) {
+      if (project.demo !== undefined) expect(project.demo, project.name).toMatch(/^https:\/\//);
+    }
+  });
+
   it('only uses "cover" or "contain" for imageFit', () => {
     for (const raw of projectsJson as { imageFit?: string }[]) {
       expect([undefined, 'cover', 'contain']).toContain(raw.imageFit);

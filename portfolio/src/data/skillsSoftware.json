@@ -4,6 +4,10 @@
         "src": "/software/github.svg"
     },
     {
+        "name": "Maven",
+        "src": "/software/maven.svg"
+    },
+    {
         "name": "VS Code",
         "src": "/software/vscode.svg"
     },
@@ -34,6 +38,10 @@
     {
         "name": "AWS",
         "src": "/software/AWS.svg"
+    },
+    {
+        "name": "Kubernetes",
+        "src": "/software/kubernetes.svg"
     },
     {
         "name": "MySQL",

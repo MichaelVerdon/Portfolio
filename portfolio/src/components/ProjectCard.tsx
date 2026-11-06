@@ -69,10 +69,24 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               </li>
             ))}
           </ul>
-          {hasSourceLink(project) && (
-            <a className="button button--primary" href={project.link} target="_blank" rel="noreferrer">
-              View source on GitHub
-            </a>
+          {(project.demo || hasSourceLink(project)) && (
+            <div className="actions">
+              {project.demo && (
+                <a className="button button--primary" href={project.demo} target="_blank" rel="noreferrer">
+                  See it live
+                </a>
+              )}
+              {hasSourceLink(project) && (
+                <a
+                  className={`button ${project.demo ? 'button--ghost' : 'button--primary'}`}
+                  href={project.link}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View source on GitHub
+                </a>
+              )}
+            </div>
           )}
         </div>
       </Modal>

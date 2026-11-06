@@ -56,7 +56,8 @@
         "src": "/projects/guitarfretverselogo.png",
         "link": "https://github.com/MichaelVerdon/GuitarFretVerse",
         "desc": "A website that acts as a visualisation and learning tool for guitarists to learn about scales, arpeggios and what moods they create.",
-        "tech": "Javascript, CSS, HTML, React.js"
+        "tech": "Javascript, CSS, HTML, React.js",
+        "demo": "https://main.d246g20s67kno4.amplifyapp.com/?mode=scale&root=C&scale=major"
     },
     {
         "name": "Edutopia",
