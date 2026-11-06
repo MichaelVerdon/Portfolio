@@ -4,7 +4,10 @@ frontend:
     build:
       commands:
         - cd portfolio
-        - npm install
+        - nvm install 22 && nvm use 22
+        - npm ci
+        # Tests run before every deploy, so a regression never reaches the live site.
+        - npm test
         - npm run build
   artifacts:
     baseDirectory: portfolio/build
@@ -12,4 +15,4 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/*
+      - portfolio/node_modules/**/*
