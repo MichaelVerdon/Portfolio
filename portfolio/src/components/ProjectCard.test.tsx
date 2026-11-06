@@ -52,6 +52,13 @@ describe('ProjectCard', () => {
     expect(within(dialog).queryByRole('link')).not.toBeInTheDocument();
   });
 
+  it('fills the frame for cover images only', async () => {
+    const { rerender, container } = render(<ProjectCard project={project} />);
+    expect(container.querySelector('.projectCard-image')).not.toHaveClass('is-cover');
+    rerender(<ProjectCard project={{ ...project, imageFit: 'cover' }} />);
+    expect(container.querySelector('.projectCard-image')).toHaveClass('is-cover');
+  });
+
   it('closes with the close button', async () => {
     render(<ProjectCard project={project} />);
     await openModal();

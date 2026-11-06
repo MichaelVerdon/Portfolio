@@ -495,6 +495,21 @@
   object-fit: contain;
 }
 
+.projectCard-image.is-cover,
+.projectModal-image.is-cover {
+  padding: 0;
+}
+
+.projectCard-image.is-cover img,
+.projectModal-image.is-cover img {
+  object-fit: cover;
+}
+
+.projectModal-image.is-cover {
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
 .projectCard-body {
   display: flex;
   flex-direction: column;

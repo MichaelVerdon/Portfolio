@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { PLACEHOLDER_IMAGE } from '../utils/image';
+import projectsJson from './projects.json';
 import { about, contacts, projects, skillGroups, techTags } from '.';
 
 const publicDir = resolve(process.cwd(), 'public');
@@ -32,6 +33,12 @@ describe('projects.json', () => {
     // A link is a full https URL, or a path on this site (e.g. "/" for no public repo).
     expect(project.link).toMatch(/^(https:\/\/|\/)/);
     expectImageExists(project.src);
+  });
+
+  it('only uses "cover" or "contain" for imageFit', () => {
+    for (const raw of projectsJson as { imageFit?: string }[]) {
+      expect([undefined, 'cover', 'contain']).toContain(raw.imageFit);
+    }
   });
 
   it('has unique project names', () => {

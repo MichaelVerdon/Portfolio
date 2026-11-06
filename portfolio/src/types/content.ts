@@ -8,6 +8,8 @@ export interface Project {
   link: string;
   desc: string;
   tech: string;
+  /** "cover" fills the frame edge to edge (good for screenshots). Defaults to fitting a logo inside it. */
+  imageFit?: 'cover' | 'contain';
 }
 
 export interface Skill {

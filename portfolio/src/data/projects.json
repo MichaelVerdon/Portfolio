@@ -1,10 +1,11 @@
 [
     {
         "name": "H2MVM",
-        "src": "N/A",
+        "src": "/projects/h2mvm.jpg",
         "link": "https://github.com/MichaelVerdon/h2m-campaign-mvm",
-        "desc": "A fork of the H2M mod adapted for singleplayer moviemaking, built with Dinkleberg. It adds the tools creators need to stage and film cinematic scenes in the campaign.",
-        "tech": "C++"
+        "desc": "A fork of the H2M mod adapted for singleplayer moviemaking, built with Dinkleberg. It adds in-game tools, with interfaces built in Dear ImGui, for staging and filming cinematic scenes in the campaign.",
+        "tech": "C++, Dear ImGui",
+        "imageFit": "cover"
     },
     {
         "name": "Pokemon Team Builder",

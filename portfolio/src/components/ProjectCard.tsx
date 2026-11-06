@@ -17,11 +17,12 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const [open, setOpen] = useState(false);
   const tags = techTags(project);
   const image = imageOrPlaceholder(project.src);
+  const coverClass = project.imageFit === 'cover' ? ' is-cover' : '';
 
   return (
     <>
       <button type="button" className="projectCard" onClick={() => setOpen(true)}>
-        <div className="projectCard-image">
+        <div className={`projectCard-image${coverClass}`}>
           <img src={image} alt="" loading="lazy" />
         </div>
         <div className="projectCard-body">
@@ -53,7 +54,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         >
           ×
         </button>
-        <div className="projectModal-image">
+        <div className={`projectModal-image${coverClass}`}>
           <img src={image} alt={project.name} />
         </div>
         <div className="projectModal-body">

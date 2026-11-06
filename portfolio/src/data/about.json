@@ -2,7 +2,7 @@
     "name": "Michael Verdon",
     "role": "Software Engineer",
     "headline": "I build software that sits where engineering meets creativity.",
-    "intro": "I'm an Associate Software Engineer at JP Morgan in Payments Technology. Before that I worked at Invertase on open-source tools that developers around the world rely on. I'm drawn to artificial intelligence and creative technology, and I love turning an idea into something people can actually use.",
+    "intro": "I'm an Associate Software Engineer at JP Morgan, where I work in Payments Technology and on AI solutions. Before that I worked at Invertase on open-source tools that developers around the world rely on. I'm drawn to artificial intelligence and creative technology, and I love turning an idea into something people can actually use.",
     "timeline": [
         {
             "label": "Studied",
@@ -25,8 +25,8 @@
         {
             "label": "Now",
             "title": "Associate Software Engineer",
-            "place": "JP Morgan · Payments Technology",
-            "text": "Building the systems behind payments at global scale, with Java, Spring Boot, MongoDB and Liquibase."
+            "place": "JP Morgan · Payments Technology & AI",
+            "text": "Building payments systems and AI solutions at global scale, using Java, Spring Boot, MongoDB and Liquibase on the back end and React with TypeScript on the front end."
         }
     ],
     "drives": [

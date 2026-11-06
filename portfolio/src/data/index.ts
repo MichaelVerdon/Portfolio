@@ -9,7 +9,12 @@ import skillsSoftwareJson from './skillsSoftware.json';
 // Typed access to the site's JSON content. The `satisfies` checks fail the
 // build if a JSON file is missing a field the components rely on.
 export const about = aboutJson satisfies About;
-export const projects = projectsJson satisfies Project[];
+// JSON can't express string literal types, so narrow imageFit here; the data
+// tests check the raw values are valid.
+export const projects: Project[] = projectsJson.map(
+  ({ imageFit, ...project }) =>
+    ({ ...project, imageFit: imageFit === 'cover' ? 'cover' : 'contain' }) satisfies Project,
+);
 export const contacts = contactJson satisfies ContactLink[];
 
 export const skillGroups: { title: string; skills: Skill[] }[] = [
