@@ -1,16 +1,21 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
-import { renderWithRouter } from '../test/render';
+import { renderWithRouter } from '../../test/render';
 import Navbar from './Navbar';
 
 describe('Navbar', () => {
-  it('links to every page', () => {
+  it('links the logo home and each link to its section', () => {
     renderWithRouter(<Navbar logo="/logo.png" />);
-    expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('href', '/projects');
-    expect(screen.getByRole('link', { name: 'Skills' })).toHaveAttribute('href', '/skills');
-    expect(screen.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '/contact');
     expect(screen.getByRole('link', { name: 'Michael Verdon' })).toHaveAttribute('href', '/');
+    for (const [name, href] of [
+      ['Story', '/#story'],
+      ['Projects', '/#projects'],
+      ['Skills', '/#skills'],
+      ['Contact', '/#contact'],
+    ]) {
+      expect(screen.getByRole('link', { name })).toHaveAttribute('href', href);
+    }
   });
 
   it('opens and closes the mobile menu', async () => {
@@ -19,20 +24,24 @@ describe('Navbar', () => {
     const list = screen.getByRole('list');
 
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    expect(list).not.toHaveClass('active');
-
     await userEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    expect(list).toHaveClass('active');
-
+    expect(list).toHaveClass('is-open');
     await userEvent.click(toggle);
-    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(list).not.toHaveClass('is-open');
   });
 
-  it('closes the mobile menu after choosing a page', async () => {
+  it('closes the mobile menu after choosing a section', async () => {
     renderWithRouter(<Navbar logo="/logo.png" />);
     await userEvent.click(screen.getByRole('button', { name: 'Toggle menu' }));
     await userEvent.click(screen.getByRole('link', { name: 'Skills' }));
-    expect(screen.getByRole('list')).not.toHaveClass('active');
+    expect(screen.getByRole('list')).not.toHaveClass('is-open');
+  });
+
+  it('closes the mobile menu when the logo is clicked', async () => {
+    renderWithRouter(<Navbar logo="/logo.png" />);
+    await userEvent.click(screen.getByRole('button', { name: 'Toggle menu' }));
+    await userEvent.click(screen.getByRole('link', { name: 'Michael Verdon' }));
+    expect(screen.getByRole('list')).not.toHaveClass('is-open');
   });
 });

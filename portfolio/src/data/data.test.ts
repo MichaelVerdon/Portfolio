@@ -1,7 +1,9 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { contacts, projects, skillGroups } from '.';
+import { PLACEHOLDER_IMAGE } from '../utils/image';
+import projectsJson from './projects.json';
+import { about, contacts, projects, skillGroups, techTags } from '.';
 
 const publicDir = resolve(process.cwd(), 'public');
 
@@ -28,9 +30,21 @@ describe('projects.json', () => {
     expect(project.name.trim()).not.toBe('');
     expect(project.desc.trim()).not.toBe('');
     expect(project.tech.trim()).not.toBe('');
-    // A link is a full https URL, or a path on this site (e.g. "/" for no public repo).
-    expect(project.link).toMatch(/^(https:\/\/|\/)/);
+    // A link is a full https URL, or empty / "/" when there is no public repo yet.
+    expect(project.link).toMatch(/^(https:\/\/|\/|$)/);
     expectImageExists(project.src);
+  });
+
+  it('only uses https links for live demos', () => {
+    for (const project of projects) {
+      if (project.demo !== undefined) expect(project.demo, project.name).toMatch(/^https:\/\//);
+    }
+  });
+
+  it('only uses "cover" or "contain" for imageFit', () => {
+    for (const raw of projectsJson as { imageFit?: string }[]) {
+      expect([undefined, 'cover', 'contain']).toContain(raw.imageFit);
+    }
   });
 
   it('has unique project names', () => {
@@ -53,5 +67,47 @@ describe('contact.json', () => {
   it.each(contacts.map((c) => [c.name, c] as const))('%s is valid', (_, contact) => {
     expect(contact.link).toMatch(/^(https:\/\/|mailto:)/);
     expectImageExists(contact.img);
+  });
+});
+
+describe('placeholder image', () => {
+  it('exists in /public', () => {
+    expectImageExists(PLACEHOLDER_IMAGE);
+  });
+});
+
+describe('about.json', () => {
+  it('has the story text filled in', () => {
+    for (const field of [about.name, about.role, about.headline, about.intro]) {
+      expect(field.trim()).not.toBe('');
+    }
+    expect(about.drives.length).toBeGreaterThan(0);
+  });
+
+  it('has a complete timeline', () => {
+    expect(about.timeline.length).toBeGreaterThan(0);
+    for (const step of about.timeline) {
+      expect(step.label.trim()).not.toBe('');
+      expect(step.title.trim()).not.toBe('');
+      expect(step.place.trim()).not.toBe('');
+      expect(step.text.trim()).not.toBe('');
+    }
+    expectUnique(about.timeline.map((s) => s.title));
+  });
+});
+
+describe('techTags', () => {
+  it('splits and trims the tech list, dropping blanks', () => {
+    expect(techTags({ ...projects[0], tech: ' Java,Spring , ,MongoDB ' })).toEqual([
+      'Java',
+      'Spring',
+      'MongoDB',
+    ]);
+  });
+
+  it('gives every project at least one tag', () => {
+    for (const project of projects) {
+      expect(techTags(project).length, project.name).toBeGreaterThan(0);
+    }
   });
 });

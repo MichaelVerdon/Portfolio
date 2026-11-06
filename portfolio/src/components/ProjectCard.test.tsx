@@ -1,7 +1,6 @@
-import { screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import type { Project } from '../types/content';
 import ProjectCard from './ProjectCard';
 
@@ -10,48 +9,94 @@ const project: Project = {
   src: '/projects/test.png',
   link: 'https://github.com/MichaelVerdon/test',
   desc: 'A project used in tests.',
-  tech: 'TypeScript, React',
+  tech: 'TypeScript, React, Vite, Vitest, Node',
 };
 
-afterEach(() => {
-  vi.restoreAllMocks();
-});
+async function openModal() {
+  await userEvent.click(screen.getByRole('button', { name: /test project/i }));
+  return screen.getByRole('dialog');
+}
 
 describe('ProjectCard', () => {
-  it('shows the name and image, with details hidden', () => {
+  it('shows the name, description and first three tech tags', () => {
     render(<ProjectCard project={project} />);
-    expect(screen.getByRole('heading', { name: 'Test Project' })).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Test Project' })).toHaveAttribute('src', project.src);
-    expect(screen.queryByText(project.desc)).not.toBeInTheDocument();
+    const card = screen.getByRole('button', { name: /test project/i });
+    expect(within(card).getByRole('heading', { name: 'Test Project' })).toBeInTheDocument();
+    expect(card).toHaveTextContent(project.desc);
+    expect(within(card).getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'TypeScript',
+      'React',
+      'Vite',
+      '+2',
+    ]);
   });
 
-  it('opens a modal with the description and tech when clicked', async () => {
+  it('shows no "+" tag when there are three tags or fewer', () => {
+    render(<ProjectCard project={{ ...project, tech: 'Python, Flask' }} />);
+    expect(screen.queryByText(/^\+/)).not.toBeInTheDocument();
+  });
+
+  it('opens a dialog with all the details and a source link', async () => {
     render(<ProjectCard project={project} />);
-    await userEvent.click(screen.getByText('Click for more info'));
-    const dialog = screen.getByRole('dialog');
+    const dialog = await openModal();
     expect(dialog).toHaveTextContent(project.desc);
-    expect(dialog).toHaveTextContent(project.tech);
+    expect(within(dialog).getAllByRole('listitem')).toHaveLength(5);
+    const source = within(dialog).getByRole('link', { name: /view source/i });
+    expect(source).toHaveAttribute('href', project.link);
+    expect(source).toHaveAttribute('target', '_blank');
   });
 
-  it('closes the modal on Escape', async () => {
+  it.each(['', '/'])('hides the source link when the link is %j', async (link) => {
+    render(<ProjectCard project={{ ...project, link }} />);
+    const dialog = await openModal();
+    expect(within(dialog).queryByRole('link')).not.toBeInTheDocument();
+  });
+
+  it('fills the frame for cover images only', async () => {
+    const { rerender, container } = render(<ProjectCard project={project} />);
+    expect(container.querySelector('.projectCard-image')).not.toHaveClass('is-cover');
+    rerender(<ProjectCard project={{ ...project, imageFit: 'cover' }} />);
+    expect(container.querySelector('.projectCard-image')).toHaveClass('is-cover');
+  });
+
+  it('shows a status badge on the card and in the dialog when set', async () => {
+    render(<ProjectCard project={{ ...project, status: 'To be released' }} />);
+    expect(screen.getByText('To be released')).toBeInTheDocument();
+    const dialog = await openModal();
+    expect(within(dialog).getByText('To be released')).toBeInTheDocument();
+  });
+
+  it('shows no status badge by default', () => {
     render(<ProjectCard project={project} />);
-    await userEvent.click(screen.getByText('Click for more info'));
-    await userEvent.keyboard('{Escape}');
+    expect(document.querySelector('.statusBadge')).toBeNull();
+  });
+
+  it('offers a live demo link alongside the source when there is one', async () => {
+    render(<ProjectCard project={{ ...project, demo: 'https://example.com/live' }} />);
+    const dialog = await openModal();
+    const live = within(dialog).getByRole('link', { name: 'See it live' });
+    expect(live).toHaveAttribute('href', 'https://example.com/live');
+    expect(live).toHaveAttribute('target', '_blank');
+    expect(within(dialog).getByRole('link', { name: /view source/i })).toHaveClass('button--ghost');
+  });
+
+  it('shows a live demo link even without a public repo', async () => {
+    render(<ProjectCard project={{ ...project, link: '', demo: 'https://example.com/live' }} />);
+    const dialog = await openModal();
+    expect(within(dialog).getAllByRole('link')).toHaveLength(1);
+  });
+
+  it('closes with the close button', async () => {
+    render(<ProjectCard project={project} />);
+    await openModal();
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('opens the source code link from the modal', async () => {
-    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+  it('closes on Escape', async () => {
     render(<ProjectCard project={project} />);
-    await userEvent.click(screen.getByText('Click for more info'));
-    await userEvent.click(screen.getByRole('img', { name: 'GitHub' }));
-    expect(open).toHaveBeenCalledWith(project.link);
-  });
-
-  it('uses a placeholder image when the source is "N/A"', () => {
-    render(<ProjectCard project={{ ...project, src: 'N/A' }} />);
-    expect(screen.getByRole('img', { name: 'Test Project' }).getAttribute('src')).toMatch(
-      /^https:\/\//,
-    );
+    await openModal();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });

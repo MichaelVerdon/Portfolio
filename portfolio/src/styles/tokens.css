@@ -1,0 +1,59 @@
+/*
+ * Design tokens for the redesign. Every new component reads from these, so
+ * the whole look can be tuned from this one file.
+ *
+ * Direction: monochrome ink-and-paper taken from the logo, one electric
+ * indigo accent, and a "pixel step" motif from the logo mark: rounded
+ * squares on a grid.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Colour */
+  --ink: #0d0d12;
+  --ink-soft: #2a2a33;
+  --graphite: #6b6b78;
+  --mist: #d9d8de;
+  --paper: #f6f5f1;
+  --white: #ffffff;
+  --accent: #4b3bff;
+  --accent-soft: #e6e3ff;
+  --accent-glow: #8f85ff;
+
+  /* Type */
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.5rem;
+  --text-3xl: clamp(2.5rem, 6vw, 4.5rem);
+
+  /* Space (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* Shape: the logo's squares have a small corner radius */
+  --radius-pixel: 3px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-slow: 600ms;
+
+  --content-width: 72rem;
+}

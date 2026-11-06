@@ -1,54 +1,66 @@
 [
     {
-        "name":"Flutter",
-        "src":"../libraries/flutter.svg"
+        "name": "Flutter",
+        "src": "/libraries/flutter.svg"
     },
     {
-        "name":"React and React Native",
-        "src":"../libraries/react.svg"
+        "name": "React and React Native",
+        "src": "/libraries/react.svg"
     },
     {
-        "name":"Nodejs",
-        "src":"../libraries/node.svg"
+        "name": "Redux Toolkit",
+        "src": "/libraries/redux.svg"
     },
     {
-        "name":"Pytorch",
-        "src":"../libraries/pytorch.svg"
+        "name": "Nodejs",
+        "src": "/libraries/node.svg"
     },
     {
-        "name":"Numpy",
-        "src":"../libraries/numpy.svg"
+        "name": "Spring Boot",
+        "src": "/libraries/spring-boot.svg"
     },
     {
-        "name":"Pandas",
-        "src":"../libraries/pandas.svg"
+        "name": "Pytorch",
+        "src": "/libraries/pytorch.svg"
     },
     {
-        "name":"SKLearn",
-        "src":"../libraries/scikit-learn.svg"
+        "name": "Numpy",
+        "src": "/libraries/numpy.svg"
     },
     {
-        "name":"MatPlotLib",
-        "src":"../libraries/Matplotlib.svg"
+        "name": "Pandas",
+        "src": "/libraries/pandas.svg"
     },
     {
-        "name":"Flask",
-        "src":"../libraries/Flask.svg"
+        "name": "SKLearn",
+        "src": "/libraries/scikit-learn.svg"
     },
     {
-        "name":"SDL",
-        "src":"../libraries/sdl.svg"
+        "name": "MatPlotLib",
+        "src": "/libraries/Matplotlib.svg"
     },
     {
-        "name":"Seaborn",
-        "src":"../libraries/seaborn.svg"
+        "name": "Flask",
+        "src": "/libraries/Flask.svg"
     },
     {
-        "name":"Firebase",
-        "src":"../libraries/firebase.svg"
+        "name": "SDL",
+        "src": "/libraries/sdl.svg"
     },
     {
-        "name":"Gradle",
-        "src":"../libraries/gradle.svg"
+        "name": "Seaborn",
+        "src": "/libraries/seaborn.svg"
+    },
+    {
+        "name": "Firebase",
+        "src": "/libraries/firebase.svg"
+    },
+    {
+        "name": "Gradle",
+        "src": "/libraries/gradle.svg"
+    },
+    {
+        "name": "Liquibase",
+        "src": "/libraries/liquibase.svg"
     }
 ]

@@ -1,6 +1,7 @@
-const PLACEHOLDER = 'https://via.placeholder.com/400';
+/** On-brand placeholder shown until a real image is added. */
+export const PLACEHOLDER_IMAGE = '/projects/placeholder.svg';
 
-/** Returns the image path, or a placeholder when the JSON says "N/A". */
+/** Returns the image path, or the placeholder when the JSON says "N/A". */
 export function imageOrPlaceholder(src: string): string {
-  return src !== 'N/A' ? src : PLACEHOLDER;
+  return src !== 'N/A' ? src : PLACEHOLDER_IMAGE;
 }
