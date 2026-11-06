@@ -1,70 +1,61 @@
-# Getting Started with Create React App
+# Portfolio app
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React + TypeScript, built with [Vite](https://vite.dev) and tested with [Vitest](https://vitest.dev).
 
-## Available Scripts
+## Getting started
 
-In the project directory, you can run:
+You need [Node.js](https://nodejs.org) 20 or newer (22 is what CI and Amplify use; see `.nvmrc`).
 
-### `npm start`
+```bash
+cd portfolio
+npm install      # first time, and after package.json changes
+npm run dev      # starts the site at http://localhost:3000 and opens it
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Edits to files in `src/` show up in the browser straight away.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Scripts
 
-### `npm test`
+| Command | What it does |
+| --- | --- |
+| `npm run dev` (or `npm start`) | Local dev server with hot reload |
+| `npm test` | Runs the whole test suite once |
+| `npm run test:watch` | Re-runs tests as you edit |
+| `npm run test:coverage` | Tests plus a coverage report; fails below 90% |
+| `npm run typecheck` | TypeScript check with no output |
+| `npm run build` | Type-checks, then builds the site into `build/` |
+| `npm run preview` | Serves the built `build/` folder to check a production build |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Project layout
 
-### `npm run build`
+```
+portfolio/
+├── index.html          Page shell (Vite entry point)
+├── public/             Static files served as-is (project, skill and contact images)
+└── src/
+    ├── main.tsx        App bootstrap (router, global styles)
+    ├── App.tsx         Routes
+    ├── pages/          One component per page (Home, Projects, Skills, Contact)
+    ├── components/     Reusable pieces (Navbar, ProjectCard, SkillCard, ContactCard)
+    ├── data/           Site content as JSON, plus index.ts which types it
+    ├── types/          TypeScript types for the content
+    ├── assets/         Images imported by components (logo, photo)
+    ├── styles/         CSS
+    ├── utils/          Small helpers
+    └── test/           Test setup and helpers
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Tests sit next to the code they cover (`*.test.ts(x)`).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Editing content
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+All content lives in `src/data/*.json`, so adding a project or skill needs no code changes:
 
-### `npm run eject`
+- **Project:** add an entry to `projects.json` with `name`, `src`, `link`, `desc` and `tech`, and put its image in `public/projects/`.
+- **Skill:** add `{ "name", "src" }` to the matching `skills*.json` file, with its icon in `public/languages`, `public/libraries` or `public/software`.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Use `"N/A"` as an image path to show a placeholder. The test suite checks every entry has its fields filled in, a valid link, a unique name, and an image file that exists, so `npm test` catches typos before they go live.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Deployment
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+AWS Amplify builds from `amplify.yml` at the repo root: it installs, runs the tests, then builds. A failing test stops the deploy. GitHub Actions (`.github/workflows/ci.yml`) runs the type check, tests with coverage and build on every push and pull request.
