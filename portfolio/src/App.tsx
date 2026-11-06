@@ -4,6 +4,7 @@ import Contact from './pages/Contact';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Skills from './pages/Skills';
+import StyleGuide from './pages/StyleGuide';
 import logo from './assets/Michael-Logotype-03.png';
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/skills" element={<Skills />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/style-guide" element={<StyleGuide />} />
       </Routes>
     </div>
   );

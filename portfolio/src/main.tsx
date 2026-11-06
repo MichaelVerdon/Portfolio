@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { routerFuture } from './routerFuture';
+import './styles/tokens.css';
 import './styles/index.css';
 import './styles/App.css';
 import './styles/pages.css';

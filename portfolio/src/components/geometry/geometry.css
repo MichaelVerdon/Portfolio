@@ -1,0 +1,94 @@
+/* Shared styles for the geometric visuals. Colours come from tokens.css,
+   and every visual inherits `color`, so it adapts to light or dark areas. */
+
+.pixelSteps .pixel {
+  transform-box: fill-box;
+  fill: currentColor;
+  opacity: 0;
+  animation: pixel-in var(--duration-slow) var(--ease-out) forwards;
+}
+
+.pixelSteps .pixel--accent {
+  fill: var(--accent);
+}
+
+@keyframes pixel-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pixelField {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pixelField .fieldPixel {
+  fill: currentColor;
+  opacity: 0.07;
+}
+
+.pixelField .fieldPixel--lit {
+  fill: var(--accent-glow);
+  animation: pixel-glow 6s ease-in-out infinite;
+}
+
+@keyframes pixel-glow {
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.orbitRings .orbit {
+  transform-origin: 0 0;
+  animation: orbit-spin linear infinite;
+}
+
+.orbitRings .orbitTrack {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.12;
+  stroke-width: 1;
+}
+
+.orbitRings .orbitArc {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.orbitRings .orbitSatellite,
+.orbitRings .orbitCore {
+  fill: var(--accent);
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Respect people who ask for less motion: show the final state, no movement. */
+@media (prefers-reduced-motion: reduce) {
+  .pixelSteps .pixel,
+  .pixelField .fieldPixel--lit,
+  .orbitRings .orbit {
+    animation: none;
+    opacity: 1;
+  }
+
+  .pixelField .fieldPixel--lit {
+    opacity: 0.6;
+  }
+}
