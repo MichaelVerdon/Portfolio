@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { PLACEHOLDER_IMAGE } from '../utils/image';
+import { isSceneId } from '../webgl/chapters';
 import projectsJson from './projects.json';
 import { about, contacts, projects, skillGroups, techTags } from '.';
 
@@ -93,6 +94,10 @@ describe('about.json', () => {
       expect(step.text.trim()).not.toBe('');
     }
     expectUnique(about.timeline.map((s) => s.title));
+  });
+
+  it('gives every story step a valid 3D scene', () => {
+    for (const step of about.timeline) expect(isSceneId(step.scene)).toBe(true);
   });
 });
 

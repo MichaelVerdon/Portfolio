@@ -1,12 +1,14 @@
 import { contacts } from '../../data';
 import { imageOrPlaceholder } from '../../utils/image';
+import { useWebglActive } from '../../webgl/sceneBus';
 import { PixelField } from '../geometry';
 import SectionHeading from '../SectionHeading';
 
 export default function ContactSection() {
+  const webgl = useWebglActive();
   return (
-    <section id="contact" className="section section--dark" aria-labelledby="contact-title">
-      <PixelField className="contact-field" columns={40} rows={12} density={0.05} seed={21} />
+    <section id="contact" className="section section--dark" data-scene="logo" aria-labelledby="contact-title">
+      {!webgl && <PixelField className="contact-field" columns={40} rows={12} density={0.05} seed={21} />}
       <div className="container contact-content">
         <SectionHeading
           id="contact-title"

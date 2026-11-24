@@ -10,11 +10,17 @@ interface SectionHeadingProps {
 export default function SectionHeading({ id, index, eyebrow, title, intro }: SectionHeadingProps) {
   return (
     <header className="sectionHeading">
-      <span className="eyebrow">
+      <span className="eyebrow" data-reveal>
         <span className="eyebrow-index">{index}</span> {eyebrow}
       </span>
-      <h2 id={id}>{title}</h2>
-      {intro && <p className="sectionIntro">{intro}</p>}
+      <h2 id={id} data-split data-underline>
+        {title}
+      </h2>
+      {intro && (
+        <p className="sectionIntro" data-reveal data-reveal-delay="0.2">
+          {intro}
+        </p>
+      )}
     </header>
   );
 }

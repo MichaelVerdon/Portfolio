@@ -1,12 +1,14 @@
 import { skillGroups } from '../../data';
 import { imageOrPlaceholder } from '../../utils/image';
+import { useWebglActive } from '../../webgl/sceneBus';
 import { OrbitRings } from '../geometry';
 import Reveal from '../Reveal';
 import SectionHeading from '../SectionHeading';
 
 export default function SkillsSection() {
+  const webgl = useWebglActive();
   return (
-    <section id="skills" className="section" aria-labelledby="skills-title">
+    <section id="skills" className="section" data-scene="orbit" aria-labelledby="skills-title">
       <div className="container">
         <div className="skills-header">
           <SectionHeading
@@ -16,7 +18,7 @@ export default function SkillsSection() {
             title="My toolkit"
             intro="The languages, frameworks and tools I reach for, from mobile apps to machine learning."
           />
-          <OrbitRings className="skills-orbit" size={200} />
+          {!webgl && <OrbitRings className="skills-orbit" size={200} />}
         </div>
         <div className="skills-groups">
           {skillGroups.map((group, i) => (

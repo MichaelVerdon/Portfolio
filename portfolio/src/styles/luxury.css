@@ -1,0 +1,385 @@
+/*
+ * The "luxury pass": an editorial type scale, more space, and the styles
+ * for the motion layer (src/motion). Loaded after site.css so it refines
+ * the base design rather than replacing it.
+ */
+
+:root {
+  --text-display: clamp(2.75rem, 7vw, 7rem);
+  --text-2xl: clamp(2.25rem, 5vw, 4.75rem);
+  --section-space: clamp(6rem, 12vw, 10.5rem);
+  --tracking-tight: -0.035em;
+  --duration-lux: 1.1s;
+}
+
+/* ---------- Editorial type and space ---------- */
+
+h1,
+h2 {
+  letter-spacing: var(--tracking-tight);
+  line-height: 0.98;
+}
+
+.section {
+  padding: var(--section-space) 0;
+}
+
+.sectionHeading {
+  gap: var(--space-4);
+  margin-bottom: clamp(3rem, 7vw, 6rem);
+  max-width: 52rem;
+}
+
+.sectionHeading h2 {
+  font-weight: 500;
+}
+
+.sectionIntro {
+  max-width: 36rem;
+}
+
+.lead {
+  font-size: clamp(1.125rem, 1.6vw, 1.4rem);
+  line-height: 1.6;
+}
+
+/* SplitText wraps each line in a mask; keep descenders from clipping. */
+.split-line {
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+/* ---------- Navbar: sliding underline ---------- */
+
+.navbar-links a {
+  position: relative;
+}
+
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.navbar-links a:hover::after,
+.navbar-links a:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  min-height: 100vh;
+  min-height: calc(100svh - 4rem);
+}
+
+.heroCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero h1 {
+  font-size: var(--text-display);
+  font-weight: 500;
+  max-width: 13ch;
+}
+
+.hero-content {
+  gap: var(--space-12);
+}
+
+.hero-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 3rem;
+  background: linear-gradient(var(--accent-glow), transparent);
+  transform-origin: top;
+  animation: scroll-line 2.4s var(--ease-out) infinite;
+}
+
+@keyframes scroll-line {
+  0% {
+    transform: scaleY(0);
+  }
+  60% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+/* ---------- Story: pinned sequence ---------- */
+
+.timeline-wrap {
+  position: relative;
+}
+
+.timeline-progress {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  z-index: 1;
+}
+
+.timeline-detail {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.7s var(--ease-out);
+}
+
+.timeline-detail > p {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.story-grid.is-pinned .timeline-progress {
+  display: block;
+}
+
+.story-grid.is-pinned .timeline-step {
+  opacity: 0.28;
+  transition: opacity 0.7s var(--ease-out);
+}
+
+.story-grid.is-pinned .timeline-step.is-past {
+  opacity: 0.55;
+}
+
+.story-grid.is-pinned .timeline-step.is-active {
+  opacity: 1;
+}
+
+.story-grid.is-pinned .timeline-step:not(.is-active) .timeline-detail {
+  grid-template-rows: 0fr;
+}
+
+.story-grid.is-pinned .timeline-step::before {
+  z-index: 2;
+  transition:
+    background 0.4s,
+    border-color 0.4s;
+}
+
+.story-grid.is-pinned .timeline-step:last-child:not(.is-active)::before {
+  background: var(--paper);
+  border-color: var(--ink);
+}
+
+.story-grid.is-pinned .timeline-step.is-active::before,
+.story-grid.is-pinned .timeline-step.is-past::before {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.story-grid.is-pinned .timeline-step h3 {
+  font-size: var(--text-xl);
+}
+
+/* ---------- Projects: gallery ---------- */
+
+.projectGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.projectGrid-featured {
+  grid-column: 1 / -1;
+}
+
+.projectCard {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+  gap: var(--space-4);
+}
+
+.projectCard:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.projectCard-image {
+  height: 15rem;
+  border: 1px solid var(--mist);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.projectCard-image img {
+  transition: transform 1.2s var(--ease-out);
+}
+
+.projectCard:hover .projectCard-image img,
+.projectCard:focus-visible .projectCard-image img {
+  transform: scale(1.05);
+}
+
+.projectCard-body {
+  padding: 0;
+}
+
+.projectCard-body h3 {
+  font-size: var(--text-xl);
+  letter-spacing: -0.02em;
+}
+
+.projectCard-cta {
+  display: inline-flex;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.projectCard-arrow {
+  transition: transform 0.6s var(--ease-out);
+}
+
+.projectCard:hover .projectCard-arrow,
+.projectCard:focus-visible .projectCard-arrow {
+  transform: translateX(6px);
+}
+
+.projectCard--featured {
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4.5rem);
+}
+
+.projectCard--featured .projectCard-image {
+  flex: 0 0 58%;
+  height: clamp(18rem, 34vw, 28rem);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.projectCard--featured h3 {
+  font-size: var(--text-2xl);
+  font-weight: 500;
+}
+
+.projectCard--featured .projectCard-desc {
+  font-size: var(--text-base);
+  -webkit-line-clamp: 5;
+  flex: 0 1 auto;
+}
+
+@media (max-width: 900px) {
+  .projectGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .projectCard--featured {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .projectCard--featured .projectCard-image {
+    flex-basis: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .projectGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The card image morphs into the modal image (src/motion/viewTransition.ts). */
+::view-transition-group(*) {
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------- Custom cursor ---------- */
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--accent);
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    width 0.4s var(--ease-out),
+    height 0.4s var(--ease-out),
+    opacity 0.3s,
+    background 0.3s;
+}
+
+.cursor.is-visible {
+  opacity: 1;
+}
+
+.cursor.is-active {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  background: var(--accent-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-line {
+    animation: none;
+  }
+
+  .timeline-detail,
+  .projectCard-image img,
+  .projectCard-arrow,
+  .navbar-links a::after {
+    transition: none;
+  }
+}
+
+/* The intro sits under the photo, so the pinned stage fits one screen. */
+.story-lead {
+  margin-top: var(--space-12);
+  font-size: var(--text-lg);
+}
+
+@media (max-width: 800px) {
+  .story-portrait {
+    max-width: none;
+  }
+
+  .story-portrait .portrait {
+    max-width: 18rem;
+  }
+
+  .story-lead {
+    margin-top: var(--space-8);
+  }
+}

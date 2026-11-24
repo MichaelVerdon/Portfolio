@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Modal from 'react-modal';
 import { techTags } from '../data';
 import type { Project } from '../types/content';
+import { transitionName, withViewTransition } from '../motion/viewTransition';
 import { imageOrPlaceholder } from '../utils/image';
 
 interface ProjectCardProps {
   project: Project;
+  /** Large, wide layout for the lead project. */
+  featured?: boolean;
 }
 
 /** Only real web links get a "source code" button (some projects have none). */
@@ -13,16 +16,48 @@ function hasSourceLink(project: Project) {
   return project.link.startsWith('https://');
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project, featured = false }: ProjectCardProps) {
   const [open, setOpen] = useState(false);
+  // The card's image and the modal's image share one name, so the browser
+  // morphs one into the other. The card only carries the name for the moment
+  // of its own transition; otherwise every card would be lifted above the
+  // modal overlay while it animates.
+  const cardImage = useRef<HTMLDivElement>(null);
+  const vtName = transitionName('project', project.name);
+  const nameCard = (name: string) => {
+    if (cardImage.current) cardImage.current.style.viewTransitionName = name;
+  };
+  const openModal = () =>
+    withViewTransition(
+      () => {
+        nameCard('');
+        setOpen(true);
+      },
+      { before: () => nameCard(vtName) },
+    );
+  const closeModal = () =>
+    withViewTransition(
+      () => {
+        setOpen(false);
+        nameCard(vtName);
+      },
+      { after: () => nameCard('') },
+    );
   const tags = techTags(project);
   const image = imageOrPlaceholder(project.src);
   const coverClass = project.imageFit === 'cover' ? ' is-cover' : '';
 
   return (
     <>
-      <button type="button" className="projectCard" onClick={() => setOpen(true)}>
-        <div className={`projectCard-image${coverClass}`}>
+      <button
+        type="button"
+        className={`projectCard${featured ? ' projectCard--featured' : ''}`}
+        onClick={openModal}
+      >
+        <div
+          ref={cardImage}
+          className={`projectCard-image${coverClass}`}
+        >
           <img src={image} alt="" loading="lazy" />
           {project.status && <span className="statusBadge">{project.status}</span>}
         </div>
@@ -37,12 +72,15 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             ))}
             {tags.length > 3 && <li className="tag tag--more">+{tags.length - 3}</li>}
           </ul>
+          <span className="projectCard-cta mono" aria-hidden="true">
+            View project <span className="projectCard-arrow">→</span>
+          </span>
         </div>
       </button>
 
       <Modal
         isOpen={open}
-        onRequestClose={() => setOpen(false)}
+        onRequestClose={closeModal}
         className="projectModal"
         overlayClassName="projectModal-overlay"
         contentLabel={project.name}
@@ -51,11 +89,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           type="button"
           className="projectModal-close"
           aria-label="Close"
-          onClick={() => setOpen(false)}
+          onClick={closeModal}
         >
           ×
         </button>
-        <div className={`projectModal-image${coverClass}`}>
+        <div
+          className={`projectModal-image${coverClass}`}
+          style={{ viewTransitionName: open ? vtName : undefined }}
+        >
           <img src={image} alt={project.name} />
         </div>
         <div className="projectModal-body">

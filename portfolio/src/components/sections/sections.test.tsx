@@ -85,3 +85,19 @@ describe('ContactSection', () => {
     expect(screen.getByRole('link', { name: 'Email' })).not.toHaveAttribute('target');
   });
 });
+
+describe('motion fallbacks', () => {
+  it('shows the whole story timeline unpinned for reduced motion', () => {
+    render(<Story />);
+    const steps = within(screen.getByRole('list')).getAllByRole('listitem');
+    // Nothing is dimmed or collapsed: no step is marked as the current one.
+    for (const step of steps) expect(step).not.toHaveAttribute('aria-current');
+    for (const step of about.timeline) expect(screen.getByText(step.text)).toBeVisible();
+  });
+
+  it('features the first project in a large panel', () => {
+    render(<ProjectsSection />);
+    const featured = screen.getByRole('heading', { level: 3, name: projects[0].name }).closest('button');
+    expect(featured).toHaveClass('projectCard--featured');
+  });
+});
