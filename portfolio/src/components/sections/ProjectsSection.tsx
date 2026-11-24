@@ -11,7 +11,7 @@ export default function ProjectsSection() {
   const visible = showAll ? projects : projects.slice(0, FEATURED_COUNT);
 
   return (
-    <section id="projects" className="section section--tinted" aria-labelledby="projects-title">
+    <section id="projects" className="section section--tinted" data-scene="field" aria-labelledby="projects-title">
       <div className="container">
         <SectionHeading
           id="projects-title"

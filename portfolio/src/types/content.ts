@@ -1,3 +1,5 @@
+import type { SceneId } from '../webgl/chapters';
+
 /** Shapes of the JSON content files in src/data. */
 
 export interface Project {
@@ -35,6 +37,8 @@ export interface Milestone {
   title: string;
   place: string;
   text: string;
+  /** The 3D formation shown while this step is on screen (see src/webgl/chapters.ts). */
+  scene?: SceneId;
 }
 
 export interface About {

@@ -1,10 +1,14 @@
 import { about } from '../../data';
+import { useWebglActive } from '../../webgl/sceneBus';
 import { HeroCanvas } from '../geometry';
 
 export default function Hero() {
+  // With 3D on, the cubes behind the page draw the mark; the 2D pixel
+  // canvas is the fallback.
+  const webgl = useWebglActive();
   return (
-    <section className="hero" aria-labelledby="hero-title">
-      <HeroCanvas className="hero-field" />
+    <section className={`hero ${webgl ? 'hero--3d' : ''}`} aria-labelledby="hero-title" data-scene="logo">
+      {!webgl && <HeroCanvas className="hero-field" />}
       <div className="container hero-content">
         <p className="eyebrow eyebrow--dark" data-reveal>
           {about.name} · {about.role}

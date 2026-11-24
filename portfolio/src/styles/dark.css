@@ -1,0 +1,535 @@
+/*
+ * The dark, precise theme: black canvas, white type, hairline grid rails
+ * and crosshair markers, Geist for text. Loaded last, so it re-points the
+ * tokens and refines the components above it. The indigo accent stays, but
+ * only in small doses (labels, the active step, a few lit cubes).
+ */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap');
+
+:root {
+  color-scheme: dark;
+
+  --bg: #000;
+  --surface: #0a0a0a;
+  --surface-2: #111;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --text: #ededed;
+  --text-2: #a1a1a1;
+  --text-3: #6e6e6e;
+
+  /* Re-point the shared tokens so older rules follow the dark theme. */
+  --ink: var(--text);
+  --ink-soft: var(--text-2);
+  --graphite: var(--text-2);
+  --mist: var(--line-strong);
+  --paper: var(--bg);
+  --white: var(--surface);
+  --accent: #8b80ff;
+  --accent-glow: #a9a2ff;
+  --accent-soft: rgba(139, 128, 255, 0.12);
+
+  --font-display: 'Geist', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Geist', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', Consolas, monospace;
+
+  --radius-md: 8px;
+  --rail-width: min(var(--content-width), 100%);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-feature-settings: 'ss01', 'cv11';
+}
+
+::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* ---------- The 3D stage and the grid ---------- */
+
+.webglStage {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-out);
+}
+
+.webglStage.is-running {
+  opacity: 1;
+}
+
+/* Two hairline rails down the page at the content edges. */
+.rails {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: var(--rail-width);
+  transform: translateX(-50%);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  pointer-events: none;
+  z-index: 1;
+}
+
+main,
+.footer {
+  position: relative;
+  z-index: 2;
+}
+
+.section,
+.section--tinted,
+.section--dark {
+  background: transparent;
+  color: var(--text);
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+  overflow: visible;
+}
+
+/* Crosshairs where the section lines meet the rails. */
+.section::before,
+.section::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  width: 11px;
+  height: 11px;
+  background:
+    linear-gradient(var(--text-3), var(--text-3)) center / 1px 100% no-repeat,
+    linear-gradient(var(--text-3), var(--text-3)) center / 100% 1px no-repeat;
+}
+
+.section::before {
+  left: calc(50% - var(--rail-width) / 2 - 5px);
+}
+
+.section::after {
+  left: calc(50% + var(--rail-width) / 2 - 6px);
+}
+
+/* ---------- Shared pieces ---------- */
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.04em;
+}
+
+.eyebrow,
+.eyebrow--dark,
+.section--dark .eyebrow {
+  color: var(--text-2);
+  letter-spacing: 0.08em;
+}
+
+.eyebrow-index,
+.section--dark .eyebrow-index {
+  color: var(--accent);
+}
+
+.sectionHeading h2 {
+  font-weight: 600;
+}
+
+.sectionIntro,
+.section--dark .sectionIntro {
+  color: var(--text-2);
+}
+
+.lead {
+  color: var(--text-2);
+}
+
+.button {
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  padding: 0.7rem 1.15rem;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background var(--duration-fast),
+    border-color var(--duration-fast),
+    color var(--duration-fast);
+}
+
+.button--primary {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.button--primary:hover {
+  background: #fff;
+}
+
+.button--ghost,
+.button--ghostDark {
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.button--ghost:hover,
+.button--ghostDark:hover {
+  border-color: var(--text-2);
+}
+
+.tag {
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--line-strong);
+}
+
+.tag--more {
+  background: transparent;
+  color: var(--text-3);
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar {
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid var(--line);
+}
+
+/* The logo PNG is black ink; flip it to white. */
+.navbar-logo img {
+  filter: invert(1);
+}
+
+.navbar-links a {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-2);
+}
+
+.navbar-links a:hover {
+  color: var(--text);
+}
+
+.navbar-toggle span {
+  background: var(--text);
+}
+
+@media (max-width: 720px) {
+  .navbar-links {
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  background: transparent;
+  border-top: 0;
+}
+
+.hero h1 {
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  max-width: 12ch;
+  background: linear-gradient(180deg, #fff 30%, #9a9a9a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* SplitText wraps lines in their own boxes; keep the gradient on them. */
+.hero h1 .split-line {
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.hero-drives {
+  color: var(--text-2);
+}
+
+.hero-drives li::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--text-3);
+}
+
+.hero-drives li:first-child::before {
+  background: var(--accent);
+}
+
+.hero-scroll {
+  color: var(--text-3);
+}
+
+.hero-scroll-line {
+  background: linear-gradient(var(--text-2), transparent);
+}
+
+/* On phones the 3D mark sits above the headline, so the text moves down. */
+@media (max-width: 899px) {
+  .hero--3d {
+    align-items: flex-end;
+    padding-top: 38vh;
+    padding-top: 38svh;
+  }
+}
+
+/* ---------- Story ---------- */
+
+.timeline {
+  border-left-color: var(--line-strong);
+}
+
+.timeline-step::before {
+  background: var(--bg);
+  border: 1px solid var(--text-2);
+  border-radius: 1px;
+}
+
+.timeline-label {
+  color: var(--accent);
+}
+
+.timeline-place {
+  color: var(--text-3);
+}
+
+.timeline-detail p {
+  color: var(--text-2);
+}
+
+.story-grid.is-pinned .timeline-step:last-child:not(.is-active)::before {
+  background: var(--bg);
+  border-color: var(--text-2);
+}
+
+.portrait img {
+  border-radius: var(--radius-md);
+  filter: grayscale(1) contrast(1.05);
+}
+
+.portrait-steps {
+  color: var(--text);
+}
+
+/* Story with 3D: photo and intro on top, then the timeline beside a framed
+   window where the cubes form each chapter. */
+.story-intro {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: var(--space-8);
+  align-items: start;
+  max-width: 40rem;
+  margin-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.story-avatar {
+  width: 6rem;
+  height: 6rem;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  filter: grayscale(1) contrast(1.05);
+}
+
+.story--3d .story-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: stretch;
+}
+
+.story-scene {
+  position: relative;
+  min-height: min(70vh, 36rem);
+  border: 1px solid var(--line);
+  /* A faint dot grid, like a technical drawing. */
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: center;
+}
+
+.story-scene-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--text-2);
+  border-style: solid;
+}
+
+.story-scene-corner--tl {
+  top: -1px;
+  left: -1px;
+  border-width: 1px 0 0 1px;
+}
+
+.story-scene-corner--br {
+  right: -1px;
+  bottom: -1px;
+  border-width: 0 1px 1px 0;
+}
+
+.story-caption {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-3);
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+
+.story-caption-label {
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+
+.story--3d .story-grid.is-pinned .timeline-step h3 {
+  font-size: var(--text-xl);
+}
+
+@media (max-width: 899px) {
+  .story--3d .story-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .story-scene {
+    display: none;
+  }
+
+  .story-intro {
+    grid-template-columns: 4rem 1fr;
+    gap: var(--space-4);
+  }
+
+  .story-avatar {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+
+/* ---------- Projects ---------- */
+
+.projectCard-image,
+.projectCard--featured .projectCard-image {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+}
+
+.projectCard:hover .projectCard-image,
+.projectCard:focus-visible .projectCard-image {
+  border-color: var(--text-2);
+}
+
+/* Logos drawn for light backgrounds sit on a soft light plate. */
+.projectCard-image:not(.is-cover),
+.projectModal-image:not(.is-cover) {
+  background: radial-gradient(circle at 50% 40%, #1c1c1c, var(--surface) 70%);
+}
+
+.projectCard-desc {
+  color: var(--text-2);
+}
+
+.projectCard-cta {
+  color: var(--text);
+}
+
+.statusBadge {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+}
+
+.projectModal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.projectModal {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+}
+
+.projectModal-close {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+}
+
+.projectModal-image {
+  background: var(--surface-2);
+}
+
+/* ---------- Skills ---------- */
+
+.skillGroup {
+  background: rgba(10, 10, 10, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+}
+
+.skill {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--text-2);
+}
+
+/* Icons are drawn for light backgrounds: give each a small light tile. */
+.skill img {
+  background: #f2f2f2;
+  border-radius: 3px;
+  padding: 2px;
+}
+
+.skills-orbit {
+  color: var(--text-2);
+}
+
+/* ---------- Contact ---------- */
+
+.contactLink {
+  background: rgba(10, 10, 10, 0.8);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text);
+}
+
+.contactLink:hover {
+  border-color: var(--text);
+}
+
+.contactLink-icon {
+  color: var(--text);
+}
+
+/* ---------- Footer and cursor ---------- */
+
+.footer {
+  background: var(--bg);
+  color: var(--text-3);
+  border-top: 1px solid var(--line);
+}
+
+.cursor {
+  background: #fff;
+  mix-blend-mode: difference;
+}
+
+.cursor.is-active {
+  background: #fff;
+}

@@ -15,7 +15,14 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/main.tsx', 'src/test/**', 'src/**/*.test.{ts,tsx}', 'src/**/*.d.ts'],
+      exclude: [
+        'src/main.tsx',
+        // three.js rendering needs a real GPU; checked in the browser instead.
+        'src/webgl/VoxelScene.ts',
+        'src/test/**',
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.d.ts',
+      ],
       // Fail the run if coverage drops, so untested code can't slip in.
       thresholds: { lines: 90, functions: 90, branches: 90, statements: 90 },
     },

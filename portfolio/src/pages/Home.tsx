@@ -7,6 +7,7 @@ import SkillsSection from '../components/sections/SkillsSection';
 import Story from '../components/sections/Story';
 import { useMagnetic } from '../motion/useMagnetic';
 import { useScrollReveals } from '../motion/useScrollReveals';
+import { useSceneTriggers } from '../webgl/useSceneTriggers';
 
 export default function Home() {
   const { hash } = useLocation();
@@ -14,6 +15,7 @@ export default function Home() {
 
   useScrollReveals(main);
   useMagnetic(main, '.button, .contactLink');
+  useSceneTriggers(main);
 
   // When arriving with a hash (e.g. /#projects from another page or an old
   // /projects link), scroll to that section once it has rendered.
