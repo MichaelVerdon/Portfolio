@@ -1,0 +1,46 @@
+# Security headers for the Amplify-hosted site.
+# Amplify reads this file from the repo root on every deploy and applies the
+# headers at its CloudFront edge, so they cost nothing and need no backend.
+# Docs: https://docs.aws.amazon.com/amplify/latest/userguide/custom-headers.html
+#
+# If you add a new third-party resource (a font CDN, analytics, an embed),
+# add its origin to the matching Content-Security-Policy directive below,
+# or the browser will block it.
+customHeaders:
+  - pattern: '**'
+    headers:
+      # Only load code, styles, fonts and images from this site, plus Google
+      # Fonts. Blocks injected scripts (XSS) and stops other sites framing us.
+      - key: Content-Security-Policy
+        value: >-
+          default-src 'self';
+          script-src 'self';
+          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+          font-src 'self' https://fonts.gstatic.com;
+          img-src 'self' data: blob:;
+          connect-src 'self';
+          worker-src 'self' blob:;
+          manifest-src 'self';
+          object-src 'none';
+          base-uri 'self';
+          form-action 'self';
+          frame-ancestors 'none';
+          upgrade-insecure-requests
+      # HTTPS only, for two years, including subdomains.
+      - key: Strict-Transport-Security
+        value: max-age=63072000; includeSubDomains
+      # Don't let browsers guess file types (stops content-sniffing attacks).
+      - key: X-Content-Type-Options
+        value: nosniff
+      # Older-browser fallback for frame-ancestors (clickjacking).
+      - key: X-Frame-Options
+        value: DENY
+      # Send only the origin, not the full URL, to other sites.
+      - key: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      # The site needs none of these browser features.
+      - key: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+      - key: Cross-Origin-Opener-Policy
+        value: same-origin
+

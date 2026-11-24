@@ -32,7 +32,8 @@ describe('Reveal', () => {
     render(<Reveal delay={200}>Hello</Reveal>);
     const el = screen.getByText('Hello');
     expect(el).not.toHaveClass('is-visible');
-    expect(el).toHaveStyle({ transitionDelay: '200ms' });
+    // Inline style, since jsdom's computed style normalises 200ms to 0.2s.
+    expect(el.style.transitionDelay).toBe('200ms');
 
     act(() => observers[0].callback([{ isIntersecting: false }]));
     expect(el).not.toHaveClass('is-visible');

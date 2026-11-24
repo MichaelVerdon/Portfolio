@@ -9,7 +9,7 @@ import { prefersReducedMotion } from './reducedMotion';
  * Content is fully visible in the HTML; the hidden start state is only set
  * here, from JavaScript, and only when motion is allowed.
  */
-export function useScrollReveals(root: RefObject<HTMLElement>) {
+export function useScrollReveals(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const scope = root.current;
     if (!scope || prefersReducedMotion()) return;

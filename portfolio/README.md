@@ -4,7 +4,9 @@ React + TypeScript, built with [Vite](https://vite.dev) and tested with [Vitest]
 
 ## Getting started
 
-You need [Node.js](https://nodejs.org) 20 or newer (22 is what CI and Amplify use; see `.nvmrc`).
+You need [Node.js](https://nodejs.org) 22.12 or newer (22 is what CI and Amplify use; see `.nvmrc`). Check with `node -v`.
+
+Security headers and the AWS firewall setup are described in [`docs/security.md`](../docs/security.md).
 
 ```bash
 cd portfolio
