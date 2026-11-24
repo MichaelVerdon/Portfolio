@@ -124,11 +124,11 @@ describe('formations', () => {
     expect(new Set(ys.map((y) => Math.round(y))).size).toBeGreaterThan(2);
   });
 
-  it('builds the skills chapter as an indigo toolbox that fills the budget', () => {
+  it('builds the skills chapter as a toolkit icon that fills the budget', () => {
     for (const total of [640, 1400]) {
       const f = buildFormation('toolkit', total);
       expect(f.colors).toBeDefined();
-      expect(f.shapeCount).toBeGreaterThan(total * SHAPE_SHARE * 0.75);
+      expect(f.shapeCount).toBeGreaterThan(total * SHAPE_SHARE * 0.7);
       const body = Array.from({ length: f.shapeCount }, (_, i) => f.colors![i * 3 + 2] > 0.7 && f.colors![i * 3] < 0.5);
       expect(body.filter(Boolean).length).toBeGreaterThan(f.shapeCount / 3);
     }

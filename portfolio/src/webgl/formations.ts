@@ -193,75 +193,91 @@ export function bootCore(total: number): Formation {
 
 /** Three tilted rings, like the skills section's orbit drawing. */
 type Rgb = [number, number, number];
-const TOOLBOX_BODY: Rgb = [0.45, 0.4, 1];
-const TOOLBOX_BAND: Rgb = [0.26, 0.22, 0.72];
-const STEEL: Rgb = [0.78, 0.8, 0.85];
-const GRIP: Rgb = [0.25, 0.26, 0.3];
+const BOX: Rgb = [0.45, 0.4, 1];
+const STEEL: Rgb = [0.95, 0.95, 1];
+const COG: Rgb = [0.3, 0.27, 0.8];
 const CYAN: Rgb = [0.35, 0.82, 1];
-const PALE: Rgb = [0.9, 0.9, 0.95];
 
-/**
- * What sits at (x, y, z) in an open toolbox: an indigo box with a carry handle
- * and a screwdriver, hammer and spanner standing in it. `h` is the grid
- * step, so walls and tools stay one cube thick at any resolution.
- */
-function toolboxAt(x: number, y: number, z: number, h: number): Rgb | null {
-  const near = (v: number, c: number) => Math.abs(v - c) <= h * 0.5 + 1e-6;
-  const inside = (v: number, a: number, b: number) => v >= a - 1e-6 && v <= b + 1e-6;
-  // The box: four walls and a floor, open at the top.
-  if (inside(x, -8, 8) && inside(y, -4, 0) && inside(z, -3, 3)) {
-    const wall = Math.abs(x) > 8 - h || Math.abs(z) > 3 - h || y < -4 + h;
-    if (!wall) return null;
-    if (z < -3 + h && Math.abs(x) <= 1 && inside(y, -1.6, -0.4)) return STEEL; // latch
-    if (inside(y, -1.4, -0.6)) return TOOLBOX_BAND; // a band round the box
-    return TOOLBOX_BODY;
-  }
-  // Carry handle: two posts and a bar across the middle.
-  if (near(z, 0) && (near(x, -3.5) || near(x, 3.5)) && inside(y, 0, 2.6)) return GRIP;
-  if (near(z, 0) && near(y, 2.6) && inside(x, -3.5, 3.5)) return GRIP;
-  // Screwdriver: yellow handle, steel shaft.
-  if (near(z, 1.4) && near(x, -5.5)) {
-    if (inside(y, 0, 2.2)) return CYAN;
-    if (inside(y, 2.2, 4.6)) return STEEL;
-  }
-  // Hammer: wooden handle, steel head.
-  if (near(z, -1.4) && near(x, 0) && inside(y, 0, 4.2)) return PALE;
-  if (near(z, -1.4) && inside(y, 4.2, 5.2) && inside(x, -1.8, 1.8)) return STEEL;
-  // Spanner: a shaft with an open jaw at the top.
-  if (near(z, 1.4)) {
-    if (near(x, 5.5) && inside(y, 0, 3.8)) return STEEL;
-    const r = Math.hypot(x - 5.5, y - 4.7);
-    const open = Math.abs(x - 5.5) < 0.5 && y > 4.7;
-    if (r <= 1.1 + h * 0.5 && r >= 1.1 - h * 0.5 && !open) return STEEL;
-  }
-  return null;
+/** Distance from (px, py) to the segment (ax, ay)-(bx, by), and how far along it (0 to 1). */
+function segment(px: number, py: number, ax: number, ay: number, bx: number, by: number) {
+  const dx = bx - ax;
+  const dy = by - ay;
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)));
+  return { d: Math.hypot(px - ax - t * dx, py - ay - t * dy), t };
 }
 
-function toolboxCells(h: number): Point[] {
+// The screwdriver runs from the butt of its handle, bottom left, up to its tip.
+const DRIVER = { ax: 2.8, ay: -6.4, bx: 8.4, by: 5.6, grip: 0.38 };
+
+/** The screwdriver at (x, y): its colour, or null. `pad` widens it to cut a gap round it. */
+function driverAt(x: number, y: number, pad = 0): Rgb | null {
+  const { d, t } = segment(x, y, DRIVER.ax, DRIVER.ay, DRIVER.bx, DRIVER.by);
+  if (t < DRIVER.grip) return d <= 1 + pad ? CYAN : null;
+  return d <= 0.38 + pad ? STEEL : null;
+}
+
+/**
+ * The toolkit icon, flat on the page: a toolbox with a carry handle and a
+ * latch, a cog standing behind it, and a screwdriver laid across in front.
+ * Returns each layer's colour at (x, y), or null.
+ */
+function toolkitAt(x: number, y: number) {
+  const gap = driverAt(x, y, 0.55) !== null; // a clear outline round the screwdriver
+  // Box: rounded corners, a lid seam, and a latch on the seam.
+  let box: Rgb | null = null;
+  const inBox = x >= -8 && x <= 3 && y >= -5 && y <= 2.4;
+  const corner = Math.hypot(Math.max(0, Math.abs(x + 2.5) - 4.5), Math.max(0, Math.abs(y + 1.3) - 2.7)) > 1;
+  if (inBox && !corner) {
+    const latch = x >= -6.6 && x <= -5.2 && y >= -0.6 && y <= 1.2;
+    if (latch) box = STEEL;
+    else if (Math.abs(y - 0.3) < 0.3) box = null; // the lid seam
+    else box = BOX;
+  }
+  // Carry handle on the lid.
+  const handleOuter = x >= -5 && x <= -0.4 && y > 2.4 && y <= 4.6;
+  const handleInner = x > -4 && x < -1.4 && y < 3.7;
+  if (handleOuter && !handleInner) box = BOX;
+  // Cog behind, off to the right: eight teeth and a hole in the middle.
+  let cog: Rgb | null = null;
+  const r = Math.hypot(x - 7.4, y - 1);
+  const tooth = Math.cos(Math.atan2(y - 1, x - 7.4) * 8) > 0.2;
+  if (r >= 1.3 && (r <= 3.2 || (tooth && r <= 4.5))) cog = COG;
+  return {
+    box: gap ? null : box,
+    cog: gap || box ? null : cog,
+    driver: driverAt(x, y),
+  };
+}
+
+function toolkitCells(h: number): Point[] {
   const points: Point[] = [];
-  const n = (v: number) => Math.ceil(v / h);
-  for (let i = -n(8.5); i <= n(8.5); i++)
-    for (let j = -n(4.5); j <= n(6.5); j++)
-      for (let k = -n(3.5); k <= n(3.5); k++) {
-        const rgb = toolboxAt(i * h, j * h, k * h, h);
-        if (rgb) points.push([i * h, j * h - 0.6, k * h, h * 0.86, ...rgb]);
-      }
+  const size = h * 0.86;
+  for (let i = Math.floor(-8.5 / h); i <= Math.ceil(12.5 / h); i++)
+    for (let j = Math.floor(-6.8 / h); j <= Math.ceil(6 / h); j++) {
+      const x = i * h;
+      const y = j * h;
+      const at = toolkitAt(x, y);
+      // Each part is two cubes deep, at its own depth: cog behind, box, then the screwdriver in front.
+      if (at.box) for (const z of [0, -h]) points.push([x, y, z, size, ...at.box]);
+      if (at.cog) for (const z of [-1.2, -1.2 - h]) points.push([x, y, z, size, ...at.cog]);
+      if (at.driver) for (const z of [1.6, 1.6 + h]) points.push([x, y, z, size, ...at.driver]);
+    }
   return points;
 }
 
 /**
- * The skills chapter: an open toolbox. The grid is as fine as the cube
- * budget allows, so it reads clearly on both tiers.
+ * The skills chapter: a toolkit icon in cubes. The grid is as fine as the
+ * cube budget allows, so it reads clearly on both tiers.
  */
 export function toolkit(budget: number): Point[] {
-  let lo = 0.35;
+  let lo = 0.3;
   let hi = 3;
   for (let i = 0; i < 14; i++) {
     const mid = (lo + hi) / 2;
-    if (toolboxCells(mid).length > budget) lo = mid;
+    if (toolkitCells(mid).length > budget) lo = mid;
     else hi = mid;
   }
-  return toolboxCells(hi);
+  return toolkitCells(hi).map(([x, y, ...rest]) => [x - 1.9, y + 0.6, ...rest] as Point);
 }
 
 const SHAPES: Record<SceneId, (budget: number) => Point[]> = {

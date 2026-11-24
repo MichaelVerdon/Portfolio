@@ -88,8 +88,8 @@ export const CHAPTERS: Record<SceneId, Chapter> = {
   toolkit: {
     id: 'toolkit',
     label: 'Fig. 05 / Toolkit',
-    wide: { x: 0.55, y: 0.3, z: -8, scale: 1.05, dim: 1, spin: true },
-    narrow: { x: 0, y: 0, z: -20, scale: 1, dim: 0.3, spin: true },
+    wide: { x: 0.55, y: 0.38, z: -8, scale: 0.9, dim: 1, spin: false },
+    narrow: { x: 0, y: 0, z: -20, scale: 1, dim: 0.3, spin: false },
   },
 };
 
