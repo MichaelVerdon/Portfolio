@@ -9,28 +9,32 @@
             "title": "MEng Computer Science, Distinction",
             "place": "University of Portsmouth",
             "text": "Where I went deep on machine learning, fuzzy systems and robotics, and found out how much I enjoy building things that think.",
-            "scene": "sphere"
+            "scene": "sphere",
+            "logo": "/logos/portsmouth.svg"
         },
         {
             "label": "Trained",
             "title": "Software Engineering Bootcamp",
             "place": "Makers Academy",
             "text": "An intense, hands-on course in test-driven development, pairing and shipping in teams.",
-            "scene": "steps"
+            "scene": "steps",
+            "logo": "/logos/makers.svg"
         },
         {
             "label": "Before",
             "title": "Junior Software Engineer",
             "place": "Invertase · Cross Platform Engineer / Open Source",
             "text": "Working on React Native Firebase and FlutterFire, the open-source libraries that connect thousands of apps to Firebase.",
-            "scene": "network"
+            "scene": "network",
+            "logo": "/logos/invertase.svg"
         },
         {
             "label": "Now",
             "title": "Associate Software Engineer",
             "place": "JP Morgan · Payments Technology & AI",
             "text": "Building payments systems and AI solutions at global scale, using Java, Spring Boot, Maven, MongoDB, Liquibase and Kubernetes on the back end and React, Redux Toolkit and TypeScript on the front end.",
-            "scene": "monolith"
+            "scene": "monolith",
+            "logo": "/logos/jpmorgan.svg"
         }
     ],
     "drives": [

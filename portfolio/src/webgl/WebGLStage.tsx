@@ -27,6 +27,7 @@ export default function WebGLStage() {
           const scene = new VoxelScene(canvas, {
             tier,
             getChapter: sceneBus.getChapter,
+            getImage: sceneBus.getChapterImage,
             ticker: gsap.ticker,
             onFail: () => {
               dispose?.();

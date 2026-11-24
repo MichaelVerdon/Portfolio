@@ -19,9 +19,12 @@ export interface Formation {
   sizes: Float32Array;
   /** How many cubes, from the start, belong to the shape (the rest are dust). */
   shapeCount: number;
+  /** r, g, b (0 to 1) for each shape cube, when the shape has its own colours (logos). */
+  colors?: Float32Array;
 }
 
-type Point = [number, number, number, number]; // x, y, z, size
+/** x, y, z, size, and optionally r, g, b. */
+type Point = [number, number, number, number, ...number[]];
 
 /** The stepped line of squares from the logo, the same grid the 2D hero uses. */
 export const LOGO_VOXELS: number[][] = LOGO_MARK;
@@ -186,11 +189,12 @@ function dust(count: number): Point[] {
 }
 
 export function buildFormation(id: SceneId, total: number): Formation {
-  const budget = Math.floor(total * SHAPE_SHARE);
+  return assemble(SHAPES[id](Math.floor(total * SHAPE_SHARE)), total);
+}
+
+function assemble(points: Point[], total: number): Formation {
   // Sorting left to right makes morphs sweep across rather than scramble.
-  const shape = SHAPES[id](budget)
-    .slice(0, total)
-    .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const shape = points.slice(0, total).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
   // Dust is indexed by cube, so a cube that is dust in two chapters stays put.
   const scatter = dust(total);
   const all = [...shape, ...scatter.slice(shape.length)];
@@ -202,5 +206,65 @@ export function buildFormation(id: SceneId, total: number): Formation {
     positions[i * 3 + 2] = z;
     sizes[i] = size;
   });
-  return { positions, sizes, shapeCount: shape.length };
+  const colored = shape.length > 0 && shape.every((p) => p.length >= 7);
+  const colors = colored ? Float32Array.from(shape.flatMap((p) => p.slice(4, 7))) : undefined;
+  return { positions, sizes, shapeCount: shape.length, colors };
+}
+
+/** RGBA pixels, as from a canvas's getImageData. */
+export interface Pixels {
+  width: number;
+  height: number;
+  data: ArrayLike<number>;
+}
+
+/** Largest a logo gets, in world units. */
+const LOGO_BOX = { width: 24, height: 17 };
+
+function luminance(r: number, g: number, b: number) {
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * The cells of a logo, sampled at grid resolution: every pixel that isn't
+ * background becomes a cube in the logo's own colour. The background is
+ * transparency, or else whatever colour the top-left corner is.
+ */
+export function logoCells(px: Pixels): Point[] {
+  const { width: cols, height: rows, data } = px;
+  const bg = [data[0], data[1], data[2], data[3]];
+  const transparentBg = bg[3] < 128;
+  const size = Math.min(LOGO_BOX.width / cols, LOGO_BOX.height / rows);
+  const points: Point[] = [];
+  for (let row = 0; row < rows; row++)
+    for (let col = 0; col < cols; col++) {
+      const i = (row * cols + col) * 4;
+      const [r, g, b, a] = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+      if (a < 128) continue;
+      if (!transparentBg && Math.hypot(r - bg[0], g - bg[1], b - bg[2]) < 80) continue;
+      let [cr, cg, cb] = [r / 255, g / 255, b / 255];
+      // Black ink would vanish on the black page: draw it in soft white.
+      if (luminance(cr, cg, cb) < 0.3) [cr, cg, cb] = [0.9, 0.9, 0.93];
+      points.push([(col - (cols - 1) / 2) * size, ((rows - 1) / 2 - row) * size, 0, size * 0.86, cr, cg, cb]);
+    }
+  return points;
+}
+
+/**
+ * A logo built from cubes. `sample(cols, rows)` draws the image at that
+ * grid size; the grid is made as fine as the cube budget allows, so the
+ * logo uses most of the cubes whatever its shape.
+ */
+export function logoFormation(sample: (cols: number, rows: number) => Pixels, aspect: number, total: number): Formation {
+  const budget = Math.floor(total * SHAPE_SHARE);
+  // First guess assumes the logo fills about half its box.
+  let cols = Math.max(4, Math.round(Math.sqrt((budget / 0.5) * aspect)));
+  let cells: Point[] = [];
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const rows = Math.max(2, Math.round(cols / aspect));
+    cells = logoCells(sample(cols, rows));
+    if (cells.length <= budget) break;
+    cols = Math.max(4, Math.floor(cols * Math.sqrt(budget / cells.length) * 0.97));
+  }
+  return assemble(cells.slice(0, budget), total);
 }

@@ -99,6 +99,10 @@ describe('about.json', () => {
   it('gives every story step a valid 3D scene', () => {
     for (const step of about.timeline) expect(isSceneId(step.scene)).toBe(true);
   });
+
+  it('points story logos at /logos/', () => {
+    for (const step of about.timeline) if (step.logo) expect(step.logo).toMatch(/^\/logos\/.+\.(svg|png|webp)$/);
+  });
 });
 
 describe('techTags', () => {

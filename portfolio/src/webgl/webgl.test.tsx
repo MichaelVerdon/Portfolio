@@ -10,7 +10,7 @@ import Home from '../pages/Home';
 import { renderWithRouter } from '../test/render';
 import { detectTier, supportsWebGL } from './capability';
 import { CHAPTERS, isSceneId, SCENE_IDS } from './chapters';
-import { buildFormation, LOGO_VOXELS, SHAPE_SHARE } from './formations';
+import { buildFormation, LOGO_VOXELS, logoCells, logoFormation, SHAPE_SHARE, type Pixels } from './formations';
 import { buildStrands, progressAt } from './strands';
 import { sceneBus, useSceneStatus, useWebglActive } from './sceneBus';
 import WebGLStage from './WebGLStage';
@@ -99,6 +99,49 @@ describe('formations', () => {
   });
 });
 
+/** A fake image: a filled disc of `color` on `bg` (or transparency), at any grid size. */
+function disc(color: number[], bg?: number[]) {
+  return (cols: number, rows: number): Pixels => {
+    const data: number[] = [];
+    for (let y = 0; y < rows; y++)
+      for (let x = 0; x < cols; x++) {
+        const inside = Math.hypot((x + 0.5) / cols - 0.5, (y + 0.5) / rows - 0.5) < 0.4;
+        data.push(...(inside ? [...color, 255] : bg ? [...bg, 255] : [0, 0, 0, 0]));
+      }
+    return { width: cols, height: rows, data };
+  };
+}
+
+describe('logo formations', () => {
+  it('turns the non-background pixels into coloured cubes', () => {
+    const cells = logoCells(disc([255, 128, 0])(10, 10));
+    expect(cells.length).toBeGreaterThan(30);
+    expect(cells.length).toBeLessThan(100);
+    expect(cells[0].slice(4)).toEqual([1, 128 / 255, 0]);
+  });
+
+  it('treats a solid corner colour as background', () => {
+    expect(logoCells(disc([20, 60, 200], [255, 255, 255])(10, 10)).length).toBe(logoCells(disc([20, 60, 200])(10, 10)).length);
+  });
+
+  it('draws black ink in soft white so it shows on the page', () => {
+    expect(logoCells(disc([0, 0, 0])(10, 10))[0].slice(4)).toEqual([0.9, 0.9, 0.93]);
+  });
+
+  it('uses as much of the cube budget as it can without going over', () => {
+    const f = logoFormation(disc([255, 0, 0]), 1, 1400);
+    const budget = Math.floor(1400 * SHAPE_SHARE);
+    expect(f.shapeCount).toBeLessThanOrEqual(budget);
+    expect(f.shapeCount).toBeGreaterThan(budget * 0.6);
+    expect(f.colors).toHaveLength(f.shapeCount * 3);
+    expect(f.positions).toHaveLength(1400 * 3);
+  });
+
+  it('leaves plain shapes uncoloured', () => {
+    expect(buildFormation('sphere', 900).colors).toBeUndefined();
+  });
+});
+
 describe('chapters', () => {
   it('recognises chapter names', () => {
     expect(isSceneId('sphere')).toBe(true);
@@ -174,6 +217,9 @@ describe('sceneBus', () => {
     sceneBus.setStatus('running');
     expect(sceneBus.getChapter()).toBe('sphere');
     expect(listener).toHaveBeenCalledTimes(2);
+    sceneBus.setChapter('sphere', '/logos/x.svg');
+    expect(sceneBus.getChapterImage()).toBe('/logos/x.svg');
+    expect(listener).toHaveBeenCalledTimes(3);
     unsubscribe();
   });
 
@@ -245,7 +291,8 @@ describe('sections with 3D on', () => {
     expect(container.querySelector('.story--3d')).toBeInTheDocument();
     expect(container.querySelector('.story-scene')).toBeInTheDocument();
     const last = about.timeline[about.timeline.length - 1];
-    expect(screen.getByText(CHAPTERS[last.scene!].label)).toBeInTheDocument();
+    const caption = last.logo ? /Fig\. 04 \/ JP Morgan/ : CHAPTERS[last.scene!].label;
+    expect(screen.getByText(caption)).toBeInTheDocument();
   });
 
   it('switch chapters as sections scroll past', () => {
