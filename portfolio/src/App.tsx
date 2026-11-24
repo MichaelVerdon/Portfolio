@@ -4,6 +4,8 @@ import Footer from './components/layout/Footer';
 import Navbar from './components/layout/Navbar';
 import Home from './pages/Home';
 import StyleGuide from './pages/StyleGuide';
+import Cursor from './motion/Cursor';
+import SmoothScroll from './motion/SmoothScroll';
 
 /** The old separate pages now live as sections of the home page. */
 const legacyRoutes = ['projects', 'skills', 'contact'];
@@ -11,6 +13,8 @@ const legacyRoutes = ['projects', 'skills', 'contact'];
 export default function App() {
   return (
     <>
+      <SmoothScroll />
+      <Cursor />
       <Navbar logo={logo} />
       <Routes>
         <Route path="/" element={<Home />} />

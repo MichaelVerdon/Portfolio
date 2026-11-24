@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { projects } from '../../data';
 import ProjectCard from '../ProjectCard';
-import Reveal from '../Reveal';
 import SectionHeading from '../SectionHeading';
 
-/** How many projects show before "Show all". The order in projects.json sets which. */
-export const FEATURED_COUNT = 6;
+/** How many projects show before "Show all": one featured panel plus two rows of three. The order in projects.json sets which. */
+export const FEATURED_COUNT = 7;
 
 export default function ProjectsSection() {
   const [showAll, setShowAll] = useState(false);
@@ -23,10 +22,13 @@ export default function ProjectsSection() {
         />
         <ul className="projectGrid">
           {visible.map((project, i) => (
-            <li key={project.name}>
-              <Reveal delay={(i % 3) * 100}>
-                <ProjectCard project={project} />
-              </Reveal>
+            <li
+              key={project.name}
+              className={i === 0 ? 'projectGrid-featured' : undefined}
+              data-reveal
+              data-reveal-delay={i === 0 ? 0 : ((i - 1) % 3) * 0.1}
+            >
+              <ProjectCard project={project} featured={i === 0} />
             </li>
           ))}
         </ul>

@@ -7,6 +7,7 @@ import { routerFuture } from './routerFuture';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/site.css';
+import './styles/luxury.css';
 
 // Lets react-modal hide the rest of the page from screen readers while open.
 Modal.setAppElement('#root');
