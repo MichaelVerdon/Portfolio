@@ -28,13 +28,15 @@ export function supportsWebGL(): boolean {
 }
 
 export function detectTier(): Tier {
-  if (typeof window === 'undefined' || prefersReducedMotion()) return 'off';
+  if (typeof window === 'undefined') return 'off';
 
-  // ?webgl=off|lite|full forces a tier, handy for checking each one.
+  // ?webgl=off|lite|full forces a tier, handy for checking each one. It
+  // even overrides a reduced-motion setting, so the 3D can be previewed.
   const forced = new URLSearchParams(window.location.search).get('webgl');
   if (forced === 'off' || forced === 'lite' || forced === 'full') {
     return forced === 'off' || supportsWebGL() ? forced : 'off';
   }
+  if (prefersReducedMotion()) return 'off';
 
   const nav = navigator as Navigator & NavigatorHints;
   const cores = nav.hardwareConcurrency ?? 8;

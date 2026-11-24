@@ -139,9 +139,11 @@ describe('detectTier', () => {
     expect(detectTier()).toBe('off');
   });
 
-  it('can be forced with ?webgl=', () => {
-    stubMedia();
+  it('can be forced with ?webgl=, even with reduced motion on', () => {
     stubWebGL(true);
+    window.history.replaceState(null, '', '/?webgl=full');
+    expect(detectTier()).toBe('full');
+    stubMedia();
     window.history.replaceState(null, '', '/?webgl=lite');
     expect(detectTier()).toBe('lite');
     window.history.replaceState(null, '', '/?webgl=off');
