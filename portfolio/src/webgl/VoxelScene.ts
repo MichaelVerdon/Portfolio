@@ -15,13 +15,19 @@ import {
   SRGBColorSpace,
   Vector3,
   WebGLRenderer,
-} from 'three';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { seededRandom } from '../components/geometry/random';
-import type { Tier } from './capability';
-import { CHAPTERS, type ChapterLayout, type SceneId } from './chapters';
-import { bootCore, buildFormation, logoFormation, type Formation } from './formations';
-import { SpaceLayer } from './SpaceLayer';
+} from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { seededRandom } from "../components/geometry/random";
+import type { Tier } from "./capability";
+import { CHAPTERS, type ChapterLayout, type SceneId } from "./chapters";
+import {
+  bootCore,
+  buildFormation,
+  LOGO_BOX,
+  logoFormation,
+  type Formation,
+} from "./formations";
+import { SpaceLayer } from "./SpaceLayer";
 
 /**
  * The 3D story: a few hundred rounded cubes (the logo's pixels) that fly
@@ -32,22 +38,23 @@ import { SpaceLayer } from './SpaceLayer';
  */
 
 // Enough cubes that a logo built from them reads clearly.
-const CUBES: Record<Exclude<Tier, 'off'>, number> = { full: 1400, lite: 640 };
+const CUBES: Record<Exclude<Tier, "off">, number> = { full: 1400, lite: 640 };
 const MORPH_SECONDS = 1.9;
 const INTRO_SECONDS = 2.6;
 const CAMERA_Z = 60;
 const FOV = 30;
-const INK = new Color('#f2f2f2');
-const ACCENT = new Color('#7c6fff');
+const INK = new Color("#f2f2f2");
+const ACCENT = new Color("#7c6fff");
 
-const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const easeInOutCubic = (t: number) =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
 /** Frame-rate independent easing toward a target. */
 const damp = (current: number, target: number, rate: number, dt: number) =>
   current + (target - current) * (1 - Math.exp(-rate * dt));
 
 interface SceneOptions {
-  tier: Exclude<Tier, 'off'>;
+  tier: Exclude<Tier, "off">;
   getChapter: () => SceneId;
   /** A logo image to build from cubes instead of the chapter's own shape. */
   getImage?: () => string | undefined;
@@ -81,7 +88,7 @@ export class VoxelScene {
   private count: number;
   private formations = new Map<SceneId, Formation>();
   /** Logo formations by image URL, once loaded (or 'failed'). */
-  private logos = new Map<string, Formation | 'loading' | 'failed'>();
+  private logos = new Map<string, Formation | "loading" | "failed">();
   /** The formation the cubes are heading for: a chapter id or a logo URL. */
   private shownKey: string;
 
@@ -134,13 +141,16 @@ export class VoxelScene {
   ) {
     const { tier } = options;
     this.count = CUBES[tier];
-    this.dpr = Math.min(window.devicePixelRatio || 1, tier === 'full' ? 1.75 : 1.25);
+    this.dpr = Math.min(
+      window.devicePixelRatio || 1,
+      tier === "full" ? 1.75 : 1.25,
+    );
 
     this.renderer = new WebGLRenderer({
       canvas,
-      antialias: tier === 'full',
+      antialias: tier === "full",
       alpha: true,
-      powerPreference: tier === 'full' ? 'high-performance' : 'low-power',
+      powerPreference: tier === "full" ? "high-performance" : "low-power",
     });
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.outputColorSpace = SRGBColorSpace;
@@ -163,9 +173,19 @@ export class VoxelScene {
     fill.position.set(-10, -12, 16);
     this.scene.add(key, rim, fill);
 
-
-    const geometry = new RoundedBoxGeometry(1, 1, 1, tier === 'full' ? 3 : 2, 0.12);
-    this.material = new MeshStandardMaterial({ roughness: 0.32, metalness: 0.15, emissive: 0x3a5bff, emissiveIntensity: 0 });
+    const geometry = new RoundedBoxGeometry(
+      1,
+      1,
+      1,
+      tier === "full" ? 3 : 2,
+      0.12,
+    );
+    this.material = new MeshStandardMaterial({
+      roughness: 0.32,
+      metalness: 0.15,
+      emissive: 0x3a5bff,
+      emissiveIntensity: 0,
+    });
     this.mesh = new InstancedMesh(geometry, this.material, this.count);
     this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);
     this.mesh.frustumCulled = false;
@@ -177,11 +197,15 @@ export class VoxelScene {
     this.axes = [];
     for (let i = 0; i < this.count; i++) {
       const accent = random() < 0.04;
-      color.copy(accent ? ACCENT : INK).multiplyScalar(accent ? 1.4 : 0.75 + random() * 0.25);
+      color
+        .copy(accent ? ACCENT : INK)
+        .multiplyScalar(accent ? 1.4 : 0.75 + random() * 0.25);
       this.mesh.setColorAt(i, color);
       color.toArray(this.defaultColors, i * 3);
       this.delays[i] = random();
-      this.axes.push(new Vector3(random() - 0.5, random() - 0.5, random() - 0.5).normalize());
+      this.axes.push(
+        new Vector3(random() - 0.5, random() - 0.5, random() - 0.5).normalize(),
+      );
     }
 
     this.spinner.add(this.mesh);
@@ -220,15 +244,20 @@ export class VoxelScene {
       this.layout = { ...this.layout, x: 0, y: 0, z: 6, scale: 1, dim: 1.5 };
     }
 
-    this.space = new SpaceLayer(this.scene, tier, () => this.worldPerPx(), (z) => this.halfSize(z));
+    this.space = new SpaceLayer(
+      this.scene,
+      tier,
+      () => this.worldPerPx(),
+      (z) => this.halfSize(z),
+    );
 
-    window.addEventListener('resize', this.resize);
-    window.addEventListener('pointermove', this.onPointer, { passive: true });
-    canvas.addEventListener('webglcontextlost', this.onContextLost);
+    window.addEventListener("resize", this.resize);
+    window.addEventListener("pointermove", this.onPointer, { passive: true });
+    canvas.addEventListener("webglcontextlost", this.onContextLost);
     if (options.ticker) {
       options.ticker.add(this.onTicker);
     } else {
-      document.addEventListener('visibilitychange', this.onVisibility);
+      document.addEventListener("visibilitychange", this.onVisibility);
       this.frame = requestAnimationFrame(this.loop);
     }
   }
@@ -263,8 +292,34 @@ export class VoxelScene {
   private targetLayout(): ChapterLayout {
     const c = CHAPTERS[this.chapter];
     const layout = this.narrow ? c.narrow : c.wide;
-    // Logos face the camera rather than spinning.
-    return this.shownKey === this.chapter ? layout : { ...layout, spin: false };
+    if (this.shownKey === this.chapter) return layout;
+    // Logos face the camera rather than spinning, and sit in the middle of
+    // the story's figure box when it is on screen.
+    return { ...layout, spin: false, ...this.figureBox() };
+  }
+
+  /** Centre and fit a logo to the story's figure box, when it is on screen. */
+  private figureBox(): Partial<ChapterLayout> {
+    const box = document.querySelector(".story-scene")?.getBoundingClientRect();
+    if (
+      !box ||
+      box.width < 40 ||
+      box.bottom < 0 ||
+      box.top > window.innerHeight
+    )
+      return {};
+    const half = this.halfSize(0);
+    const perPx = (half.h * 2) / window.innerHeight;
+    const fit = Math.min(
+      (box.width * perPx * 0.72) / LOGO_BOX.width,
+      (box.height * perPx * 0.62) / LOGO_BOX.height,
+    );
+    return {
+      x: ((box.left + box.width / 2) / window.innerWidth) * 2 - 1,
+      y: 1 - ((box.top + box.height / 2) / window.innerHeight) * 2,
+      z: 0,
+      scale: Math.min(1, fit),
+    };
   }
 
   /**
@@ -272,25 +327,32 @@ export class VoxelScene {
    * loaded, otherwise the chapter's own shape. Starts loading logos on
    * first request.
    */
-  private wanted(id: SceneId, image: string | undefined): { key: string; formation: Formation } {
+  private wanted(
+    id: SceneId,
+    image: string | undefined,
+  ): { key: string; formation: Formation } {
     if (image) {
       const logo = this.logos.get(image);
       if (logo === undefined) this.loadLogo(image);
-      else if (logo !== 'loading' && logo !== 'failed') return { key: image, formation: logo };
+      else if (logo !== "loading" && logo !== "failed")
+        return { key: image, formation: logo };
     }
     return { key: id, formation: this.formation(id) };
   }
 
   private loadLogo(url: string) {
-    this.logos.set(url, 'loading');
+    this.logos.set(url, "loading");
     const img = new Image();
-    img.decoding = 'async';
+    img.decoding = "async";
     img.onload = () => {
-      const aspect = img.naturalWidth && img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1;
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const aspect =
+        img.naturalWidth && img.naturalHeight
+          ? img.naturalWidth / img.naturalHeight
+          : 1;
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) {
-        this.logos.set(url, 'failed');
+        this.logos.set(url, "failed");
         return;
       }
       const sample = (cols: number, rows: number) => {
@@ -301,9 +363,9 @@ export class VoxelScene {
         return ctx.getImageData(0, 0, cols, rows);
       };
       const formation = logoFormation(sample, aspect, this.count);
-      this.logos.set(url, formation.shapeCount > 0 ? formation : 'failed');
+      this.logos.set(url, formation.shapeCount > 0 ? formation : "failed");
     };
-    img.onerror = () => this.logos.set(url, 'failed');
+    img.onerror = () => this.logos.set(url, "failed");
     img.src = url;
   }
 
@@ -316,7 +378,10 @@ export class VoxelScene {
     if (next.colors) {
       // Logo colours are sRGB; the renderer works in linear light.
       for (let i = 0; i < next.colors.length; i += 3) {
-        this.color.fromArray(next.colors, i).convertSRGBToLinear().toArray(this.toColors, i);
+        this.color
+          .fromArray(next.colors, i)
+          .convertSRGBToLinear()
+          .toArray(this.toColors, i);
       }
     }
     this.fromPos = this.livePos.slice();
@@ -339,7 +404,7 @@ export class VoxelScene {
   };
 
   private onPointer = (e: PointerEvent) => {
-    if (e.pointerType !== 'mouse') return;
+    if (e.pointerType !== "mouse") return;
     this.pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
     this.pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
   };
@@ -376,18 +441,24 @@ export class VoxelScene {
     const id = this.options.getChapter();
     if (this.booting && now - this.booting.start > BOOT.burst) {
       this.booting = false;
-      this.shownKey = ''; // forces the burst into the current chapter below
+      this.shownKey = ""; // forces the burst into the current chapter below
     }
     if (!this.booting) {
       const next = this.wanted(id, this.options.getImage?.());
-      if (next.key !== this.shownKey || id !== this.chapter) this.goTo(id, next.key, next.formation);
+      if (next.key !== this.shownKey || id !== this.chapter)
+        this.goTo(id, next.key, next.formation);
     }
 
     // Scroll speed nudges the spin, so the scene feels tied to the page.
     const scroll = window.scrollY;
     const delta = scroll - this.lastScroll;
     this.lastScroll = scroll;
-    this.scrollVelocity = damp(this.scrollVelocity, delta / Math.max(dt, 1 / 120), 6, dt);
+    this.scrollVelocity = damp(
+      this.scrollVelocity,
+      delta / Math.max(dt, 1 / 120),
+      6,
+      dt,
+    );
 
     this.updateLayout(dt);
     this.updateCubes(now);
@@ -397,9 +468,12 @@ export class VoxelScene {
 
   private updateLayout(dt: number) {
     // While booting, the block glows where the logo will land.
-    const target = this.booting ? { ...this.targetLayout(), scale: 1, dim: 1.5, spin: true, glass: 0 } : this.targetLayout();
+    const target = this.booting
+      ? { ...this.targetLayout(), scale: 1, dim: 1.5, spin: true, glass: 0 }
+      : this.targetLayout();
     const l = this.layout;
-    for (const key of ['x', 'y', 'z', 'scale', 'dim'] as const) l[key] = damp(l[key], target[key], 2.6, dt);
+    for (const key of ["x", "y", "z", "scale", "dim"] as const)
+      l[key] = damp(l[key], target[key], 2.6, dt);
 
     const dist = CAMERA_Z - l.z;
     const halfH = Math.tan((FOV * Math.PI) / 360) * dist;
@@ -426,7 +500,8 @@ export class VoxelScene {
     this.pointer.sx = damp(this.pointer.sx, this.pointer.x, 3, dt);
     this.pointer.sy = damp(this.pointer.sy, this.pointer.y, 3, dt);
     this.world.rotation.y = this.pointer.sx * 0.28;
-    this.world.rotation.x = this.pointer.sy * 0.16 + (this.chapter === 'field' ? 0.24 : 0.12);
+    this.world.rotation.x =
+      this.pointer.sy * 0.16 + (this.chapter === "field" ? 0.24 : 0.12);
 
     // Spin, plus a push from scrolling. Chapters that face the camera
     // (the logo) unwind to the nearest whole turn.
@@ -441,7 +516,7 @@ export class VoxelScene {
     }
     this.spinner.rotation.y = this.spin;
     this.spinner.rotation.z = push * 0.08;
-    this.wave = damp(this.wave, this.chapter === 'field' ? 1 : 0, 2, dt);
+    this.wave = damp(this.wave, this.chapter === "field" ? 1 : 0, 2, dt);
   }
 
   private updateCubes(now: number) {
@@ -455,18 +530,29 @@ export class VoxelScene {
     for (let i = 0; i < this.count; i++) {
       const i3 = i * 3;
       // Cubes later in the list (further right) leave a little later.
-      const order = i < this.shapeCount ? i / Math.max(1, this.shapeCount) : this.delays[i];
+      const order =
+        i < this.shapeCount ? i / Math.max(1, this.shapeCount) : this.delays[i];
       const start = (order * 0.7 + this.delays[i] * 0.3) * stagger;
-      const p = settled ? 1 : easeInOutCubic(clamp01((elapsed / this.morphSeconds - start) / travel));
+      const p = settled
+        ? 1
+        : easeInOutCubic(
+            clamp01((elapsed / this.morphSeconds - start) / travel),
+          );
 
-      for (let a = 0; a < 3; a++) pos[i3 + a] = this.fromPos[i3 + a] + (this.toPos[i3 + a] - this.fromPos[i3 + a]) * p;
+      for (let a = 0; a < 3; a++)
+        pos[i3 + a] =
+          this.fromPos[i3 + a] +
+          (this.toPos[i3 + a] - this.fromPos[i3 + a]) * p;
       // An arc mid-flight, so cubes swoop rather than slide.
       const arc = Math.sin(p * Math.PI);
       pos[i3 + 2] += arc * 6 * (this.delays[i] - 0.3);
       size[i] = this.fromSize[i] + (this.toSize[i] - this.fromSize[i]) * p;
       if (!settled) {
         const c = this.liveColors;
-        for (let a = 0; a < 3; a++) c[i3 + a] = this.fromColors[i3 + a] + (this.toColors[i3 + a] - this.fromColors[i3 + a]) * p;
+        for (let a = 0; a < 3; a++)
+          c[i3 + a] =
+            this.fromColors[i3 + a] +
+            (this.toColors[i3 + a] - this.fromColors[i3 + a]) * p;
         this.mesh.setColorAt(i, this.color.fromArray(c, i3));
       }
 
@@ -474,20 +560,27 @@ export class VoxelScene {
       if (this.wave > 0.001 && i < this.shapeCount) {
         const x = pos[i3];
         const z = pos[i3 + 2];
-        y += this.wave * (Math.sin(x * 0.22 + now * 0.9) * 0.9 + Math.cos(z * 0.35 + now * 0.7) * 0.6);
+        y +=
+          this.wave *
+          (Math.sin(x * 0.22 + now * 0.9) * 0.9 +
+            Math.cos(z * 0.35 + now * 0.7) * 0.6);
       } else if (i >= this.shapeCount) {
         y += Math.sin(now * 0.3 + this.delays[i] * 20) * 0.4; // dust drifts
       }
 
       // Tumble in flight; settle perfectly square on arrival.
-      this.quat.setFromAxisAngle(this.axes[i], arc * Math.PI * (0.6 + this.delays[i]));
+      this.quat.setFromAxisAngle(
+        this.axes[i],
+        arc * Math.PI * (0.6 + this.delays[i]),
+      );
       this.vec.set(pos[i3], y, pos[i3 + 2]);
       this.scaleVec.setScalar(Math.max(0.0001, size[i]));
       this.matrix.compose(this.vec, this.quat, this.scaleVec);
       this.mesh.setMatrixAt(i, this.matrix);
     }
     this.mesh.instanceMatrix.needsUpdate = true;
-    if (!settled && this.mesh.instanceColor) this.mesh.instanceColor.needsUpdate = true;
+    if (!settled && this.mesh.instanceColor)
+      this.mesh.instanceColor.needsUpdate = true;
   }
 
   dispose() {
@@ -495,10 +588,10 @@ export class VoxelScene {
     cancelAnimationFrame(this.frame);
     this.options.ticker?.remove(this.onTicker);
     this.space.dispose();
-    window.removeEventListener('resize', this.resize);
-    window.removeEventListener('pointermove', this.onPointer);
-    this.canvas.removeEventListener('webglcontextlost', this.onContextLost);
-    document.removeEventListener('visibilitychange', this.onVisibility);
+    window.removeEventListener("resize", this.resize);
+    window.removeEventListener("pointermove", this.onPointer);
+    this.canvas.removeEventListener("webglcontextlost", this.onContextLost);
+    document.removeEventListener("visibilitychange", this.onVisibility);
     this.mesh.geometry.dispose();
     this.material.dispose();
     this.mesh.dispose();

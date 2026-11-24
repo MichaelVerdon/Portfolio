@@ -142,6 +142,22 @@ describe('logo formations', () => {
     expect(logoCells(disc([20, 60, 200], [255, 255, 255])(10, 10)).length).toBe(logoCells(disc([20, 60, 200])(10, 10)).length);
   });
 
+  it('centres a logo on its ink, whatever padding the image has', () => {
+    // A disc pushed into the bottom-right corner of its image.
+    const corner = (cols: number, rows: number): Pixels => {
+      const data: number[] = [];
+      for (let y = 0; y < rows; y++)
+        for (let x = 0; x < cols; x++)
+          data.push(...(Math.hypot(x / cols - 0.75, y / rows - 0.75) < 0.2 ? [255, 0, 0, 255] : [0, 0, 0, 0]));
+      return { width: cols, height: rows, data };
+    };
+    const f = logoFormation(corner, 1, 900);
+    const xs = Array.from({ length: f.shapeCount }, (_, i) => f.positions[i * 3]);
+    const ys = Array.from({ length: f.shapeCount }, (_, i) => f.positions[i * 3 + 1]);
+    expect(Math.abs(Math.min(...xs) + Math.max(...xs))).toBeLessThan(0.01);
+    expect(Math.abs(Math.min(...ys) + Math.max(...ys))).toBeLessThan(0.01);
+  });
+
   it('draws black ink in soft white so it shows on the page', () => {
     expect(logoCells(disc([0, 0, 0])(10, 10))[0].slice(4)).toEqual([0.9, 0.9, 0.93]);
   });
@@ -355,6 +371,18 @@ describe('sections with 3D on', () => {
     Object.defineProperty(projects, 'isActive', { value: true });
     configs[index].onToggle!(projects);
     expect(sceneBus.getChapter()).toBe('field');
+    create.mockRestore();
+  });
+
+  it('shows the first logo as soon as the story intro scrolls in', () => {
+    const create = vi.spyOn(ScrollTrigger, 'create');
+    renderWithRouter(<Home />);
+    const configs = create.mock.calls.map(([c]) => c);
+    const index = configs.findIndex((c) => (c.trigger as HTMLElement).classList?.contains('story-intro'));
+    const intro = create.mock.results[index].value as ScrollTrigger;
+    Object.defineProperty(intro, 'isActive', { value: true });
+    configs[index].onToggle!(intro);
+    expect(sceneBus.getChapterImage()).toBe(about.timeline[0].logo);
     create.mockRestore();
   });
 });
