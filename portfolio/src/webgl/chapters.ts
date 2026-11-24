@@ -5,7 +5,7 @@
  * load.
  */
 
-export type SceneId = 'logo' | 'sphere' | 'steps' | 'network' | 'monolith' | 'field' | 'orbit';
+export type SceneId = 'logo' | 'sphere' | 'steps' | 'network' | 'monolith' | 'field' | 'toolkit';
 
 export interface ChapterLayout {
   /** Horizontal centre, as a fraction of half the visible width (-1 left edge, 1 right edge). */
@@ -66,13 +66,29 @@ export const CHAPTERS: Record<SceneId, Chapter> = {
   field: {
     id: 'field',
     label: 'Index / Data towers',
-    wide: { x: 0, y: -0.2, z: -44, scale: 1.15, dim: 0.6, spin: false, glass: 1 },
-    narrow: { x: 0, y: -0.5, z: -40, scale: 1, dim: 0.4, spin: false, glass: 1 },
+    wide: {
+      x: 0,
+      y: -0.2,
+      z: -44,
+      scale: 1.15,
+      dim: 0.6,
+      spin: false,
+      glass: 1,
+    },
+    narrow: {
+      x: 0,
+      y: -0.5,
+      z: -40,
+      scale: 1,
+      dim: 0.4,
+      spin: false,
+      glass: 1,
+    },
   },
-  orbit: {
-    id: 'orbit',
-    label: 'Fig. 05 / Toolkit orbit',
-    wide: { x: 0.55, y: 0.3, z: -12, scale: 1, dim: 0.6, spin: true },
+  toolkit: {
+    id: 'toolkit',
+    label: 'Fig. 05 / Toolkit',
+    wide: { x: 0.55, y: 0.3, z: -8, scale: 1.05, dim: 1, spin: true },
     narrow: { x: 0, y: 0, z: -20, scale: 1, dim: 0.3, spin: true },
   },
 };

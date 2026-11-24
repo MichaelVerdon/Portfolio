@@ -1,147 +1,129 @@
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
-import { describe, expect, it } from "vitest";
-import { PLACEHOLDER_IMAGE } from "../utils/image";
-import { isSceneId } from "../webgl/chapters";
-import projectsJson from "./projects.json";
-import {
-  about,
-  contacts,
-  projects,
-  skillGroups,
-  techTags,
-  toolkitSpotlight,
-} from ".";
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { describe, expect, it } from 'vitest';
+import { PLACEHOLDER_IMAGE } from '../utils/image';
+import { isSceneId } from '../webgl/chapters';
+import projectsJson from './projects.json';
+import { about, contacts, projects, skillGroups, techTags, toolkitSpotlight } from '.';
 
-const publicDir = resolve(process.cwd(), "public");
+const publicDir = resolve(process.cwd(), 'public');
 
 /** Maps an image path from the JSON (e.g. "../projects/x.png") to a file in /public. */
 function publicFile(src: string) {
-  return resolve(publicDir, src.replace(/^(\.\.\/|\/)+/, ""));
+  return resolve(publicDir, src.replace(/^(\.\.\/|\/)+/, ''));
 }
 
 function expectImageExists(src: string) {
-  if (src === "N/A") return;
+  if (src === 'N/A') return;
   expect(existsSync(publicFile(src)), `missing image public/${src}`).toBe(true);
 }
 
 function expectUnique(names: string[]) {
-  expect(new Set(names).size, `duplicate names: ${names.join(", ")}`).toBe(
-    names.length,
-  );
+  expect(new Set(names).size, `duplicate names: ${names.join(', ')}`).toBe(names.length);
 }
 
-describe("projects.json", () => {
-  it("has at least one project", () => {
+describe('projects.json', () => {
+  it('has at least one project', () => {
     expect(projects.length).toBeGreaterThan(0);
   });
 
-  it.each(projects.map((p) => [p.name, p] as const))(
-    "%s is complete",
-    (_, project) => {
-      expect(project.name.trim()).not.toBe("");
-      expect(project.desc.trim()).not.toBe("");
-      expect(project.tech.trim()).not.toBe("");
-      // A link is a full https URL, or empty / "/" when there is no public repo yet.
-      expect(project.link).toMatch(/^(https:\/\/|\/|$)/);
-      expectImageExists(project.src);
-    },
-  );
+  it.each(projects.map((p) => [p.name, p] as const))('%s is complete', (_, project) => {
+    expect(project.name.trim()).not.toBe('');
+    expect(project.desc.trim()).not.toBe('');
+    expect(project.tech.trim()).not.toBe('');
+    // A link is a full https URL, or empty / "/" when there is no public repo yet.
+    expect(project.link).toMatch(/^(https:\/\/|\/|$)/);
+    expectImageExists(project.src);
+  });
 
-  it("only uses https links for live demos", () => {
+  it('only uses https links for live demos', () => {
     for (const project of projects) {
-      if (project.demo !== undefined)
-        expect(project.demo, project.name).toMatch(/^https:\/\//);
+      if (project.demo !== undefined) expect(project.demo, project.name).toMatch(/^https:\/\//);
     }
   });
 
   it('only uses "cover" or "contain" for imageFit', () => {
     for (const raw of projectsJson as { imageFit?: string }[]) {
-      expect([undefined, "cover", "contain"]).toContain(raw.imageFit);
+      expect([undefined, 'cover', 'contain']).toContain(raw.imageFit);
     }
   });
 
-  it("has unique project names", () => {
+  it('has unique project names', () => {
     expectUnique(projects.map((p) => p.name));
   });
 });
 
-describe("toolkit spotlight", () => {
-  it("names a tool with an icon, text and tags", () => {
-    expect(toolkitSpotlight.name.trim()).not.toBe("");
+describe('toolkit spotlight', () => {
+  it('names a tool with an icon, text and tags', () => {
+    expect(toolkitSpotlight.name.trim()).not.toBe('');
     expect(toolkitSpotlight.text.length).toBeGreaterThan(40);
     expect(toolkitSpotlight.tags.length).toBeGreaterThan(0);
     expectImageExists(toolkitSpotlight.icon);
   });
 });
 
-describe("skills JSON files", () => {
-  it.each(skillGroups.map((g) => [g.title, g] as const))(
-    "%s is valid",
-    (_, group) => {
-      expect(group.skills.length).toBeGreaterThan(0);
-      for (const skill of group.skills) {
-        expect(skill.name.trim()).not.toBe("");
-        expectImageExists(skill.src);
-      }
-      expectUnique(group.skills.map((s) => s.name));
-    },
-  );
+describe('skills JSON files', () => {
+  it.each(skillGroups.map((g) => [g.title, g] as const))('%s is valid', (_, group) => {
+    expect(group.skills.length).toBeGreaterThan(0);
+    for (const skill of group.skills) {
+      expect(skill.name.trim()).not.toBe('');
+      expectImageExists(skill.src);
+    }
+    expectUnique(group.skills.map((s) => s.name));
+  });
 });
 
-describe("contact.json", () => {
-  it.each(contacts.map((c) => [c.name, c] as const))(
-    "%s is valid",
-    (_, contact) => {
-      expect(contact.link).toMatch(/^(https:\/\/|mailto:)/);
-      expectImageExists(contact.img);
-    },
-  );
+describe('contact.json', () => {
+  it.each(contacts.map((c) => [c.name, c] as const))('%s is valid', (_, contact) => {
+    expect(contact.link).toMatch(/^(https:\/\/|mailto:)/);
+    expectImageExists(contact.img);
+  });
 });
 
-describe("placeholder image", () => {
-  it("exists in /public", () => {
+describe('placeholder image', () => {
+  it('exists in /public', () => {
     expectImageExists(PLACEHOLDER_IMAGE);
   });
 });
 
-describe("about.json", () => {
-  it("has the story text filled in", () => {
+describe('about.json', () => {
+  it('has the story text filled in', () => {
     for (const field of [about.name, about.role, about.headline, about.intro]) {
-      expect(field.trim()).not.toBe("");
+      expect(field.trim()).not.toBe('');
     }
     expect(about.drives.length).toBeGreaterThan(0);
   });
 
-  it("has a complete timeline", () => {
+  it('has a complete timeline', () => {
     expect(about.timeline.length).toBeGreaterThan(0);
     for (const step of about.timeline) {
-      expect(step.label.trim()).not.toBe("");
-      expect(step.title.trim()).not.toBe("");
-      expect(step.place.trim()).not.toBe("");
-      expect(step.text.trim()).not.toBe("");
+      expect(step.label.trim()).not.toBe('');
+      expect(step.title.trim()).not.toBe('');
+      expect(step.place.trim()).not.toBe('');
+      expect(step.text.trim()).not.toBe('');
     }
     expectUnique(about.timeline.map((s) => s.title));
   });
 
-  it("gives every story step a valid 3D scene", () => {
+  it('gives every story step a valid 3D scene', () => {
     for (const step of about.timeline) expect(isSceneId(step.scene)).toBe(true);
   });
 
-  it("points story logos at /logos/", () => {
-    for (const step of about.timeline)
-      if (step.logo) expect(step.logo).toMatch(/^\/logos\/.+\.(svg|png|webp)$/);
+  it('points story logos at /logos/', () => {
+    for (const step of about.timeline) if (step.logo) expect(step.logo).toMatch(/^\/logos\/.+\.(svg|png|webp)$/);
   });
 });
 
-describe("techTags", () => {
-  it("splits and trims the tech list, dropping blanks", () => {
-    expect(
-      techTags({ ...projects[0], tech: " Java,Spring , ,MongoDB " }),
-    ).toEqual(["Java", "Spring", "MongoDB"]);
+describe('techTags', () => {
+  it('splits and trims the tech list, dropping blanks', () => {
+    expect(techTags({ ...projects[0], tech: ' Java,Spring , ,MongoDB ' })).toEqual([
+      'Java',
+      'Spring',
+      'MongoDB',
+    ]);
   });
 
-  it("gives every project at least one tag", () => {
+  it('gives every project at least one tag', () => {
     for (const project of projects) {
       expect(techTags(project).length, project.name).toBeGreaterThan(0);
     }

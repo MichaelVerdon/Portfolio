@@ -1,4 +1,4 @@
-import type { SceneId } from "../webgl/chapters";
+import type { SceneId } from '../webgl/chapters';
 
 /** Shapes of the JSON content files in src/data. */
 
@@ -11,7 +11,7 @@ export interface Project {
   desc: string;
   tech: string;
   /** "cover" fills the frame edge to edge (good for screenshots). Defaults to fitting a logo inside it. */
-  imageFit?: "cover" | "contain";
+  imageFit?: 'cover' | 'contain';
   /** Optional badge, e.g. "To be released". */
   status?: string;
   /** Optional link to a live version of the project. */

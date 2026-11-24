@@ -589,7 +589,7 @@ h3 {
   color: var(--text-2);
 }
 
-/* One tool called out above the lists, lit like a selected menu item. */
+/* One tool called out above the lists, lit like a selected menu item in the site's indigo. */
 .toolSpotlight {
   display: flex;
   gap: var(--space-5, 1.5rem);
@@ -597,12 +597,12 @@ h3 {
   margin-bottom: var(--space-6, 2rem);
   padding: var(--space-5, 1.5rem);
   background:
-    linear-gradient(100deg, rgba(217, 119, 87, 0.14), rgba(80, 110, 255, 0.08) 55%, rgba(10, 10, 10, 0.82)),
+    linear-gradient(100deg, var(--accent-soft), rgba(80, 110, 255, 0.05) 55%, rgba(10, 10, 10, 0.82)),
     rgba(10, 10, 10, 0.82);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border: 1px solid var(--line-strong);
-  border-left: 2px solid #d97757;
+  border-left: 2px solid var(--accent);
   border-radius: var(--radius-md);
 }
 
@@ -617,7 +617,7 @@ h3 {
   font-size: var(--text-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #e3a189;
+  color: var(--accent);
 }
 
 .toolSpotlight h3 {

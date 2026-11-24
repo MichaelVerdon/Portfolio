@@ -10,13 +10,24 @@ import Home from '../pages/Home';
 import { renderWithRouter } from '../test/render';
 import { detectTier, supportsWebGL } from './capability';
 import { CHAPTERS, isSceneId, SCENE_IDS } from './chapters';
-import { bootCore, buildFormation, LOGO_VOXELS, logoCells, logoFormation, SHAPE_SHARE, type Pixels } from './formations';
+import {
+  bootCore,
+  buildFormation,
+  LOGO_VOXELS,
+  logoCells,
+  logoFormation,
+  SHAPE_SHARE,
+  type Pixels,
+} from './formations';
 import { buildStrands, progressAt } from './strands';
 import { sceneBus, useSceneStatus, useWebglActive } from './sceneBus';
 import WebGLStage, { firstVisitThisSession } from './WebGLStage';
 
 const voxel = vi.hoisted(() => ({
-  instances: [] as { options: { onFail: () => void; getChapter: () => string }; dispose: () => void }[],
+  instances: [] as {
+    options: { onFail: () => void; getChapter: () => string };
+    dispose: () => void;
+  }[],
   throwOnCreate: false,
 }));
 vi.mock('./VoxelScene', () => ({
@@ -61,7 +72,11 @@ beforeEach(() => {
   sceneBus.reset();
   voxel.instances = [];
   voxel.throwOnCreate = false;
-  stubNavigator({ hardwareConcurrency: 8, deviceMemory: 8, connection: undefined });
+  stubNavigator({
+    hardwareConcurrency: 8,
+    deviceMemory: 8,
+    connection: undefined,
+  });
 });
 
 afterEach(() => {
@@ -107,6 +122,16 @@ describe('formations', () => {
     expect(f.colors).toBeDefined();
     const ys = Array.from({ length: f.shapeCount }, (_, i) => f.positions[i * 3 + 1]);
     expect(new Set(ys.map((y) => Math.round(y))).size).toBeGreaterThan(2);
+  });
+
+  it('builds the skills chapter as an indigo toolbox that fills the budget', () => {
+    for (const total of [640, 1400]) {
+      const f = buildFormation('toolkit', total);
+      expect(f.colors).toBeDefined();
+      expect(f.shapeCount).toBeGreaterThan(total * SHAPE_SHARE * 0.75);
+      const body = Array.from({ length: f.shapeCount }, (_, i) => f.colors![i * 3 + 2] > 0.7 && f.colors![i * 3] < 0.5);
+      expect(body.filter(Boolean).length).toBeGreaterThan(f.shapeCount / 3);
+    }
   });
 
   it('keeps dust cubes in place between chapters', () => {
