@@ -65,6 +65,7 @@ Use `"N/A"` as an image path to show the on-brand placeholder until you have an 
 A fixed three.js canvas sits behind the page (`src/webgl/`). Several hundred rounded cubes, the logo's pixels, fly between formations as you scroll: the logo mark in the hero, one shape per story step, a rippling floor behind the projects, orbit rings for skills, and the logo again at the end.
 
 - Each story step picks its shape with `"scene"` in `src/data/about.json` (`sphere`, `steps`, `network`, `monolith`, `field`, `orbit`, `logo`). Sections pick theirs with a `data-scene` attribute. Positions and captions live in `src/webgl/chapters.ts`.
+- A violet spiral coils down the page with the scroll, drawing itself in and running under each heading marked `data-underline`. Icosahedrons and a starfield drift behind at different depths. When 3D is off, those headings get a plain CSS underline instead.
 - three.js is lazy-loaded after the first paint, in its own chunk, so the first load is unchanged.
 - Phones, tablets and modest laptops get a lighter scene. Reduced motion, data saver, very low-end devices and browsers without WebGL get no 3D; the 2D pixel canvas and drawings show instead.
 - Add `?webgl=full`, `?webgl=lite` or `?webgl=off` to the URL to check each version.

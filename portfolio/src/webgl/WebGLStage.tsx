@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { gsap } from '../motion/gsap';
 import { sceneBus, useSceneStatus } from './sceneBus';
 
 type IdleCallback = (cb: () => void, opts?: { timeout: number }) => number;
@@ -26,12 +27,17 @@ export default function WebGLStage() {
           const scene = new VoxelScene(canvas, {
             tier,
             getChapter: sceneBus.getChapter,
+            ticker: gsap.ticker,
             onFail: () => {
-              scene.dispose();
+              dispose?.();
               sceneBus.setStatus('failed');
             },
           });
-          dispose = () => scene.dispose();
+          dispose = () => {
+            scene.dispose();
+            document.documentElement.classList.remove('webgl-on');
+          };
+          document.documentElement.classList.add('webgl-on');
           sceneBus.setStatus('running');
         })
         .catch(() => {

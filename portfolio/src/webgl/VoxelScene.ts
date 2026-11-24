@@ -5,7 +5,6 @@ import {
   DirectionalLight,
   DynamicDrawUsage,
   Fog,
-  GridHelper,
   Group,
   InstancedMesh,
   Matrix4,
@@ -22,6 +21,7 @@ import { seededRandom } from '../components/geometry/random';
 import type { Tier } from './capability';
 import { CHAPTERS, type ChapterLayout, type SceneId } from './chapters';
 import { buildFormation, type Formation } from './formations';
+import { SpaceLayer } from './SpaceLayer';
 
 /**
  * The 3D story: a few hundred rounded cubes (the logo's pixels) that fly
@@ -50,6 +50,12 @@ interface SceneOptions {
   getChapter: () => SceneId;
   /** WebGL stopped working (context lost); the page falls back to 2D. */
   onFail: () => void;
+  /**
+   * Frame clock to render on. Passing GSAP's ticker renders right after
+   * Lenis has moved the page, so the spiral stays glued to the text.
+   * Defaults to requestAnimationFrame.
+   */
+  ticker?: { add: (fn: () => void) => void; remove: (fn: () => void) => void };
 }
 
 export class VoxelScene {
@@ -59,6 +65,7 @@ export class VoxelScene {
   private world = new Group(); // placed per chapter
   private spinner = new Group(); // turns on the spot
   private mesh: InstancedMesh;
+  private space: SpaceLayer;
   private material: MeshStandardMaterial;
   private count: number;
   private formations = new Map<SceneId, Formation>();
@@ -116,7 +123,8 @@ export class VoxelScene {
     this.renderer.toneMapping = ACESFilmicToneMapping;
     this.renderer.setPixelRatio(this.dpr);
 
-    this.camera.position.set(0, 3, CAMERA_Z);
+    // Looking straight ahead, so the page plane (z = 0) maps 1:1 to the screen.
+    this.camera.position.set(0, 0, CAMERA_Z);
     this.camera.lookAt(0, 0, 0);
     this.scene.fog = new Fog(0x000000, CAMERA_Z + 4, CAMERA_Z + 85);
 
@@ -130,10 +138,6 @@ export class VoxelScene {
     fill.position.set(-10, -12, 16);
     this.scene.add(key, rim, fill);
 
-    // A faint floor grid gives the space a sense of scale.
-    const grid = new GridHelper(260, 104, 0x2a2a2a, 0x151515);
-    grid.position.y = -17;
-    this.scene.add(grid);
 
     const geometry = new RoundedBoxGeometry(1, 1, 1, tier === 'full' ? 3 : 2, 0.12);
     this.material = new MeshStandardMaterial({ roughness: 0.32, metalness: 0.15 });
@@ -178,12 +182,36 @@ export class VoxelScene {
     this.layout = { ...this.targetLayout() };
     this.morphStart = performance.now() / 1000;
 
+    this.space = new SpaceLayer(this.scene, tier, () => this.worldPerPx(), (z) => this.halfSize(z));
+
     window.addEventListener('resize', this.resize);
     window.addEventListener('pointermove', this.onPointer, { passive: true });
     canvas.addEventListener('webglcontextlost', this.onContextLost);
-    document.addEventListener('visibilitychange', this.onVisibility);
-    this.frame = requestAnimationFrame(this.tick);
+    if (options.ticker) {
+      options.ticker.add(this.onTicker);
+    } else {
+      document.addEventListener('visibilitychange', this.onVisibility);
+      this.frame = requestAnimationFrame(this.loop);
+    }
   }
+
+  /** Half the visible width and height at depth z, in world units. */
+  private halfSize(z: number) {
+    const h = Math.tan((FOV * Math.PI) / 360) * (CAMERA_Z - z);
+    return { w: h * this.camera.aspect, h };
+  }
+
+  /** World units per CSS pixel on the page plane. */
+  private worldPerPx() {
+    return (this.halfSize(0).h * 2) / window.innerHeight;
+  }
+
+  private onTicker = () => this.tick(performance.now());
+
+  private loop = (now: number) => {
+    this.tick(now);
+    if (!this.disposed) this.frame = requestAnimationFrame(this.loop);
+  };
 
   private formation(id: SceneId): Formation {
     let f = this.formations.get(id);
@@ -219,6 +247,7 @@ export class VoxelScene {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h, false);
+    this.space?.measure();
   };
 
   private onPointer = (e: PointerEvent) => {
@@ -236,11 +265,11 @@ export class VoxelScene {
     cancelAnimationFrame(this.frame);
     if (!document.hidden && !this.disposed) {
       this.last = performance.now();
-      this.frame = requestAnimationFrame(this.tick);
+      this.frame = requestAnimationFrame(this.loop);
     }
   };
 
-  private tick = (nowMs: number) => {
+  private tick(nowMs: number) {
     if (this.disposed) return;
     const dt = Math.min(0.05, (nowMs - this.last) / 1000);
     this.last = nowMs;
@@ -267,9 +296,9 @@ export class VoxelScene {
 
     this.updateLayout(dt);
     this.updateCubes(now);
+    this.space.update(scroll, now, dt);
     this.renderer.render(this.scene, this.camera);
-    this.frame = requestAnimationFrame(this.tick);
-  };
+  }
 
   private updateLayout(dt: number) {
     const target = this.targetLayout();
@@ -289,7 +318,7 @@ export class VoxelScene {
     this.pointer.sx = damp(this.pointer.sx, this.pointer.x, 3, dt);
     this.pointer.sy = damp(this.pointer.sy, this.pointer.y, 3, dt);
     this.world.rotation.y = this.pointer.sx * 0.28;
-    this.world.rotation.x = this.pointer.sy * 0.16 + (this.chapter === 'field' ? 0.18 : 0.06);
+    this.world.rotation.x = this.pointer.sy * 0.16 + (this.chapter === 'field' ? 0.24 : 0.12);
 
     // Spin, plus a push from scrolling. Chapters that face the camera
     // (the logo) unwind to the nearest whole turn.
@@ -348,6 +377,8 @@ export class VoxelScene {
   dispose() {
     this.disposed = true;
     cancelAnimationFrame(this.frame);
+    this.options.ticker?.remove(this.onTicker);
+    this.space.dispose();
     window.removeEventListener('resize', this.resize);
     window.removeEventListener('pointermove', this.onPointer);
     this.canvas.removeEventListener('webglcontextlost', this.onContextLost);

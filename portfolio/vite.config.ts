@@ -18,7 +18,9 @@ export default defineConfig({
       exclude: [
         'src/main.tsx',
         // three.js rendering needs a real GPU; checked in the browser instead.
+        // The maths they use (formations.ts, spiralPath.ts) is unit tested.
         'src/webgl/VoxelScene.ts',
+        'src/webgl/SpaceLayer.ts',
         'src/test/**',
         'src/**/*.test.{ts,tsx}',
         'src/**/*.d.ts',

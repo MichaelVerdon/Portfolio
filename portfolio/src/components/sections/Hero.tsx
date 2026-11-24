@@ -13,7 +13,7 @@ export default function Hero() {
         <p className="eyebrow eyebrow--dark" data-reveal>
           {about.name} · {about.role}
         </p>
-        <h1 id="hero-title" data-split>
+        <h1 id="hero-title" data-split data-underline>
           {about.headline}
         </h1>
         <ul className="hero-drives" aria-label="What drives me" data-reveal data-reveal-delay="0.5">

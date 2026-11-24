@@ -11,6 +11,7 @@ import { renderWithRouter } from '../test/render';
 import { detectTier, supportsWebGL } from './capability';
 import { CHAPTERS, isSceneId, SCENE_IDS } from './chapters';
 import { buildFormation, LOGO_VOXELS, SHAPE_SHARE } from './formations';
+import { drawIndexFor, spiralPath } from './spiralPath';
 import { sceneBus, useSceneStatus, useWebglActive } from './sceneBus';
 import WebGLStage from './WebGLStage';
 
@@ -258,5 +259,42 @@ describe('sections with 3D on', () => {
     projects.onToggle!({ isActive: true } as ScrollTrigger);
     expect(sceneBus.getChapter()).toBe('field');
     create.mockRestore();
+  });
+});
+
+describe('spiralPath', () => {
+  const view = { width: 1440, height: 900 };
+
+  it('is empty without headings to underline', () => {
+    expect(spiralPath([], view)).toEqual([]);
+    expect(spiralPath([{ left: 10, right: 10, y: 50 }], view)).toEqual([]);
+  });
+
+  it('runs flat on the page under each heading, in page order', () => {
+    const anchors = [
+      { left: 200, right: 700, y: 2400 },
+      { left: 168, right: 900, y: 600 },
+    ];
+    const path = spiralPath(anchors, view);
+    for (const a of anchors) {
+      const under = path.filter((p) => p.y === a.y && p.z === 0).map((p) => p.x);
+      expect(under).toEqual([a.left, (a.left + a.right) / 2, a.right]);
+    }
+    const ys = path.map((p) => p.y);
+    expect([...ys].sort((a, b) => a - b)).toEqual(ys);
+    expect(Math.min(...path.map((p) => p.z))).toBeLessThan(-20);
+  });
+
+  it('adds turns across long gaps', () => {
+    const short = spiralPath([{ left: 0, right: 100, y: 0 }, { left: 0, right: 100, y: 900 }], view);
+    const long = spiralPath([{ left: 0, right: 100, y: 0 }, { left: 0, right: 100, y: 5000 }], view);
+    expect(long.length).toBeGreaterThan(short.length);
+  });
+
+  it('finds how far down to draw', () => {
+    const ys = [0, 10, 20, 30];
+    expect(drawIndexFor(ys, -5)).toBe(0);
+    expect(drawIndexFor(ys, 15)).toBe(2);
+    expect(drawIndexFor(ys, 99)).toBe(4);
   });
 });

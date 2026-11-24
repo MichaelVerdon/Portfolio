@@ -13,7 +13,7 @@ export default function SectionHeading({ id, index, eyebrow, title, intro }: Sec
       <span className="eyebrow" data-reveal>
         <span className="eyebrow-index">{index}</span> {eyebrow}
       </span>
-      <h2 id={id} data-split>
+      <h2 id={id} data-split data-underline>
         {title}
       </h2>
       {intro && (
