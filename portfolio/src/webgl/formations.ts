@@ -1,3 +1,4 @@
+import { LOGO_MARK } from '../components/geometry/logoMark';
 import { seededRandom } from '../components/geometry/random';
 import type { SceneId } from './chapters';
 
@@ -22,12 +23,8 @@ export interface Formation {
 
 type Point = [number, number, number, number]; // x, y, z, size
 
-/** The stepped mark from the logo, filled in (1 = square). 7 columns by 3 rows. */
-export const LOGO_VOXELS: number[][] = [
-  [0, 0, 1, 0, 0, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1],
-  [1, 1, 1, 0, 0, 1, 1],
-];
+/** The stepped line of squares from the logo, the same grid the 2D hero uses. */
+export const LOGO_VOXELS: number[][] = LOGO_MARK;
 
 /** Share of the cubes that build the shape; the rest are dust. */
 export const SHAPE_SHARE = 0.6;
