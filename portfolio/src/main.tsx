@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import Modal from 'react-modal';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import { routerFuture } from './routerFuture';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/site.css';
@@ -15,7 +14,7 @@ Modal.setAppElement('#root');
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter future={routerFuture}>
+    <BrowserRouter>
       <App />
     </BrowserRouter>
   </React.StrictMode>,

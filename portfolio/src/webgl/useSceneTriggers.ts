@@ -8,7 +8,7 @@ import { sceneBus } from './sceneBus';
  * chapter while they cross the middle of the screen. Does nothing when
  * there is no 3D for this visitor.
  */
-export function useSceneTriggers(root: RefObject<HTMLElement>) {
+export function useSceneTriggers(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const scope = root.current;
     if (!scope || sceneBus.getStatus() === 'off') return;

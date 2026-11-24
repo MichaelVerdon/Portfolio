@@ -6,7 +6,7 @@ import { hasFinePointer, prefersReducedMotion } from './reducedMotion';
  * Makes every element matching `selector` inside `root` drift gently toward
  * the mouse and spring back on leave. Mouse only, off for reduced motion.
  */
-export function useMagnetic(root: RefObject<HTMLElement>, selector: string, strength = 0.3) {
+export function useMagnetic(root: RefObject<HTMLElement | null>, selector: string, strength = 0.3) {
   useEffect(() => {
     const scope = root.current;
     if (!scope || !hasFinePointer() || prefersReducedMotion()) return;

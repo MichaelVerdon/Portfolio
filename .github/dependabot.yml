@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Weekly PRs for outdated or vulnerable npm packages. Minor and patch
+  # updates are grouped into one PR to keep the noise down.
+  - package-ecosystem: npm
+    directory: /portfolio
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
