@@ -128,6 +128,20 @@ describe('logo formations', () => {
     expect(logoCells(disc([0, 0, 0])(10, 10))[0].slice(4)).toEqual([0.9, 0.9, 0.93]);
   });
 
+  it('keeps a logo that fills the corner when the rest is transparent', () => {
+    const px = disc([0, 128, 255])(10, 10);
+    const data = Array.from(px.data);
+    data.splice(0, 4, 0, 128, 255, 255); // the corner pixel is part of the logo
+    expect(logoCells({ ...px, data }).length).toBe(logoCells(px).length + 1);
+  });
+
+  it('lifts dark colours but keeps their hue', () => {
+    const [r, g, b] = logoCells(disc([60, 0, 50])(10, 10))[0].slice(4);
+    expect(r).toBeGreaterThan(60 / 255);
+    expect(r).toBeGreaterThan(b);
+    expect(g).toBeLessThan(r);
+  });
+
   it('uses as much of the cube budget as it can without going over', () => {
     const f = logoFormation(disc([255, 0, 0]), 1, 1400);
     const budget = Math.floor(1400 * SHAPE_SHARE);

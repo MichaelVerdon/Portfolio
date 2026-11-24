@@ -10,7 +10,7 @@
             "place": "University of Portsmouth",
             "text": "Where I went deep on machine learning, fuzzy systems and robotics, and found out how much I enjoy building things that think.",
             "scene": "sphere",
-            "logo": "/logos/portsmouth.svg"
+            "logo": "/logos/portsmouth.png"
         },
         {
             "label": "Trained",
@@ -18,7 +18,7 @@
             "place": "Makers Academy",
             "text": "An intense, hands-on course in test-driven development, pairing and shipping in teams.",
             "scene": "steps",
-            "logo": "/logos/makers.svg"
+            "logo": "/logos/makers.png"
         },
         {
             "label": "Before",
@@ -34,7 +34,7 @@
             "place": "JP Morgan · Payments Technology & AI",
             "text": "Building payments systems and AI solutions at global scale, using Java, Spring Boot, Maven, MongoDB, Liquibase and Kubernetes on the back end and React, Redux Toolkit and TypeScript on the front end.",
             "scene": "monolith",
-            "logo": "/logos/jpmorgan.svg"
+            "logo": "/logos/jpmorgan.png"
         }
     ],
     "drives": [

@@ -228,12 +228,20 @@ function luminance(r: number, g: number, b: number) {
 /**
  * The cells of a logo, sampled at grid resolution: every pixel that isn't
  * background becomes a cube in the logo's own colour. The background is
- * transparency, or else whatever colour the top-left corner is.
+ * transparency if the image has any, or else the top-left corner's colour.
  */
 export function logoCells(px: Pixels): Point[] {
   const { width: cols, height: rows, data } = px;
   const bg = [data[0], data[1], data[2], data[3]];
-  const transparentBg = bg[3] < 128;
+  // Any see-through pixel means the background is transparency, even when
+  // the logo itself fills the top-left corner.
+  let transparentBg = false;
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] < 128) {
+      transparentBg = true;
+      break;
+    }
+  }
   const size = Math.min(LOGO_BOX.width / cols, LOGO_BOX.height / rows);
   const points: Point[] = [];
   for (let row = 0; row < rows; row++)
@@ -243,8 +251,12 @@ export function logoCells(px: Pixels): Point[] {
       if (a < 128) continue;
       if (!transparentBg && Math.hypot(r - bg[0], g - bg[1], b - bg[2]) < 80) continue;
       let [cr, cg, cb] = [r / 255, g / 255, b / 255];
-      // Black ink would vanish on the black page: draw it in soft white.
-      if (luminance(cr, cg, cb) < 0.3) [cr, cg, cb] = [0.9, 0.9, 0.93];
+      // Black or grey ink would vanish on the black page: draw it in soft
+      // white. Dark colours keep their hue but are lifted so they show.
+      const lum = luminance(cr, cg, cb);
+      const saturation = Math.max(cr, cg, cb) - Math.min(cr, cg, cb);
+      if (lum < 0.3 && saturation < 0.15) [cr, cg, cb] = [0.9, 0.9, 0.93];
+      else if (lum < 0.18) [cr, cg, cb] = [cr, cg, cb].map((v) => Math.min(1, (v * 0.18) / Math.max(lum, 0.01) + 0.04));
       points.push([(col - (cols - 1) / 2) * size, ((rows - 1) / 2 - row) * size, 0, size * 0.86, cr, cg, cb]);
     }
   return points;
