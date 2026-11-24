@@ -66,6 +66,7 @@ A fixed three.js canvas sits behind the page (`src/webgl/`). Several hundred rou
 
 - Each story step picks its shape with `"scene"` in `src/data/about.json` (`sphere`, `steps`, `network`, `monolith`, `field`, `orbit`, `logo`). Sections pick theirs with a `data-scene` attribute. Positions and captions live in `src/webgl/chapters.ts`.
 - Curly violet strands (after the curly tubes on lusion.co) sweep in from a different edge for each heading marked `data-underline`, curl, run flat under it, then flow off and erase as you scroll (`src/webgl/strands.ts`). Icosahedrons and a starfield drift behind at different depths. When 3D is off, those headings get a plain CSS underline instead.
+- Early-2000s console menus are the mood, not a copy: on the first visit of a session the cubes gather into one glowing block and burst into the logo (`bootCore`, skipped if the page opens part-way down), the background is a deep blue void with rising light motes, the projects sit over glassy towers of cubes, and nav items light up with a small spinning cube on hover.
 - three.js is lazy-loaded after the first paint, in its own chunk, so the first load is unchanged.
 - Phones, tablets and modest laptops get a lighter scene. Reduced motion, data saver, very low-end devices and browsers without WebGL get no 3D; the 2D pixel canvas and drawings show instead.
 - Add `?webgl=full`, `?webgl=lite` or `?webgl=off` to the URL to check each version.

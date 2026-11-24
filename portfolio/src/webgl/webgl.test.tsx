@@ -10,10 +10,10 @@ import Home from '../pages/Home';
 import { renderWithRouter } from '../test/render';
 import { detectTier, supportsWebGL } from './capability';
 import { CHAPTERS, isSceneId, SCENE_IDS } from './chapters';
-import { buildFormation, LOGO_VOXELS, logoCells, logoFormation, SHAPE_SHARE, type Pixels } from './formations';
+import { bootCore, buildFormation, LOGO_VOXELS, logoCells, logoFormation, SHAPE_SHARE, type Pixels } from './formations';
 import { buildStrands, progressAt } from './strands';
 import { sceneBus, useSceneStatus, useWebglActive } from './sceneBus';
-import WebGLStage from './WebGLStage';
+import WebGLStage, { firstVisitThisSession } from './WebGLStage';
 
 const voxel = vi.hoisted(() => ({
   instances: [] as { options: { onFail: () => void; getChapter: () => string }; dispose: () => void }[],
@@ -89,6 +89,24 @@ describe('formations', () => {
     const cells = LOGO_VOXELS.flat().filter(Boolean).length;
     const f = buildFormation('logo', 900);
     expect(f.shapeCount % (cells * 2)).toBe(0);
+  });
+
+  it('packs every cube into one block for the boot intro', () => {
+    for (const total of [420, 900]) {
+      const f = bootCore(total);
+      expect(f.positions).toHaveLength(total * 3);
+      const xs = Array.from({ length: f.shapeCount }, (_, i) => f.positions[i * 3]);
+      expect(f.shapeCount).toBeGreaterThan(total * 0.4);
+      expect(Math.max(...xs) - Math.min(...xs)).toBeLessThan(12);
+      expect(Array.from(f.positions).every(Number.isFinite)).toBe(true);
+    }
+  });
+
+  it('colours the project towers from blue at the base to cyan at the top', () => {
+    const f = buildFormation('field', 900);
+    expect(f.colors).toBeDefined();
+    const ys = Array.from({ length: f.shapeCount }, (_, i) => f.positions[i * 3 + 1]);
+    expect(new Set(ys.map((y) => Math.round(y))).size).toBeGreaterThan(2);
   });
 
   it('keeps dust cubes in place between chapters', () => {
@@ -280,6 +298,22 @@ describe('WebGLStage', () => {
     voxel.throwOnCreate = true;
     render(<WebGLStage />);
     await waitFor(() => expect(sceneBus.getStatus()).toBe('failed'));
+  });
+});
+
+describe('firstVisitThisSession', () => {
+  it('is true once per session, then false', () => {
+    sessionStorage.clear();
+    expect(firstVisitThisSession()).toBe(true);
+    expect(firstVisitThisSession()).toBe(false);
+  });
+
+  it('skips the intro when storage is blocked', () => {
+    const spy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    expect(firstVisitThisSession()).toBe(false);
+    spy.mockRestore();
   });
 });
 

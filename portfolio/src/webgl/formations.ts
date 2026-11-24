@@ -136,17 +136,58 @@ export function monolith(budget: number): Point[] {
   return points;
 }
 
-/** A wide floor of cubes that ripples behind the project list. */
+/**
+ * Towers of glassy cubes rising out of a misty floor behind the project
+ * list, a nod to the data towers of early-2000s console menus. Heights roll
+ * gently across the grid; colour runs from deep blue at the base to pale
+ * cyan at the top.
+ */
 export function field(budget: number): Point[] {
-  const cols = Math.max(2, Math.round(Math.sqrt(budget * 2.4)));
-  const rows = Math.max(2, Math.floor(budget / cols));
-  const s = 2.3;
+  const height = (c: number, r: number) =>
+    1 + Math.round(2.5 + 2.2 * Math.sin(c * 0.55 + r * 0.25) + 1.4 * Math.cos(r * 0.7 - c * 0.3));
+  // Grow the grid until it uses the budget.
+  let cols = 4;
+  const count = (n: number) => {
+    let total = 0;
+    for (let r = 0; r < Math.ceil(n * 0.6); r++) for (let c = 0; c < n; c++) total += height(c, r);
+    return total;
+  };
+  while (count(cols + 1) <= budget) cols++;
+  const rows = Math.ceil(cols * 0.6);
+  const s = 2.1;
   const points: Point[] = [];
   for (let r = 0; r < rows; r++)
     for (let c = 0; c < cols; c++) {
-      points.push([(c - (cols - 1) / 2) * s, -8, (r - (rows - 1) / 2) * s, 0.9]);
+      const h = height(c, r);
+      for (let y = 0; y < h; y++) {
+        const t = y / 7;
+        points.push([
+          (c - (cols - 1) / 2) * s,
+          -8 + y * s * 0.62,
+          (r - (rows - 1) / 2) * s,
+          s * 0.58,
+          0.25 + 0.45 * t,
+          0.45 + 0.45 * t,
+          1,
+        ]);
+      }
     }
   return points;
+}
+
+/**
+ * Every shape cube packed into one solid block: the boot intro gathers the
+ * cubes into this, then bursts it into the first chapter.
+ */
+export function bootCore(total: number): Formation {
+  const budget = Math.floor(total * SHAPE_SHARE);
+  const k = Math.max(2, Math.floor(Math.cbrt(budget)));
+  const s = 0.78;
+  const points: Point[] = [];
+  for (let x = 0; x < k; x++)
+    for (let y = 0; y < k; y++)
+      for (let z = 0; z < k; z++) points.push([(x - (k - 1) / 2) * s, (y - (k - 1) / 2) * s, (z - (k - 1) / 2) * s, s * 0.9]);
+  return assemble(points, total);
 }
 
 /** Three tilted rings, like the skills section's orbit drawing. */

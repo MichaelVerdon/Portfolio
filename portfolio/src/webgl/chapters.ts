@@ -19,6 +19,8 @@ export interface ChapterLayout {
   dim: number;
   /** Slowly turn on the spot. Off for the logo, which faces the camera. */
   spin: boolean;
+  /** 0 solid, 1 glassy (see-through cubes). */
+  glass?: number;
 }
 
 export interface Chapter {
@@ -63,9 +65,9 @@ export const CHAPTERS: Record<SceneId, Chapter> = {
   },
   field: {
     id: 'field',
-    label: 'Index / Work',
-    wide: { x: 0, y: -0.75, z: -40, scale: 1, dim: 0.22, spin: false },
-    narrow: { x: 0, y: -0.6, z: -40, scale: 1, dim: 0.18, spin: false },
+    label: 'Index / Data towers',
+    wide: { x: 0, y: -0.2, z: -44, scale: 1.15, dim: 0.6, spin: false, glass: 1 },
+    narrow: { x: 0, y: -0.5, z: -40, scale: 1, dim: 0.4, spin: false, glass: 1 },
   },
   orbit: {
     id: 'orbit',

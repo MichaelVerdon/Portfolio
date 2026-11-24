@@ -38,11 +38,13 @@
 }
 
 body {
-  /* A faint nebula: two soft glows, fixed behind everything. */
+  /* A deep blue console-menu void: a glow rising off the floor, a faint
+     nebula up top, fixed behind everything. */
   background:
+    radial-gradient(90rem 30rem at 50% 115%, rgba(40, 80, 255, 0.22), transparent 70%),
     radial-gradient(60rem 40rem at 85% 8%, rgba(124, 111, 255, 0.09), transparent 70%),
     radial-gradient(50rem 40rem at 5% 70%, rgba(70, 110, 255, 0.06), transparent 70%),
-    var(--bg);
+    linear-gradient(#000 30%, #03051a);
   background-attachment: fixed;
   color: var(--text);
   font-feature-settings: 'ss01', 'cv11';
@@ -240,6 +242,80 @@ h3 {
   .navbar-links {
     background: var(--bg);
     border-bottom: 1px solid var(--line);
+  }
+}
+
+/* Menu-style nav: hovering an item lights a glow strip behind it and a
+   small wireframe cube spins up beside it, like picking an option on an
+   early-2000s console menu. */
+.navbar-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  transition:
+    color var(--duration-fast),
+    background var(--duration-fast),
+    text-shadow var(--duration-fast);
+}
+
+.navbar-links a::after {
+  display: none;
+}
+
+.navbar-links a:hover,
+.navbar-links a:focus-visible {
+  color: #fff;
+  background: linear-gradient(90deg, rgba(80, 110, 255, 0.28), rgba(80, 110, 255, 0));
+  text-shadow: 0 0 12px rgba(140, 170, 255, 0.8);
+}
+
+.navCube {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  transform-style: preserve-3d;
+  opacity: 0.35;
+  transform: rotateX(-25deg) rotateY(35deg) scale(0.8);
+  transition:
+    opacity var(--duration-fast),
+    transform 0.4s var(--ease-out);
+}
+
+.navCube i {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #9fb8ff;
+  background: rgba(90, 120, 255, 0.18);
+}
+
+.navCube i:nth-child(1) { transform: translateZ(4.5px); }
+.navCube i:nth-child(2) { transform: rotateY(180deg) translateZ(4.5px); }
+.navCube i:nth-child(3) { transform: rotateY(90deg) translateZ(4.5px); }
+.navCube i:nth-child(4) { transform: rotateY(-90deg) translateZ(4.5px); }
+.navCube i:nth-child(5) { transform: rotateX(90deg) translateZ(4.5px); }
+.navCube i:nth-child(6) { transform: rotateX(-90deg) translateZ(4.5px); }
+
+.navbar-links a:hover .navCube,
+.navbar-links a:focus-visible .navCube {
+  opacity: 1;
+  animation: nav-cube-spin 1.6s linear infinite;
+}
+
+@keyframes nav-cube-spin {
+  from {
+    transform: rotateX(-25deg) rotateY(0deg) scale(1.1);
+  }
+  to {
+    transform: rotateX(-25deg) rotateY(360deg) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-links a:hover .navCube,
+  .navbar-links a:focus-visible .navCube {
+    animation: none;
   }
 }
 

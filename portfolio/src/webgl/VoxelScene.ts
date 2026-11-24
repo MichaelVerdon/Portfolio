@@ -20,7 +20,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { seededRandom } from '../components/geometry/random';
 import type { Tier } from './capability';
 import { CHAPTERS, type ChapterLayout, type SceneId } from './chapters';
-import { buildFormation, logoFormation, type Formation } from './formations';
+import { bootCore, buildFormation, logoFormation, type Formation } from './formations';
 import { SpaceLayer } from './SpaceLayer';
 
 /**
@@ -59,7 +59,15 @@ interface SceneOptions {
    * Defaults to requestAnimationFrame.
    */
   ticker?: { add: (fn: () => void) => void; remove: (fn: () => void) => void };
+  /**
+   * Play the boot intro: the cubes gather into one spinning block in the
+   * middle of the screen, then burst out into the first chapter.
+   */
+  boot?: boolean;
 }
+
+/** Boot intro timings, in seconds from start. */
+const BOOT = { gather: 1.3, burst: 2.2 };
 
 export class VoxelScene {
   private renderer: WebGLRenderer;
@@ -109,6 +117,10 @@ export class VoxelScene {
   private slowFrames = 0;
   private dpr: number;
   private disposed = false;
+  /** Boot intro stage: gathering into the block, then done. */
+  private booting: false | { start: number } = false;
+  private glass = 0;
+  private glassy = false;
 
   private matrix = new Matrix4();
   private color = new Color();
@@ -138,7 +150,8 @@ export class VoxelScene {
     // Looking straight ahead, so the page plane (z = 0) maps 1:1 to the screen.
     this.camera.position.set(0, 0, CAMERA_Z);
     this.camera.lookAt(0, 0, 0);
-    this.scene.fog = new Fog(0x000000, CAMERA_Z + 4, CAMERA_Z + 85);
+    // Deep blue haze: far things fade into a console-menu void, not to black.
+    this.scene.fog = new Fog(0x050816, CAMERA_Z + 4, CAMERA_Z + 85);
 
     // Light: a cool white key, a soft fill and an indigo rim from behind.
     this.scene.add(new AmbientLight(0xffffff, 0.35));
@@ -152,7 +165,7 @@ export class VoxelScene {
 
 
     const geometry = new RoundedBoxGeometry(1, 1, 1, tier === 'full' ? 3 : 2, 0.12);
-    this.material = new MeshStandardMaterial({ roughness: 0.32, metalness: 0.15 });
+    this.material = new MeshStandardMaterial({ roughness: 0.32, metalness: 0.15, emissive: 0x3a5bff, emissiveIntensity: 0 });
     this.mesh = new InstancedMesh(geometry, this.material, this.count);
     this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);
     this.mesh.frustumCulled = false;
@@ -190,15 +203,22 @@ export class VoxelScene {
       this.fromPos[i * 3 + 2] = (random() - 0.5) * 60 - 10;
       this.fromSize[i] = 0;
     }
-    this.toPos = first.positions;
-    this.toSize = first.sizes;
-    this.shapeCount = first.shapeCount;
+    const start = options.boot ? bootCore(this.count) : first;
+    this.toPos = start.positions;
+    this.toSize = start.sizes;
+    this.shapeCount = start.shapeCount;
     this.livePos = this.fromPos.slice();
     this.liveSize = this.fromSize.slice();
 
     this.resize();
     this.layout = { ...this.targetLayout() };
     this.morphStart = performance.now() / 1000;
+    if (options.boot) {
+      this.booting = { start: this.morphStart };
+      this.morphSeconds = BOOT.gather;
+      // The block forms dead centre, then the first chapter glides into place.
+      this.layout = { ...this.layout, x: 0, y: 0, z: 6, scale: 1, dim: 1.5 };
+    }
 
     this.space = new SpaceLayer(this.scene, tier, () => this.worldPerPx(), (z) => this.halfSize(z));
 
@@ -354,8 +374,14 @@ export class VoxelScene {
     }
 
     const id = this.options.getChapter();
-    const next = this.wanted(id, this.options.getImage?.());
-    if (next.key !== this.shownKey || id !== this.chapter) this.goTo(id, next.key, next.formation);
+    if (this.booting && now - this.booting.start > BOOT.burst) {
+      this.booting = false;
+      this.shownKey = ''; // forces the burst into the current chapter below
+    }
+    if (!this.booting) {
+      const next = this.wanted(id, this.options.getImage?.());
+      if (next.key !== this.shownKey || id !== this.chapter) this.goTo(id, next.key, next.formation);
+    }
 
     // Scroll speed nudges the spin, so the scene feels tied to the page.
     const scroll = window.scrollY;
@@ -370,7 +396,8 @@ export class VoxelScene {
   }
 
   private updateLayout(dt: number) {
-    const target = this.targetLayout();
+    // While booting, the block glows where the logo will land.
+    const target = this.booting ? { ...this.targetLayout(), scale: 1, dim: 1.5, spin: true, glass: 0 } : this.targetLayout();
     const l = this.layout;
     for (const key of ['x', 'y', 'z', 'scale', 'dim'] as const) l[key] = damp(l[key], target[key], 2.6, dt);
 
@@ -383,6 +410,18 @@ export class VoxelScene {
     this.world.scale.setScalar(l.scale * fit);
     this.material.color.setScalar(l.dim);
 
+    // Glassy chapters: see-through cubes that glow where they overlap.
+    this.glass = damp(this.glass, target.glass ?? 0, 2.4, dt);
+    const glassy = this.glass > 0.02;
+    if (glassy !== this.glassy) {
+      this.glassy = glassy;
+      this.material.transparent = glassy;
+      this.material.depthWrite = !glassy;
+      this.material.needsUpdate = true;
+    }
+    this.material.opacity = 1 - this.glass * 0.6;
+    this.material.emissiveIntensity = this.glass * 0.35;
+
     // Pointer tilt, eased for weight.
     this.pointer.sx = damp(this.pointer.sx, this.pointer.x, 3, dt);
     this.pointer.sy = damp(this.pointer.sy, this.pointer.y, 3, dt);
@@ -392,7 +431,9 @@ export class VoxelScene {
     // Spin, plus a push from scrolling. Chapters that face the camera
     // (the logo) unwind to the nearest whole turn.
     const push = Math.max(-1, Math.min(1, this.scrollVelocity / 2500));
-    if (target.spin) {
+    if (this.booting) {
+      this.spin += dt * 2.4; // the block spins up before it bursts
+    } else if (target.spin) {
       this.spin += dt * 0.14 + push * dt * 1.6;
     } else {
       const home = Math.round(this.spin / (Math.PI * 2)) * Math.PI * 2;

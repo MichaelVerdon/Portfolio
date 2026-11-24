@@ -2,6 +2,17 @@ import { useEffect, useRef } from 'react';
 import { gsap } from '../motion/gsap';
 import { sceneBus, useSceneStatus } from './sceneBus';
 
+/** True the first time this runs in a browser tab, so the boot intro plays once per visit. */
+export function firstVisitThisSession(): boolean {
+  try {
+    if (sessionStorage.getItem('booted')) return false;
+    sessionStorage.setItem('booted', '1');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 type IdleCallback = (cb: () => void, opts?: { timeout: number }) => number;
 
 /**
@@ -29,6 +40,7 @@ export default function WebGLStage() {
             getChapter: sceneBus.getChapter,
             getImage: sceneBus.getChapterImage,
             ticker: gsap.ticker,
+            boot: firstVisitThisSession() && window.scrollY < 50,
             onFail: () => {
               dispose?.();
               sceneBus.setStatus('failed');
