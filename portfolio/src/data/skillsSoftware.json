@@ -1,5 +1,9 @@
 [
     {
+        "name": "Claude Code",
+        "src": "/software/claude-code.svg"
+    },
+    {
         "name": "Github",
         "src": "/software/github.svg"
     },

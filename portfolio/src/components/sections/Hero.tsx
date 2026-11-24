@@ -32,7 +32,7 @@ export default function Hero() {
       </div>
       <a className="hero-scroll mono" href="#story" aria-label="Scroll to my story">
         <span className="hero-scroll-line" aria-hidden="true" />
-        scroll
+        scroll to start
       </a>
     </section>
   );

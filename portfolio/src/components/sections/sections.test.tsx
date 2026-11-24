@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
-import { about, contacts, projects, skillGroups } from '../../data';
+import { about, contacts, projects, skillGroups, toolkitSpotlight } from '../../data';
 import ContactSection from './ContactSection';
 import Hero from './Hero';
 import ProjectsSection, { FEATURED_COUNT } from './ProjectsSection';
@@ -45,7 +45,9 @@ describe('ProjectsSection', () => {
 
   it('can expand to every project and collapse again', async () => {
     render(<ProjectsSection />);
-    const toggle = screen.getByRole('button', { name: `Show all ${projects.length} projects` });
+    const toggle = screen.getByRole('button', {
+      name: `Show all ${projects.length} projects`,
+    });
     await userEvent.click(toggle);
     expect(cardNames()).toEqual(projects.map((p) => p.name));
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
@@ -55,10 +57,20 @@ describe('ProjectsSection', () => {
 });
 
 describe('SkillsSection', () => {
+  it('calls out the spotlight tool above the lists', () => {
+    render(<SkillsSection />);
+    const card = screen.getByRole('article', { name: toolkitSpotlight.name });
+    expect(card).toHaveTextContent(toolkitSpotlight.text);
+    expect(within(card).getAllByRole('listitem')).toHaveLength(toolkitSpotlight.tags.length);
+  });
+
   it('shows every skill group and skill', () => {
     render(<SkillsSection />);
     for (const group of skillGroups) {
-      const heading = screen.getByRole('heading', { level: 3, name: group.title });
+      const heading = screen.getByRole('heading', {
+        level: 3,
+        name: group.title,
+      });
       const list = heading.parentElement!.querySelector('ul')!;
       expect(within(list).getAllByRole('listitem').map((li) => li.textContent)).toEqual(
         group.skills.map((s) => s.name),

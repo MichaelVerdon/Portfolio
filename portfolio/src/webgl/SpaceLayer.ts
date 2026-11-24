@@ -1,4 +1,5 @@
 import {
+  CanvasTexture,
   AdditiveBlending,
   BufferAttribute,
   BufferGeometry,
@@ -77,6 +78,9 @@ export class SpaceLayer {
   }[] = [];
   private icosaGroup = new Group();
   private stars: Points;
+  /** Soft lights drifting slowly upward through the haze. */
+  private motes: Points;
+  private moteSpeeds: Float32Array;
   private strandMaterial = new MeshBasicMaterial({ color: STRAND_COLOR, toneMapped: false });
   private cometMaterial = new MeshBasicMaterial({ color: 0xffffff });
   private cometGeometry = new IcosahedronGeometry(0.22, 0);
@@ -111,7 +115,10 @@ export class SpaceLayer {
     this.materials.push(this.stars.material as Material);
 
     this.buildIcosas();
-    scene.add(this.strandGroup, this.icosaGroup, this.stars);
+    this.moteSpeeds = new Float32Array(0);
+    this.motes = this.buildMotes();
+    this.materials.push(this.motes.material as Material);
+    scene.add(this.strandGroup, this.icosaGroup, this.stars, this.motes);
 
     // Re-measure the headings whenever the page changes size (fonts loading,
     // the pinned story adding its scroll space, a project list expanding).
@@ -208,6 +215,45 @@ export class SpaceLayer {
     this.strands = [];
   }
 
+  private buildMotes(): Points {
+    const count = this.tier === 'full' ? 140 : 60;
+    const random = seededRandom(13);
+    const positions = new Float32Array(count * 3);
+    this.moteSpeeds = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      positions[i * 3] = (random() - 0.5) * 130;
+      positions[i * 3 + 1] = (random() - 0.5) * 70;
+      positions[i * 3 + 2] = -10 - random() * 70;
+      this.moteSpeeds[i] = 0.4 + random() * 1.2;
+    }
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new BufferAttribute(positions, 3));
+
+    // A soft round glow, drawn once.
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      g.addColorStop(0, 'rgba(255,255,255,1)');
+      g.addColorStop(0.3, 'rgba(170,190,255,0.5)');
+      g.addColorStop(1, 'rgba(120,140,255,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 64, 64);
+    }
+    const material = new PointsMaterial({
+      color: 0x9fb8ff,
+      size: 1.6,
+      map: new CanvasTexture(canvas),
+      transparent: true,
+      opacity: 0.55,
+      depthWrite: false,
+      blending: AdditiveBlending,
+      sizeAttenuation: true,
+    });
+    return new Points(geometry, material);
+  }
+
   private buildStars(wpp: number) {
     const count = this.tier === 'full' ? 1800 : 700;
     const random = seededRandom(9);
@@ -262,6 +308,16 @@ export class SpaceLayer {
     }
 
     this.stars.position.y = scrollY * wpp * 0.12;
+
+    // Motes rise and wrap round, with a touch of scroll parallax.
+    const motes = this.motes.geometry.getAttribute('position') as BufferAttribute;
+    for (let i = 0; i < this.moteSpeeds.length; i++) {
+      let y = motes.getY(i) + this.moteSpeeds[i] * dt;
+      if (y > 36) y -= 72;
+      motes.setY(i, y);
+    }
+    motes.needsUpdate = true;
+    this.motes.position.y = scrollY * wpp * 0.05;
     this.stars.rotation.z = Math.sin(now * 0.02) * 0.01;
   }
 
@@ -269,9 +325,11 @@ export class SpaceLayer {
     window.clearTimeout(this.remeasureTimer);
     this.observer.disconnect();
     this.clearStrands();
-    this.scene.remove(this.strandGroup, this.icosaGroup, this.stars);
+    this.scene.remove(this.strandGroup, this.icosaGroup, this.stars, this.motes);
     this.cometGeometry.dispose();
     this.stars.geometry.dispose();
+    this.motes.geometry.dispose();
+    (this.motes.material as PointsMaterial).map?.dispose();
     this.icosaGroup.traverse((o) => {
       if (o instanceof Mesh || o instanceof LineSegments) o.geometry.dispose();
     });

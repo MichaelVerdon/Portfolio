@@ -20,6 +20,7 @@ const listeners = new Set<Listener>();
 let tier: Tier | null = null;
 let status: SceneStatus | null = null;
 let chapter: SceneId = 'logo';
+let chapterImage: string | undefined;
 
 function emit() {
   listeners.forEach((l) => l());
@@ -42,9 +43,15 @@ export const sceneBus = {
   getChapter(): SceneId {
     return chapter;
   },
-  setChapter(next: SceneId) {
-    if (next === chapter) return;
+  /** The logo image to build instead of the chapter's shape, if any. */
+  getChapterImage(): string | undefined {
+    return chapterImage;
+  },
+  /** Switch chapter. With `image`, the cubes build that logo (falling back to the chapter's shape). */
+  setChapter(next: SceneId, image?: string) {
+    if (next === chapter && image === chapterImage) return;
     chapter = next;
+    chapterImage = image;
     emit();
   },
   subscribe(listener: Listener) {
@@ -58,6 +65,7 @@ export const sceneBus = {
     tier = null;
     status = null;
     chapter = 'logo';
+    chapterImage = undefined;
     emit();
   },
 };

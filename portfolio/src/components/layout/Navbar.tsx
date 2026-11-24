@@ -37,6 +37,14 @@ export default function Navbar({ logo }: NavbarProps) {
           {navLinks.map(({ href, label }) => (
             <li key={href}>
               <a href={href} onClick={close}>
+                <span className="navCube" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                </span>
                 {label}
               </a>
             </li>

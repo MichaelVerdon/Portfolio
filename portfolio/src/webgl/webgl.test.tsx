@@ -10,13 +10,24 @@ import Home from '../pages/Home';
 import { renderWithRouter } from '../test/render';
 import { detectTier, supportsWebGL } from './capability';
 import { CHAPTERS, isSceneId, SCENE_IDS } from './chapters';
-import { buildFormation, LOGO_VOXELS, SHAPE_SHARE } from './formations';
+import {
+  bootCore,
+  buildFormation,
+  LOGO_VOXELS,
+  logoCells,
+  logoFormation,
+  SHAPE_SHARE,
+  type Pixels,
+} from './formations';
 import { buildStrands, progressAt } from './strands';
 import { sceneBus, useSceneStatus, useWebglActive } from './sceneBus';
-import WebGLStage from './WebGLStage';
+import WebGLStage, { firstVisitThisSession } from './WebGLStage';
 
 const voxel = vi.hoisted(() => ({
-  instances: [] as { options: { onFail: () => void; getChapter: () => string }; dispose: () => void }[],
+  instances: [] as {
+    options: { onFail: () => void; getChapter: () => string };
+    dispose: () => void;
+  }[],
   throwOnCreate: false,
 }));
 vi.mock('./VoxelScene', () => ({
@@ -61,7 +72,11 @@ beforeEach(() => {
   sceneBus.reset();
   voxel.instances = [];
   voxel.throwOnCreate = false;
-  stubNavigator({ hardwareConcurrency: 8, deviceMemory: 8, connection: undefined });
+  stubNavigator({
+    hardwareConcurrency: 8,
+    deviceMemory: 8,
+    connection: undefined,
+  });
 });
 
 afterEach(() => {
@@ -91,11 +106,112 @@ describe('formations', () => {
     expect(f.shapeCount % (cells * 2)).toBe(0);
   });
 
+  it('packs every cube into one block for the boot intro', () => {
+    for (const total of [420, 900]) {
+      const f = bootCore(total);
+      expect(f.positions).toHaveLength(total * 3);
+      const xs = Array.from({ length: f.shapeCount }, (_, i) => f.positions[i * 3]);
+      expect(f.shapeCount).toBeGreaterThan(total * 0.4);
+      expect(Math.max(...xs) - Math.min(...xs)).toBeLessThan(12);
+      expect(Array.from(f.positions).every(Number.isFinite)).toBe(true);
+    }
+  });
+
+  it('colours the project towers from blue at the base to cyan at the top', () => {
+    const f = buildFormation('field', 900);
+    expect(f.colors).toBeDefined();
+    const ys = Array.from({ length: f.shapeCount }, (_, i) => f.positions[i * 3 + 1]);
+    expect(new Set(ys.map((y) => Math.round(y))).size).toBeGreaterThan(2);
+  });
+
+  it('builds the skills chapter as a toolkit icon that fills the budget', () => {
+    for (const total of [640, 1400]) {
+      const f = buildFormation('toolkit', total);
+      expect(f.colors).toBeDefined();
+      expect(f.shapeCount).toBeGreaterThan(total * SHAPE_SHARE * 0.7);
+      const body = Array.from({ length: f.shapeCount }, (_, i) => f.colors![i * 3 + 2] > 0.7 && f.colors![i * 3] < 0.5);
+      expect(body.filter(Boolean).length).toBeGreaterThan(f.shapeCount / 3);
+    }
+  });
+
   it('keeps dust cubes in place between chapters', () => {
     const a = buildFormation('sphere', 900);
     const b = buildFormation('monolith', 900);
     const last = 899 * 3;
     expect(a.positions.slice(last, last + 3)).toEqual(b.positions.slice(last, last + 3));
+  });
+});
+
+/** A fake image: a filled disc of `color` on `bg` (or transparency), at any grid size. */
+function disc(color: number[], bg?: number[]) {
+  return (cols: number, rows: number): Pixels => {
+    const data: number[] = [];
+    for (let y = 0; y < rows; y++)
+      for (let x = 0; x < cols; x++) {
+        const inside = Math.hypot((x + 0.5) / cols - 0.5, (y + 0.5) / rows - 0.5) < 0.4;
+        data.push(...(inside ? [...color, 255] : bg ? [...bg, 255] : [0, 0, 0, 0]));
+      }
+    return { width: cols, height: rows, data };
+  };
+}
+
+describe('logo formations', () => {
+  it('turns the non-background pixels into coloured cubes', () => {
+    const cells = logoCells(disc([255, 128, 0])(10, 10));
+    expect(cells.length).toBeGreaterThan(30);
+    expect(cells.length).toBeLessThan(100);
+    expect(cells[0].slice(4)).toEqual([1, 128 / 255, 0]);
+  });
+
+  it('treats a solid corner colour as background', () => {
+    expect(logoCells(disc([20, 60, 200], [255, 255, 255])(10, 10)).length).toBe(logoCells(disc([20, 60, 200])(10, 10)).length);
+  });
+
+  it('centres a logo on its ink, whatever padding the image has', () => {
+    // A disc pushed into the bottom-right corner of its image.
+    const corner = (cols: number, rows: number): Pixels => {
+      const data: number[] = [];
+      for (let y = 0; y < rows; y++)
+        for (let x = 0; x < cols; x++)
+          data.push(...(Math.hypot(x / cols - 0.75, y / rows - 0.75) < 0.2 ? [255, 0, 0, 255] : [0, 0, 0, 0]));
+      return { width: cols, height: rows, data };
+    };
+    const f = logoFormation(corner, 1, 900);
+    const xs = Array.from({ length: f.shapeCount }, (_, i) => f.positions[i * 3]);
+    const ys = Array.from({ length: f.shapeCount }, (_, i) => f.positions[i * 3 + 1]);
+    expect(Math.abs(Math.min(...xs) + Math.max(...xs))).toBeLessThan(0.01);
+    expect(Math.abs(Math.min(...ys) + Math.max(...ys))).toBeLessThan(0.01);
+  });
+
+  it('draws black ink in soft white so it shows on the page', () => {
+    expect(logoCells(disc([0, 0, 0])(10, 10))[0].slice(4)).toEqual([0.9, 0.9, 0.93]);
+  });
+
+  it('keeps a logo that fills the corner when the rest is transparent', () => {
+    const px = disc([0, 128, 255])(10, 10);
+    const data = Array.from(px.data);
+    data.splice(0, 4, 0, 128, 255, 255); // the corner pixel is part of the logo
+    expect(logoCells({ ...px, data }).length).toBe(logoCells(px).length + 1);
+  });
+
+  it('lifts dark colours but keeps their hue', () => {
+    const [r, g, b] = logoCells(disc([60, 0, 50])(10, 10))[0].slice(4);
+    expect(r).toBeGreaterThan(60 / 255);
+    expect(r).toBeGreaterThan(b);
+    expect(g).toBeLessThan(r);
+  });
+
+  it('uses as much of the cube budget as it can without going over', () => {
+    const f = logoFormation(disc([255, 0, 0]), 1, 1400);
+    const budget = Math.floor(1400 * SHAPE_SHARE);
+    expect(f.shapeCount).toBeLessThanOrEqual(budget);
+    expect(f.shapeCount).toBeGreaterThan(budget * 0.6);
+    expect(f.colors).toHaveLength(f.shapeCount * 3);
+    expect(f.positions).toHaveLength(1400 * 3);
+  });
+
+  it('leaves plain shapes uncoloured', () => {
+    expect(buildFormation('sphere', 900).colors).toBeUndefined();
   });
 });
 
@@ -174,6 +290,9 @@ describe('sceneBus', () => {
     sceneBus.setStatus('running');
     expect(sceneBus.getChapter()).toBe('sphere');
     expect(listener).toHaveBeenCalledTimes(2);
+    sceneBus.setChapter('sphere', '/logos/x.svg');
+    expect(sceneBus.getChapterImage()).toBe('/logos/x.svg');
+    expect(listener).toHaveBeenCalledTimes(3);
     unsubscribe();
   });
 
@@ -223,6 +342,22 @@ describe('WebGLStage', () => {
   });
 });
 
+describe('firstVisitThisSession', () => {
+  it('is true once per session, then false', () => {
+    sessionStorage.clear();
+    expect(firstVisitThisSession()).toBe(true);
+    expect(firstVisitThisSession()).toBe(false);
+  });
+
+  it('skips the intro when storage is blocked', () => {
+    const spy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    expect(firstVisitThisSession()).toBe(false);
+    spy.mockRestore();
+  });
+});
+
 describe('sections with 3D on', () => {
   beforeEach(() => sceneBus.setStatus('loading'));
 
@@ -245,7 +380,8 @@ describe('sections with 3D on', () => {
     expect(container.querySelector('.story--3d')).toBeInTheDocument();
     expect(container.querySelector('.story-scene')).toBeInTheDocument();
     const last = about.timeline[about.timeline.length - 1];
-    expect(screen.getByText(CHAPTERS[last.scene!].label)).toBeInTheDocument();
+    const caption = last.logo ? /Fig\. 04 \/ JP Morgan/ : CHAPTERS[last.scene!].label;
+    expect(screen.getByText(caption)).toBeInTheDocument();
   });
 
   it('switch chapters as sections scroll past', () => {
@@ -260,6 +396,18 @@ describe('sections with 3D on', () => {
     Object.defineProperty(projects, 'isActive', { value: true });
     configs[index].onToggle!(projects);
     expect(sceneBus.getChapter()).toBe('field');
+    create.mockRestore();
+  });
+
+  it('shows the first logo as soon as the story intro scrolls in', () => {
+    const create = vi.spyOn(ScrollTrigger, 'create');
+    renderWithRouter(<Home />);
+    const configs = create.mock.calls.map(([c]) => c);
+    const index = configs.findIndex((c) => (c.trigger as HTMLElement).classList?.contains('story-intro'));
+    const intro = create.mock.results[index].value as ScrollTrigger;
+    Object.defineProperty(intro, 'isActive', { value: true });
+    configs[index].onToggle!(intro);
+    expect(sceneBus.getChapterImage()).toBe(about.timeline[0].logo);
     create.mockRestore();
   });
 });

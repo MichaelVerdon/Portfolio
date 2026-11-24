@@ -1,0 +1,7 @@
+{
+  "eyebrow": "How I work now",
+  "name": "Claude Code",
+  "icon": "/software/claude-code.svg",
+  "text": "Agentic coding is part of my everyday workflow. I use Claude Code to plan changes, refactor across a codebase, write and run tests, and review pull requests, while I stay in charge of the design and the final call. This site was built with it.",
+  "tags": ["Agentic coding", "Refactoring", "Test writing", "Code review"]
+}

@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { PLACEHOLDER_IMAGE } from '../utils/image';
 import { isSceneId } from '../webgl/chapters';
 import projectsJson from './projects.json';
-import { about, contacts, projects, skillGroups, techTags } from '.';
+import { about, contacts, projects, skillGroups, techTags, toolkitSpotlight } from '.';
 
 const publicDir = resolve(process.cwd(), 'public');
 
@@ -53,6 +53,15 @@ describe('projects.json', () => {
   });
 });
 
+describe('toolkit spotlight', () => {
+  it('names a tool with an icon, text and tags', () => {
+    expect(toolkitSpotlight.name.trim()).not.toBe('');
+    expect(toolkitSpotlight.text.length).toBeGreaterThan(40);
+    expect(toolkitSpotlight.tags.length).toBeGreaterThan(0);
+    expectImageExists(toolkitSpotlight.icon);
+  });
+});
+
 describe('skills JSON files', () => {
   it.each(skillGroups.map((g) => [g.title, g] as const))('%s is valid', (_, group) => {
     expect(group.skills.length).toBeGreaterThan(0);
@@ -98,6 +107,10 @@ describe('about.json', () => {
 
   it('gives every story step a valid 3D scene', () => {
     for (const step of about.timeline) expect(isSceneId(step.scene)).toBe(true);
+  });
+
+  it('points story logos at /logos/', () => {
+    for (const step of about.timeline) if (step.logo) expect(step.logo).toMatch(/^\/logos\/.+\.(svg|png|webp)$/);
   });
 });
 

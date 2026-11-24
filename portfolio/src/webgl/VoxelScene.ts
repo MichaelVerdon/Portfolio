@@ -20,7 +20,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { seededRandom } from '../components/geometry/random';
 import type { Tier } from './capability';
 import { CHAPTERS, type ChapterLayout, type SceneId } from './chapters';
-import { buildFormation, type Formation } from './formations';
+import { bootCore, buildFormation, LOGO_BOX, logoFormation, type Formation } from './formations';
 import { SpaceLayer } from './SpaceLayer';
 
 /**
@@ -31,7 +31,8 @@ import { SpaceLayer } from './SpaceLayer';
  * draw call. Loaded lazily by WebGLStage; never part of the first bundle.
  */
 
-const CUBES: Record<Exclude<Tier, 'off'>, number> = { full: 900, lite: 420 };
+// Enough cubes that a logo built from them reads clearly.
+const CUBES: Record<Exclude<Tier, 'off'>, number> = { full: 1400, lite: 640 };
 const MORPH_SECONDS = 1.9;
 const INTRO_SECONDS = 2.6;
 const CAMERA_Z = 60;
@@ -48,6 +49,8 @@ const damp = (current: number, target: number, rate: number, dt: number) =>
 interface SceneOptions {
   tier: Exclude<Tier, 'off'>;
   getChapter: () => SceneId;
+  /** A logo image to build from cubes instead of the chapter's own shape. */
+  getImage?: () => string | undefined;
   /** WebGL stopped working (context lost); the page falls back to 2D. */
   onFail: () => void;
   /**
@@ -56,7 +59,15 @@ interface SceneOptions {
    * Defaults to requestAnimationFrame.
    */
   ticker?: { add: (fn: () => void) => void; remove: (fn: () => void) => void };
+  /**
+   * Play the boot intro: the cubes gather into one spinning block in the
+   * middle of the screen, then burst out into the first chapter.
+   */
+  boot?: boolean;
 }
+
+/** Boot intro timings, in seconds from start. */
+const BOOT = { gather: 1.3, burst: 2.2 };
 
 export class VoxelScene {
   private renderer: WebGLRenderer;
@@ -69,6 +80,10 @@ export class VoxelScene {
   private material: MeshStandardMaterial;
   private count: number;
   private formations = new Map<SceneId, Formation>();
+  /** Logo formations by image URL, once loaded (or 'failed'). */
+  private logos = new Map<string, Formation | 'loading' | 'failed'>();
+  /** The formation the cubes are heading for: a chapter id or a logo URL. */
+  private shownKey: string;
 
   // Morph state: every cube travels from `from` to `to`.
   private fromPos: Float32Array;
@@ -77,6 +92,10 @@ export class VoxelScene {
   private toSize: Float32Array;
   private livePos: Float32Array;
   private liveSize: Float32Array;
+  private defaultColors: Float32Array;
+  private fromColors: Float32Array;
+  private toColors: Float32Array;
+  private liveColors: Float32Array;
   private delays: Float32Array;
   private axes: Vector3[];
   private morphStart = 0;
@@ -98,8 +117,13 @@ export class VoxelScene {
   private slowFrames = 0;
   private dpr: number;
   private disposed = false;
+  /** Boot intro stage: gathering into the block, then done. */
+  private booting: false | { start: number } = false;
+  private glass = 0;
+  private glassy = false;
 
   private matrix = new Matrix4();
+  private color = new Color();
   private quat = new Quaternion();
   private vec = new Vector3();
   private scaleVec = new Vector3();
@@ -126,7 +150,8 @@ export class VoxelScene {
     // Looking straight ahead, so the page plane (z = 0) maps 1:1 to the screen.
     this.camera.position.set(0, 0, CAMERA_Z);
     this.camera.lookAt(0, 0, 0);
-    this.scene.fog = new Fog(0x000000, CAMERA_Z + 4, CAMERA_Z + 85);
+    // Deep blue haze: far things fade into a console-menu void, not to black.
+    this.scene.fog = new Fog(0x050816, CAMERA_Z + 4, CAMERA_Z + 85);
 
     // Light: a cool white key, a soft fill and an indigo rim from behind.
     this.scene.add(new AmbientLight(0xffffff, 0.35));
@@ -140,7 +165,12 @@ export class VoxelScene {
 
 
     const geometry = new RoundedBoxGeometry(1, 1, 1, tier === 'full' ? 3 : 2, 0.12);
-    this.material = new MeshStandardMaterial({ roughness: 0.32, metalness: 0.15 });
+    this.material = new MeshStandardMaterial({
+      roughness: 0.32,
+      metalness: 0.15,
+      emissive: 0x3a5bff,
+      emissiveIntensity: 0,
+    });
     this.mesh = new InstancedMesh(geometry, this.material, this.count);
     this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);
     this.mesh.frustumCulled = false;
@@ -148,11 +178,13 @@ export class VoxelScene {
     const random = seededRandom(3);
     const color = new Color();
     this.delays = new Float32Array(this.count);
+    this.defaultColors = new Float32Array(this.count * 3);
     this.axes = [];
     for (let i = 0; i < this.count; i++) {
       const accent = random() < 0.04;
       color.copy(accent ? ACCENT : INK).multiplyScalar(accent ? 1.4 : 0.75 + random() * 0.25);
       this.mesh.setColorAt(i, color);
+      color.toArray(this.defaultColors, i * 3);
       this.delays[i] = random();
       this.axes.push(new Vector3(random() - 0.5, random() - 0.5, random() - 0.5).normalize());
     }
@@ -163,7 +195,11 @@ export class VoxelScene {
 
     // Start as a scattered cloud, then assemble the first chapter.
     this.chapter = options.getChapter();
+    this.shownKey = this.chapter;
     const first = this.formation(this.chapter);
+    this.liveColors = this.defaultColors.slice();
+    this.fromColors = this.defaultColors.slice();
+    this.toColors = this.defaultColors.slice();
     this.fromPos = new Float32Array(this.count * 3);
     this.fromSize = new Float32Array(this.count);
     for (let i = 0; i < this.count; i++) {
@@ -172,15 +208,22 @@ export class VoxelScene {
       this.fromPos[i * 3 + 2] = (random() - 0.5) * 60 - 10;
       this.fromSize[i] = 0;
     }
-    this.toPos = first.positions;
-    this.toSize = first.sizes;
-    this.shapeCount = first.shapeCount;
+    const start = options.boot ? bootCore(this.count) : first;
+    this.toPos = start.positions;
+    this.toSize = start.sizes;
+    this.shapeCount = start.shapeCount;
     this.livePos = this.fromPos.slice();
     this.liveSize = this.fromSize.slice();
 
     this.resize();
     this.layout = { ...this.targetLayout() };
     this.morphStart = performance.now() / 1000;
+    if (options.boot) {
+      this.booting = { start: this.morphStart };
+      this.morphSeconds = BOOT.gather;
+      // The block forms dead centre, then the first chapter glides into place.
+      this.layout = { ...this.layout, x: 0, y: 0, z: 6, scale: 1, dim: 1.5 };
+    }
 
     this.space = new SpaceLayer(this.scene, tier, () => this.worldPerPx(), (z) => this.halfSize(z));
 
@@ -224,13 +267,80 @@ export class VoxelScene {
 
   private targetLayout(): ChapterLayout {
     const c = CHAPTERS[this.chapter];
-    return this.narrow ? c.narrow : c.wide;
+    const layout = this.narrow ? c.narrow : c.wide;
+    if (this.shownKey === this.chapter) return layout;
+    // Logos face the camera rather than spinning, and sit in the middle of
+    // the story's figure box when it is on screen.
+    return { ...layout, spin: false, ...this.figureBox() };
+  }
+
+  /** Centre and fit a logo to the story's figure box, when it is on screen. */
+  private figureBox(): Partial<ChapterLayout> {
+    const box = document.querySelector('.story-scene')?.getBoundingClientRect();
+    if (!box || box.width < 40 || box.bottom < 0 || box.top > window.innerHeight) return {};
+    const half = this.halfSize(0);
+    const perPx = (half.h * 2) / window.innerHeight;
+    const fit = Math.min((box.width * perPx * 0.72) / LOGO_BOX.width, (box.height * perPx * 0.62) / LOGO_BOX.height);
+    return {
+      x: ((box.left + box.width / 2) / window.innerWidth) * 2 - 1,
+      y: 1 - ((box.top + box.height / 2) / window.innerHeight) * 2,
+      z: 0,
+      scale: Math.min(1, fit),
+    };
+  }
+
+  /**
+   * The formation to show: the chapter's logo when it has one and it has
+   * loaded, otherwise the chapter's own shape. Starts loading logos on
+   * first request.
+   */
+  private wanted(id: SceneId, image: string | undefined): { key: string; formation: Formation } {
+    if (image) {
+      const logo = this.logos.get(image);
+      if (logo === undefined) this.loadLogo(image);
+      else if (logo !== 'loading' && logo !== 'failed') return { key: image, formation: logo };
+    }
+    return { key: id, formation: this.formation(id) };
+  }
+
+  private loadLogo(url: string) {
+    this.logos.set(url, 'loading');
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => {
+      const aspect = img.naturalWidth && img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!ctx) {
+        this.logos.set(url, 'failed');
+        return;
+      }
+      const sample = (cols: number, rows: number) => {
+        canvas.width = cols;
+        canvas.height = rows;
+        ctx.clearRect(0, 0, cols, rows);
+        ctx.drawImage(img, 0, 0, cols, rows);
+        return ctx.getImageData(0, 0, cols, rows);
+      };
+      const formation = logoFormation(sample, aspect, this.count);
+      this.logos.set(url, formation.shapeCount > 0 ? formation : 'failed');
+    };
+    img.onerror = () => this.logos.set(url, 'failed');
+    img.src = url;
   }
 
   /** Start flying every cube from wherever it is now to the new chapter. */
-  private goTo(id: SceneId) {
+  private goTo(id: SceneId, key: string, next: Formation) {
     this.chapter = id;
-    const next = this.formation(id);
+    this.shownKey = key;
+    this.fromColors = this.liveColors.slice();
+    this.toColors = this.defaultColors.slice();
+    if (next.colors) {
+      // Logo colours are sRGB; the renderer works in linear light.
+      for (let i = 0; i < next.colors.length; i += 3) {
+        this.color.fromArray(next.colors, i).convertSRGBToLinear().toArray(this.toColors, i);
+      }
+    }
     this.fromPos = this.livePos.slice();
     this.fromSize = this.liveSize.slice();
     this.toPos = next.positions;
@@ -285,8 +395,15 @@ export class VoxelScene {
       this.slowFrames = 0;
     }
 
-    const wanted = this.options.getChapter();
-    if (wanted !== this.chapter) this.goTo(wanted);
+    const id = this.options.getChapter();
+    if (this.booting && now - this.booting.start > BOOT.burst) {
+      this.booting = false;
+      this.shownKey = ''; // forces the burst into the current chapter below
+    }
+    if (!this.booting) {
+      const next = this.wanted(id, this.options.getImage?.());
+      if (next.key !== this.shownKey || id !== this.chapter) this.goTo(id, next.key, next.formation);
+    }
 
     // Scroll speed nudges the spin, so the scene feels tied to the page.
     const scroll = window.scrollY;
@@ -301,7 +418,10 @@ export class VoxelScene {
   }
 
   private updateLayout(dt: number) {
-    const target = this.targetLayout();
+    // While booting, the block glows where the logo will land.
+    const target = this.booting
+      ? { ...this.targetLayout(), scale: 1, dim: 1.5, spin: true, glass: 0 }
+      : this.targetLayout();
     const l = this.layout;
     for (const key of ['x', 'y', 'z', 'scale', 'dim'] as const) l[key] = damp(l[key], target[key], 2.6, dt);
 
@@ -314,6 +434,18 @@ export class VoxelScene {
     this.world.scale.setScalar(l.scale * fit);
     this.material.color.setScalar(l.dim);
 
+    // Glassy chapters: see-through cubes that glow where they overlap.
+    this.glass = damp(this.glass, target.glass ?? 0, 2.4, dt);
+    const glassy = this.glass > 0.02;
+    if (glassy !== this.glassy) {
+      this.glassy = glassy;
+      this.material.transparent = glassy;
+      this.material.depthWrite = !glassy;
+      this.material.needsUpdate = true;
+    }
+    this.material.opacity = 1 - this.glass * 0.6;
+    this.material.emissiveIntensity = this.glass * 0.35;
+
     // Pointer tilt, eased for weight.
     this.pointer.sx = damp(this.pointer.sx, this.pointer.x, 3, dt);
     this.pointer.sy = damp(this.pointer.sy, this.pointer.y, 3, dt);
@@ -323,7 +455,9 @@ export class VoxelScene {
     // Spin, plus a push from scrolling. Chapters that face the camera
     // (the logo) unwind to the nearest whole turn.
     const push = Math.max(-1, Math.min(1, this.scrollVelocity / 2500));
-    if (target.spin) {
+    if (this.booting) {
+      this.spin += dt * 2.4; // the block spins up before it bursts
+    } else if (target.spin) {
       this.spin += dt * 0.14 + push * dt * 1.6;
     } else {
       const home = Math.round(this.spin / (Math.PI * 2)) * Math.PI * 2;
@@ -354,6 +488,11 @@ export class VoxelScene {
       const arc = Math.sin(p * Math.PI);
       pos[i3 + 2] += arc * 6 * (this.delays[i] - 0.3);
       size[i] = this.fromSize[i] + (this.toSize[i] - this.fromSize[i]) * p;
+      if (!settled) {
+        const c = this.liveColors;
+        for (let a = 0; a < 3; a++) c[i3 + a] = this.fromColors[i3 + a] + (this.toColors[i3 + a] - this.fromColors[i3 + a]) * p;
+        this.mesh.setColorAt(i, this.color.fromArray(c, i3));
+      }
 
       let y = pos[i3 + 1];
       if (this.wave > 0.001 && i < this.shapeCount) {
@@ -372,6 +511,7 @@ export class VoxelScene {
       this.mesh.setMatrixAt(i, this.matrix);
     }
     this.mesh.instanceMatrix.needsUpdate = true;
+    if (!settled && this.mesh.instanceColor) this.mesh.instanceColor.needsUpdate = true;
   }
 
   dispose() {

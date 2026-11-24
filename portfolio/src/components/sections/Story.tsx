@@ -11,8 +11,8 @@ import SectionHeading from '../SectionHeading';
 const NARROW_MOTION = '(prefers-reduced-motion: no-preference) and (max-width: 899px)';
 
 function showScene(step: number) {
-  const scene = about.timeline[step]?.scene;
-  if (scene) sceneBus.setChapter(scene);
+  const milestone = about.timeline[step];
+  if (milestone?.scene) sceneBus.setChapter(milestone.scene, milestone.logo);
 }
 
 /**
@@ -100,12 +100,18 @@ export default function Story() {
   );
 
   if (webgl) {
-    const scene = about.timeline[active]?.scene;
+    const milestone = about.timeline[active];
+    const scene = milestone?.scene;
     return (
       <section id="story" className="section story--3d" aria-labelledby="story-title">
         <div className="container">
           <SectionHeading id="story-title" index="01" eyebrow="Story" title="Hello, I'm Michael." />
-          <div className="story-intro" data-reveal data-scene={about.timeline[0]?.scene}>
+          <div
+            className="story-intro"
+            data-reveal
+            data-scene={about.timeline[0]?.scene}
+            data-scene-logo={about.timeline[0]?.logo}
+          >
             <img className="story-avatar" src={selfie} alt={about.name} />
             <p className="lead">{about.intro}</p>
           </div>
@@ -116,7 +122,9 @@ export default function Story() {
               <span className="story-scene-corner story-scene-corner--br" />
               <span className="story-caption mono">
                 {String(active + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
-                <span className="story-caption-label">{scene ? CHAPTERS[scene].label : ''}</span>
+                <span className="story-caption-label">
+                  {milestone?.logo ? `Fig. ${String(active + 1).padStart(2, '0')} / ${milestone.place.split(' · ')[0]}` : scene ? CHAPTERS[scene].label : ''}
+                </span>
               </span>
             </div>
           </div>
