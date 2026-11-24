@@ -6,7 +6,7 @@ The 3D story builds each career step's logo out of cubes, in the logo's own colo
 | --- | --- |
 | `portsmouth.svg` | University of Portsmouth |
 | `makers.svg` | Makers Academy |
-| `invertase.svg` | Invertase |
+| `invertase.png` | Invertase (mark only, cropped from the logo Michael shared) |
 | `jpmorgan.svg` | JP Morgan |
 
 - SVG or PNG both work. Use a transparent background, or a plain one: the top-left pixel's colour is treated as background.

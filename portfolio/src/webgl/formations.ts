@@ -219,7 +219,7 @@ export interface Pixels {
 }
 
 /** Largest a logo gets, in world units. */
-const LOGO_BOX = { width: 24, height: 17 };
+const LOGO_BOX = { width: 19, height: 14 };
 
 function luminance(r: number, g: number, b: number) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
