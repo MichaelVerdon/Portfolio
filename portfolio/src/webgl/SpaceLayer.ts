@@ -21,24 +21,23 @@ import {
 } from 'three';
 import { seededRandom } from '../components/geometry/random';
 import type { Tier } from './capability';
-import { drawIndexFor, spiralPath, type Anchor } from './spiralPath';
+import { buildStrands, progressAt, type Anchor, type Strand } from './strands';
 
 /**
  * The space around the cubes:
- * - a spiral that winds down the page with the scroll, drawing itself in
- *   and running flat under each `[data-underline]` heading;
+ * - curly strands (after lusion.co's curly tubes) that sweep in from
+ *   different edges as you scroll, each running flat under one
+ *   `[data-underline]` heading before curling away (see strands.ts);
  * - icosahedrons (some solid and faceted, some wireframe) drifting at
  *   different depths for parallax;
  * - a starfield far behind everything.
  *
- * The spiral and icosahedrons are laid out in page coordinates, so they
+ * The strands and icosahedrons are laid out in page coordinates, so they
  * scroll with the content rather than floating on top of it.
  */
 
-const SPIRAL_COLOR = new Color('#9d94ff');
+const STRAND_COLOR = new Color('#9d94ff');
 const RADIAL = 6;
-/** How far down the screen the spiral has drawn itself to. */
-const DRAW_TO = 0.78;
 
 interface Icosa {
   /** Where on the page it sits, 0 top to 1 bottom. */
@@ -64,15 +63,23 @@ const ICOSAS: Icosa[] = [
 ];
 
 export class SpaceLayer {
-  private spiral = new Group();
+  private strandGroup = new Group();
+  private strands: {
+    def: Strand;
+    mesh: Mesh<TubeGeometry, MeshBasicMaterial>;
+    comet: Mesh;
+    samples: Vector3[];
+    segments: number;
+    /** Where the underline ends, as a fraction of the strand. */
+    underline: number;
+    head: number;
+    tail: number;
+  }[] = [];
   private icosaGroup = new Group();
   private stars: Points;
-  private tube?: Mesh<TubeGeometry, MeshBasicMaterial>;
-  private comet: Mesh;
-  private spiralMaterial = new MeshBasicMaterial({ color: SPIRAL_COLOR, toneMapped: false });
-  private sampleYs = new Float32Array(0);
-  private samplePoints: Vector3[] = [];
-  private drawn = 0;
+  private strandMaterial = new MeshBasicMaterial({ color: STRAND_COLOR, toneMapped: false });
+  private cometMaterial = new MeshBasicMaterial({ color: 0xffffff });
+  private cometGeometry = new IcosahedronGeometry(0.22, 0);
   private icosas: { def: Icosa; object: Group; spin: Vector3 }[] = [];
   private materials: Material[] = [];
   private docHeight = 1;
@@ -87,11 +94,7 @@ export class SpaceLayer {
     /** Half the visible width and height at a given depth, in world units. */
     private halfSize: (z: number) => { w: number; h: number },
   ) {
-    const comet = new MeshBasicMaterial({ color: 0xffffff });
-    this.materials.push(comet, this.spiralMaterial);
-    this.comet = new Mesh(new IcosahedronGeometry(0.22, 0), comet);
-    this.comet.visible = false;
-    this.spiral.add(this.comet);
+    this.materials.push(this.strandMaterial, this.cometMaterial);
 
     this.stars = new Points(
       new BufferGeometry(),
@@ -108,7 +111,7 @@ export class SpaceLayer {
     this.materials.push(this.stars.material as Material);
 
     this.buildIcosas();
-    scene.add(this.spiral, this.icosaGroup, this.stars);
+    scene.add(this.strandGroup, this.icosaGroup, this.stars);
 
     // Re-measure the headings whenever the page changes size (fonts loading,
     // the pinned story adding its scroll space, a project list expanding).
@@ -147,7 +150,7 @@ export class SpaceLayer {
     });
   }
 
-  /** Reads the headings' positions and rebuilds the spiral and starfield to fit. */
+  /** Reads the headings' positions and rebuilds the strands and starfield to fit. */
   measure() {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -165,32 +168,44 @@ export class SpaceLayer {
       return [{ left: text.left, right: text.right, y: box.bottom + scrollY + 8 }];
     });
 
+    this.clearStrands();
     const wpp = this.worldPerPx();
-    const points = spiralPath(anchors, { width, height }).map(
-      (p) => new Vector3((p.x - width / 2) * wpp, -p.y * wpp, p.z),
-    );
-
-    this.tube?.geometry.dispose();
-    if (this.tube) this.spiral.remove(this.tube);
-    this.tube = undefined;
-    this.samplePoints = [];
-    this.sampleYs = new Float32Array(0);
-
-    if (points.length >= 2) {
+    const maxSegments = this.tier === 'full' ? 900 : 450;
+    for (const def of buildStrands(anchors, { width, height })) {
+      const points = def.points.map((p) => new Vector3((p.x - width / 2) * wpp, -p.y * wpp, p.z));
       const curve = new CatmullRomCurve3(points, false, 'centripetal');
-      const segments = Math.min(this.tier === 'full' ? 2400 : 1200, Math.max(300, Math.round(curve.getLength() / (wpp * 6))));
+      const segments = Math.min(maxSegments, Math.max(120, Math.round(curve.getLength() / (wpp * 5))));
       // About 2.5px thick on screen, at the front.
-      const geometry = new TubeGeometry(curve, segments, wpp * 1.25, RADIAL, false);
-      this.tube = new Mesh(geometry, this.spiralMaterial);
-      this.tube.frustumCulled = false;
-      this.spiral.add(this.tube);
-      this.samplePoints = curve.getSpacedPoints(segments);
-      // Back in page pixels, for "how far down has the reader scrolled".
-      this.sampleYs = Float32Array.from(this.samplePoints, (p) => -p.y / wpp);
-      this.drawn = Math.min(this.drawn, segments);
+      const mesh = new Mesh(new TubeGeometry(curve, segments, wpp * 1.25, RADIAL, false), this.strandMaterial);
+      mesh.frustumCulled = false;
+      const samples = curve.getSpacedPoints(segments);
+      let underline = 0.5;
+      if (def.underlineEnd !== undefined) {
+        const target = points[def.underlineEnd];
+        let best = Infinity;
+        samples.forEach((p, i) => {
+          const d = p.distanceToSquared(target);
+          if (d < best) {
+            best = d;
+            underline = i / segments;
+          }
+        });
+      }
+      const comet = new Mesh(this.cometGeometry, this.cometMaterial);
+      comet.visible = false;
+      this.strandGroup.add(mesh, comet);
+      this.strands.push({ def, mesh, comet, samples, segments, underline, head: 0, tail: 0 });
     }
 
     this.buildStars(wpp);
+  }
+
+  private clearStrands() {
+    for (const s of this.strands) {
+      s.mesh.geometry.dispose();
+      this.strandGroup.remove(s.mesh, s.comet);
+    }
+    this.strands = [];
   }
 
   private buildStars(wpp: number) {
@@ -213,20 +228,23 @@ export class SpaceLayer {
     const wpp = this.worldPerPx();
     const view = this.halfSize(0);
 
-    // The spiral moves exactly with the page.
-    this.spiral.position.y = view.h + scrollY * wpp;
-
-    if (this.tube) {
-      const target = drawIndexFor(this.sampleYs, scrollY + window.innerHeight * DRAW_TO);
-      // Ease toward the target so it draws in smoothly, fast enough to keep up.
-      this.drawn += (target - this.drawn) * (1 - Math.exp(-5 * dt));
-      const segments = Math.max(0, Math.min(this.samplePoints.length - 1, Math.round(this.drawn)));
-      this.tube.geometry.setDrawRange(0, segments * RADIAL * 6);
-      const tip = this.samplePoints[segments];
-      this.comet.visible = segments > 0 && segments < this.samplePoints.length - 1;
-      if (tip) this.comet.position.copy(tip);
-      this.comet.rotation.set(now * 1.3, now * 0.9, 0);
-      this.comet.scale.setScalar(1 + Math.sin(now * 5) * 0.15);
+    // Strands move exactly with the page.
+    this.strandGroup.position.y = view.h + scrollY * wpp;
+    const ease = 1 - Math.exp(-6 * dt);
+    for (const s of this.strands) {
+      s.head += (progressAt(s.def.head, scrollY, s.underline) - s.head) * ease;
+      s.tail += (progressAt(s.def.tail, scrollY, s.underline) - s.tail) * ease;
+      const from = Math.round(Math.min(s.tail, s.head) * s.segments);
+      const to = Math.round(s.head * s.segments);
+      const visible = to - from > 1;
+      s.mesh.visible = visible;
+      s.mesh.geometry.setDrawRange(from * RADIAL * 6, Math.max(0, to - from) * RADIAL * 6);
+      s.comet.visible = visible && to < s.segments;
+      if (s.comet.visible) {
+        s.comet.position.copy(s.samples[to]);
+        s.comet.rotation.set(now * 1.3, now * 0.9, 0);
+        s.comet.scale.setScalar(1 + Math.sin(now * 5 + from) * 0.15);
+      }
     }
 
     // Icosahedrons: placed down the page, drifting at their own depth.
@@ -250,9 +268,9 @@ export class SpaceLayer {
   dispose() {
     window.clearTimeout(this.remeasureTimer);
     this.observer.disconnect();
-    this.scene.remove(this.spiral, this.icosaGroup, this.stars);
-    this.tube?.geometry.dispose();
-    this.comet.geometry.dispose();
+    this.clearStrands();
+    this.scene.remove(this.strandGroup, this.icosaGroup, this.stars);
+    this.cometGeometry.dispose();
     this.stars.geometry.dispose();
     this.icosaGroup.traverse((o) => {
       if (o instanceof Mesh || o instanceof LineSegments) o.geometry.dispose();

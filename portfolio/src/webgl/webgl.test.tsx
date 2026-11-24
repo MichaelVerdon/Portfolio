@@ -11,7 +11,7 @@ import { renderWithRouter } from '../test/render';
 import { detectTier, supportsWebGL } from './capability';
 import { CHAPTERS, isSceneId, SCENE_IDS } from './chapters';
 import { buildFormation, LOGO_VOXELS, SHAPE_SHARE } from './formations';
-import { drawIndexFor, spiralPath } from './spiralPath';
+import { buildStrands, progressAt } from './strands';
 import { sceneBus, useSceneStatus, useWebglActive } from './sceneBus';
 import WebGLStage from './WebGLStage';
 
@@ -253,48 +253,63 @@ describe('sections with 3D on', () => {
     renderWithRouter(<Home />);
     const configs = create.mock.calls.map(([c]) => c);
     expect(configs.length).toBeGreaterThanOrEqual(4);
-    const projects = configs.find((c) => (c.trigger as HTMLElement).id === 'projects')!;
-    projects.onToggle!({ isActive: false } as ScrollTrigger);
+    const index = configs.findIndex((c) => (c.trigger as HTMLElement).id === 'projects');
+    const projects = create.mock.results[index].value as ScrollTrigger;
+    configs[index].onToggle!(projects);
     expect(sceneBus.getChapter()).toBe('logo');
-    projects.onToggle!({ isActive: true } as ScrollTrigger);
+    Object.defineProperty(projects, 'isActive', { value: true });
+    configs[index].onToggle!(projects);
     expect(sceneBus.getChapter()).toBe('field');
     create.mockRestore();
   });
 });
 
-describe('spiralPath', () => {
+describe('strands', () => {
   const view = { width: 1440, height: 900 };
+  const anchors = [
+    { left: 168, right: 900, y: 600 },
+    { left: 168, right: 700, y: 1500 },
+    { left: 168, right: 640, y: 6000 },
+  ];
 
   it('is empty without headings to underline', () => {
-    expect(spiralPath([], view)).toEqual([]);
-    expect(spiralPath([{ left: 10, right: 10, y: 50 }], view)).toEqual([]);
+    expect(buildStrands([], view)).toEqual([]);
+    expect(buildStrands([{ left: 10, right: 10, y: 50 }], view)).toEqual([]);
   });
 
-  it('runs flat on the page under each heading, in page order', () => {
-    const anchors = [
-      { left: 200, right: 700, y: 2400 },
-      { left: 168, right: 900, y: 600 },
-    ];
-    const path = spiralPath(anchors, view);
-    for (const a of anchors) {
-      const under = path.filter((p) => p.y === a.y && p.z === 0).map((p) => p.x);
-      expect(under).toEqual([a.left, (a.left + a.right) / 2, a.right]);
-    }
-    const ys = path.map((p) => p.y);
-    expect([...ys].sort((a, b) => a - b)).toEqual(ys);
-    expect(Math.min(...path.map((p) => p.z))).toBeLessThan(-20);
+  it('gives each heading a strand that runs flat under it', () => {
+    const strands = buildStrands(anchors, view).filter((s) => s.underlineEnd !== undefined);
+    expect(strands).toHaveLength(3);
+    strands.forEach((strand, i) => {
+      const a = anchors[i];
+      const end = strand.points[strand.underlineEnd!];
+      expect(end).toEqual({ x: a.right, y: a.y, z: 0 });
+      const under = strand.points.filter((p) => p.y === a.y && p.z === 0).map((p) => p.x);
+      expect(under[0]).toBe(a.left);
+      expect(under[under.length - 1]).toBe(a.right);
+      expect(Math.min(...strand.points.map((p) => p.z))).toBeLessThan(-5);
+    });
   });
 
-  it('adds turns across long gaps', () => {
-    const short = spiralPath([{ left: 0, right: 100, y: 0 }, { left: 0, right: 100, y: 900 }], view);
-    const long = spiralPath([{ left: 0, right: 100, y: 0 }, { left: 0, right: 100, y: 5000 }], view);
-    expect(long.length).toBeGreaterThan(short.length);
+  it('brings strands in from different places each time', () => {
+    const starts = buildStrands(anchors, view)
+      .slice(0, 3)
+      .map((s) => `${Math.round(s.points[0].x)},${Math.round(s.points[0].y - anchors[0].y)}`);
+    expect(new Set(starts).size).toBe(3);
   });
 
-  it('finds how far down to draw', () => {
-    const ys = [0, 10, 20, 30];
-    expect(drawIndexFor(ys, -5)).toBe(0);
-    expect(drawIndexFor(ys, 15)).toBe(2);
-    expect(drawIndexFor(ys, 99)).toBe(4);
+  it('adds free strands across long gaps', () => {
+    const strands = buildStrands(anchors, view);
+    expect(strands.filter((s) => s.underlineEnd === undefined).length).toBeGreaterThan(0);
+  });
+
+  it('draws in, holds on the underline, then flows off with scroll', () => {
+    const [strand] = buildStrands(anchors, view);
+    const under = 0.4;
+    expect(progressAt(strand.head, -9999, under)).toBe(0);
+    expect(progressAt(strand.head, 600 - 0.45 * 900, under)).toBeCloseTo(under);
+    expect(progressAt(strand.head, 9999, under)).toBe(1);
+    expect(progressAt(strand.tail, 600, under)).toBeGreaterThan(0);
+    expect(progressAt(strand.tail, 9999, under)).toBe(1);
   });
 });
